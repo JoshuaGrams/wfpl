@@ -34,6 +34,7 @@
 # including the use of sub-templates can be found in tem_test.php
 
 require_once('code/wfpl/encode.php');
+require_once('code/wfpl/basics.php');
 
 class tem {
 	var $keyval;        # an array containing key/value pairs 
@@ -183,16 +184,6 @@ function tem_output($filename = false) {
 }
 
 
-
-function read_whole_file($name) {
-	$fd = fopen($name, 'r');
-	if($fd === false) {
-		die("Failed to read file: '$name'");
-	}
-	$temp = fread($fd, filesize($name));
-	fclose($fd);
-	return $temp;
-}
 
 # this is used in template_run() and should be of no other use
 function template_filler($matches) {
