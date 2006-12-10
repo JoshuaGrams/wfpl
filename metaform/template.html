@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>~form_name~ entry</title>
+</head>
+
+<body>
+  <h2>~form_name~ entry form</h2>
+
+  <form action="~form_name~.php" method="post">
+    <table cellspacing="0" cellpadding="4" border="0" summary="">
+<!--~textbox start~-->      <tr><td class="caption">~caption.html~: </td><td><input type="text" name="~name~" value="~~~name~.attr~~" /></td></tr>
+<!--~end~--><!--~textarea start~-->      <tr><td class="caption">~caption.html~: </td><td><textarea name="~name~">~~~name~.html~~</textarea></td></tr>
+<!--~end~--><!--~checkbox start~-->      <tr><td class="caption">~caption.html~: </td><td><input type="checkbox" name="~name~~~~name~.checked~~" /></td></tr>
+<!--~end~--><!--~submit start~-->      <tr><td class="submit_row" colspan="2"><input type="submit" name="~name~" value="~caption.attr~" /></td></tr>
+<!--~end~-->    </table>
+  </form>
+</body>
+</html>

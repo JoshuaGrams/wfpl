@@ -37,4 +37,13 @@ function enc_attr($str) {
 	return $str;
 }
 
+# this is a stupid hack to work around html's stupid syntax for checkboxes
+function enc_checked($str) {
+	if($str == 'Yes') {
+		return '" checked="checked';
+	} else {
+		return '';
+	}
+}
+	
 

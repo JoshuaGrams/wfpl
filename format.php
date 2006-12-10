@@ -22,6 +22,28 @@
 
 # This file contains basic encodings
 
+function format_oneline($str) {
+	$str = str_replace("\r", '', $str);
+	return str_replace("\n", '', $str);
+}
+
+function format_unix($str) {
+	return unix_newlines($str);
+}
+
+function format_yesno($str) {
+	if($str) {
+		return "Yes";
+	} else {
+		return "No";
+	}
+}
+
+function format_email($str) {
+	# FIXME
+	return format_oneline($str);
+}
+
 function format_money($str, $display_cents = true) {
 	$str = ereg_replace('[^0-9.]', '', $str);
 	if($display_cents) {

@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Meta Form</title>
+</head>
+
+<body>
+  <form action="metaform.php" method="get">
+    <p>Form name: <input type="text" name="form_name" value="~form_name~" /></p>
+
+    <p>Fields: 
+    <textarea name="fields">~fields.html~</textarea></p>
+
+    <p><input type="submit" name="download_sql" value="Download SQL" /></p>
+
+    <p><input type="submit" name="download_php" value="Download PHP" /></p>
+
+    <p><input type="submit" name="download_template" value="Download template" /></p>
+
+    <p><input type="submit" name="download_email" value="Download e-mail" /></p>
+  </form>
+</body>
+</html>
