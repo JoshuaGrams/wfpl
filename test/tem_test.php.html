@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!-- This file is an example template for wfpl/template.php. It contains two
+special things: sub-templates and template tags. -->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+</head>
+
+<body>
+  <h1>Template Test Page</h1>
+  
+  <!-- Here's the first special thing. This marks the begining of a
+  sub-template. It marks a section of template which the php can decide how
+  many times to display (including none.) -->
+  
+  <!--~login start~-->
+  <h3>Please Log In Below</h3>
+
+  <form method="get" action="tem_test.php">
+    <table summary="">
+      <tr>
+        <td>Username:</td>
+
+		<!-- Neatly tucked into the next line is a template tag. This will be
+		replaced with content from PHP. Every template tag has a name ("user"
+		in this case) which says which value from php goes here, and should
+		also have an encoding ("attr" in this case). It is important to always
+		use the correct encoding. If you are putting the value in an html
+		attribute, use "attr" if you are displaying it use "html", if you are
+		putting it in a text file or e-mail then leave the encoding off and
+		just put ~user~. -->
+
+        <td><input type="text" name="user" value="~user.attr~" /></td>
+      </tr>
+
+      <tr>
+        <td>Password:</td>
+
+        <!-- there's another template tag named pass -->
+
+        <td><input type="password" name="pass" value="~pass.attr~" /></td>
+      </tr>
+
+      <tr>
+        <td colspan="2"><input type="submit" value="Log In" /></td>
+      </tr>
+    </table>
+  </form>
+
+  <!-- and here's the mark for the end of the login sub-template. -->
+
+  <!--~end~-->
+
+
+  <!-- Now for a more complex example of sub-templates. This whole table is in
+  a sub-template so php can decide to display the whole bit or not. First the
+  marker for the begining of the sub-template -->
+
+  <!--~foobar_table start~-->
+  <h3>All your foobar:</h3>
+
+  <table summary="">
+    <tr>
+      <th>foo</th>
+
+      <th>bar</th>
+    </tr>
+
+	<!-- OK, here's the fun part. We want PHP to be able to display many rows
+	in this table, so we make a template with just one row, and mark that row
+	as a sub-template named foobar_row -->
+    
+    <!--~foobar_row start~-->
+    <tr>
+	  <!-- sorry that the following tag looks a bit like a filename. It isn't.
+	  It's simply asking PHP for a value called "foo" encoded as html -->
+      <td>~foo.html~</td>
+
+      <td><input value="~bar.attr~" /></td>
+    </tr>
+    <!-- Here's the end of foobar_row -->
+    <!--~end~-->
+
+    <tr>
+      <td></td>
+      
+      <td><input type="submit" /></td>
+    </tr>
+
+  </table>
+  <!-- and the end of foobar_table -->
+  <!--~end~-->
+</body>
+</html>

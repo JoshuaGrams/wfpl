@@ -1,0 +1,42 @@
+	First you have some globally accessible array of key->value pairs which contain the data to be entered into templates
+
+	Then you have some template files
+
+tem_set($key, $value)
+tem_get($key)
+tem_run($file/template)
+tem_echo($file/template) { echo tem_run($file); }
+
+This should work for simple templates such as:  foo: '~foo~'
+
+
+	It gets trickier when you have bits in your template that need to be repeated
+	(with different tags each time) and others perhaps not displayed at all.
+
+	foobar.html:
+
+<table>
+<tr><th>foo</th><th>bar</th></tr>
+<!--~foobar_row start~--><tr><td>~foo~</td><td><input value="~bar~"></tr><!--~end~-->
+</table>
+
+tem_load('foobar.html');
+
+		
+		the main template (with the sub-templates like foobar_row replaced with a single tag ie:
+
+<table>
+<tr><th>foo</th><th>bar</th></tr>
+~foobar_row~
+</table>
+
+	Main data structure:
+		key/value pairs
+		template file (if template string is empty, it will be read from here)
+		template string
+		sub templates:
+			key: foobar_row
+			value: <tr><td>~foo.....html~</td><td><input value="~bar.attr~"></tr>
+
+
+tmpl_insert('foobar_row');
