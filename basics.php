@@ -10,4 +10,10 @@ function read_whole_file($name) {
 	return $temp;
 }
 
+function unix_newlines($str) {
+	$str = str_replace("\r\n", "\n", $str);
+	return str_replace("\r", "\n", $str);
+}
+
+
 ?>
