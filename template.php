@@ -77,11 +77,12 @@ class tem {
 				return;
 			}
 
+			# move everything up to (but not including) <!-- to the output
 			$out .= substr($in, 0, $n);
 			$in = substr($in, $n);
 
-			#we found something.
-			#is it an end tag?
+			# we found something.
+			# is it an end tag?
 			if(strcmp('<!--~end~-->', substr($in, 0, 12)) == 0) {
 				$in = substr($in, 12);
 				return;
@@ -89,7 +90,7 @@ class tem {
 
 			$matches = array();
 			# this limits sub_template names to 50 chars
-			if(ereg('<!--~([^~]*) start~-->', substr($in, 0, 65), $matches)) {
+			if(ereg('^<!--~([^~]*) start~-->', substr($in, 0, 65), $matches)) {
 				list($start_tag, $tag_name) = $matches;
 				$out .= '~' . $tag_name . '~';
 				$in = substr($in, strlen($start_tag));
