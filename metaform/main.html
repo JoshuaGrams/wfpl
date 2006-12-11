@@ -6,19 +6,23 @@
 </head>
 
 <body>
-  <form action="metaform.php" method="get">
-    <p>Form name: <input type="text" name="form_name" value="~form_name~" /></p>
+  <h1>Meta Form</h1>
+  <p>This site will write code for you (sql code, php code, html template, email template) to handle a form.</p>
+  <form action="~metaform_name~" method="get">
+    <p>The form name should not contain any capitals or symbols (besides underscore)</p>
 
+    <p>Form name: <input type="text" name="form_name" value="~form_name.attr~" /></p>
+
+	<p>Below, specify the fields you'd like in your form, one field per line. After each field name, put at least one space, then the field type. The following field types are available: name textbox email phone money dollars url textarea checkbox yesno submit.</p>
+	<p>Example:<br /><pre>
+name      textbox
+phone     phone
+comments  textarea
+agree     yesno</pre></p>
     <p>Fields: 
-    <textarea name="fields">~fields.html~</textarea></p>
+    <textarea rows="10" cols="40" name="fields">~fields.html~</textarea></p>
 
-    <p><input type="submit" name="download_sql" value="Download SQL" /></p>
-
-    <p><input type="submit" name="download_php" value="Download PHP" /></p>
-
-    <p><input type="submit" name="download_template" value="Download template" /></p>
-
-    <p><input type="submit" name="download_email" value="Download e-mail" /></p>
+    <p><input type="submit" name="preview" value="Continue" /></p>
   </form>
 </body>
 </html>

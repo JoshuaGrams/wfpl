@@ -1,6 +1,29 @@
 <?php
 
+#  Copyright (C) 2006 Jason Woofenden
+#
+#  This file is part of wfpl.
+#
+#  wfpl is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2, or (at your option)
+#  any later version.
+#
+#  wfpl is distributed in the hope that it will be useful, but
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with wfpl; see the file COPYING.  If not, write to the
+#  Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+#  MA 02111-1307, USA.
+
+
+# This file writes the code for you (sql, php, html, email) to handle a form.
+
 require_once('code/wfpl/template.php');
+require_once('code/wfpl/tar.php');
 
 # see code/wfpl/metaform/template.html for the html templates for these elements
 $GLOBALS['types'] = array(
@@ -14,37 +37,49 @@ $GLOBALS['types'] = array(
 	'url' =>        array('textbox',     'url',        'varchar(200)'),
 	'textarea' =>   array('textarea',    'unix',       'text'),
 	'pulldown' =>   array('pulldown',    'options',    'int'),
-	'checkbox' =>   array('checkbox',    'yesno',   'int'),
-	'yesno' =>      array('checkbox',    'yesno',   'int'),
+	'checkbox' =>   array('checkbox',    'yesno',      'int'),
+	'yesno' =>      array('checkbox',    'yesno',      'int'),
 	'submit' =>     array('submit',      'oneline',    'n/a')
 );
 
 if(isset($_REQUEST['form_name'])) {
-	$GLOBALS['form_name'] = $_REQUEST['form_name'];
+	$GLOBALS['form_name'] = ereg_replace('[^a-z0-9_-]', '', $_REQUEST['form_name']);
 } else {
 	$GLOBALS['form_name'] = 'some_form';
 }
 
 if(isset($_REQUEST['fields'])) {
-	if(isset($_REQUEST['download_sql'])) {
-		download_sql();
+	if(isset($_REQUEST['view_sql'])) {
+		view_sql();
 		exit();
-	} elseif(isset($_REQUEST['download_php'])) {
-		download_php();
+	} elseif(isset($_REQUEST['view_php'])) {
+		view_php();
 		exit();
-	} elseif(isset($_REQUEST['download_template'])) {
-		download_template();
+	} elseif(isset($_REQUEST['view_template'])) {
+		view_template();
 		exit();
-	} elseif(isset($_REQUEST['download_email'])) {
-		download_email();
+	} elseif(isset($_REQUEST['view_email'])) {
+		view_email();
 		exit();
-	} else {
-		tem_set('message', "Sorry... couldn't tell which button you pressed");
+	} elseif(isset($_REQUEST['download_tar'])) {
+		download_tar();
+		exit();
+	} elseif(isset($_REQUEST['preview'])) {
+		preview();
+		exit();
+	} elseif(isset($_REQUEST['edit'])) {
+		tem_set('fields', $_REQUEST['fields']);
+		tem_set('form_name', $GLOBALS['form_name']);
 		# fall through
+	} else {
+		die("Sorry... couldn't tell which button you pressed");
 	}
-} else {
-	tem_output('code/wfpl/metaform/main.html');
 }
+
+set_form_action();
+tem_output('code/wfpl/metaform/main.html');
+exit();
+
 
 function field_input($type)  { return $GLOBALS['types'][$type][0]; }
 function field_format($type) { return $GLOBALS['types'][$type][1]; }
@@ -67,97 +102,151 @@ function get_fields() {
 	return $ret;
 }
 
-function download_headers() {
-	header('Content-type: application/octet-stream');
-	header('Content-disposition: download'); # is this correct? does it do anything?
+function set_form_action() {
+	$action = ereg_replace('.*/', '', $_SERVER['REQUEST_URI']);
+	if($action == '') $action = './';
+	tem_set('form_action', $action);
+}
+
+# perfect HTTP headers for viewing created files
+function view_headers() {
+	header('Content-type: text/plain');
 }
 	
 
 
 
-function download_sql() {
-	tem_load('code/wfpl/metaform/template.sql');
-	tem_set('form_name', $GLOBALS['form_name']);
+function make_sql() {
+	$tem = new tem();
+	$tem->load('code/wfpl/metaform/template.sql');
+	$tem->set('form_name', $GLOBALS['form_name']);
 	$fields = get_fields();
 	foreach($fields as $field) {
 		list($name, $type, $input, $format, $sql) = $field;
 		if($sql != 'n/a') {
-			tem_set('name', $name);
-			tem_set('type', $sql);
+			$tem->set('name', $name);
+			$tem->set('type', $sql);
 			if($sql == 'int') {
-				tem_set('default', '0');
+				$tem->set('default', '0');
 			} else {
-				tem_set('default', '""');
+				$tem->set('default', '""');
 			}
-			tem_sub('column');
+			$tem->sub('column');
 		}
 	}
-	download_headers();
-	tem_output();
+	view_headers();
+	return $tem->run();
+}
+
+function view_sql() {
+	view_headers();
+	echo make_sql();
 }
 	
 
-function download_template() {
-	tem_load('code/wfpl/metaform/template.html');
-	tem_set('form_name', $GLOBALS['form_name']);
+# pass false if you want to exclude the <head> and <body> tag etc.
+function make_template($whole_file = true) {
+	$tem = new tem();
+	$tem->load('code/wfpl/metaform/template.html');
+	$tem->set('form_name', $GLOBALS['form_name']);
 	$fields = get_fields();
 	foreach($fields as $field) {
 		list($name, $type, $input, $format, $sql) = $field;
-		tem_set('name', $name);
-		tem_set('caption', $name); # fixme
-		tem_sub($input);
+		$tem->set('name', $name);
+		$tem->set('caption', $name); # fixme
+		$tem->sub($input);
 	}
-	tem_set('name', 'save');
-	tem_set('caption', 'Save');
-	tem_sub('submit');
-	download_headers();
-	tem_output();
+	$tem->set('name', 'save');
+	$tem->set('caption', 'Save');
+	$tem->sub('submit');
+	$tem->sub('body');
+	if($whole_file) {
+		return $tem->run();
+	} else {
+		return $tem->get('body');
+	}
+}
+
+function view_template() {
+	view_headers();
+	echo make_template();
 }
 
 
-function download_php() {
-	tem_load('code/wfpl/metaform/template.php');
-	tem_set('form_name', $GLOBALS['form_name']);
+function make_php() {
+	$tem = new tem();
+	$tem->load('code/wfpl/metaform/template.php');
+	$tem->set('form_name', $GLOBALS['form_name']);
 	$fields = get_fields();
 	$db_fields = '';
 	$always_field = false;
 	foreach($fields as $field) {
 		list($name, $type, $input, $format, $sql) = $field;
 		if($input != 'submit') {
-			tem_set('format', $format);
-			tem_set('name', $name);
-			tem_set('db_field', ''); # we don't want to use the value from last time
+			$tem->set('format', $format);
+			$tem->set('name', $name);
+			$tem->set('db_field', ''); # we don't want to use the value from last time
 			if($sql != 'n/a') {
-				tem_sub('db_field');
+				$tem->sub('db_field');
 				if($db_fields != '') $db_fields .= ',';
 				$db_fields .= $name;
 			}
-			tem_sub('formats');
+			$tem->sub('formats');
 			if(!$always_field and $input != 'checkbox' and $input != 'radio') {
 				$always_field = $name;
 			}
 		}
 	}
 	# always_field is a form field that always submits (unlike say, checkboxes). It's used to detect if the form has submitted or not.
-	tem_set('always_field', $always_field);
-	tem_set('db_fields', $db_fields);
-	download_headers();
-	tem_output();
+	$tem->set('always_field', $always_field);
+	$tem->set('db_fields', $db_fields);
+	return $tem->run();
+}
+
+function view_php() {
+	view_headers();
+	echo make_php();
 }
 
 
-function download_email() {
-	tem_load('code/wfpl/metaform/template.email.txt');
-	tem_set('form_name', $GLOBALS['form_name']);
+function make_email() {
+	$tem = new tem();
+	$tem->load('code/wfpl/metaform/template.email.txt');
+	$tem->set('form_name', $GLOBALS['form_name']);
 	$fields = get_fields();
 	foreach($fields as $field) {
 		list($name, $type, $input, $format, $sql) = $field;
-		tem_set('name', $name);
-		tem_set('caption', $name); # fixme
-		tem_sub('fields');
+		$tem->set('name', $name);
+		$tem->set('caption', $name); # fixme
+		$tem->sub('fields');
 	}
-	download_headers();
-	tem_output();
+	return $tem->run();
+}
+
+function view_email() {
+	view_headers();
+	echo make_email();
+}
+
+
+function preview() {
+	$tem = new tem();
+	$tem->load('code/wfpl/metaform/preview.html');
+	$tem->set('form_name', $GLOBALS['form_name']);
+	$tem->set('fields', $_REQUEST['fields']);
+	$tem->set('preview', make_template(false));
+	set_form_action();
+	$tem->output();
+}
+
+function download_tar() {
+	$name = $GLOBALS['form_name'];
+	$data = array(
+		"$name.html" => make_template(),
+		"$name.sql" => make_sql(),
+		"$name.email.txt" => make_email(),
+		"$name.php" => make_php());
+	make_tar($name, $data);
 }
 
 ?>

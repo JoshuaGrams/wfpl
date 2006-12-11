@@ -1,5 +1,8 @@
 <?php
 
+# This form requires wfpl. See: http://jasonwoof.org/wfpl
+
+if(!file_exists('code/wfpl/template.php')) { die('This form requires <a href="http://jasonwoof.org/wfpl">wfpl</a>.'); }
 require_once('code/wfpl/template.php');
 require_once('code/wfpl/format.php');
 #require_once('code/wfpl/db.php'); # fixme

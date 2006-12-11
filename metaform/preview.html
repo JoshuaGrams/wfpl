@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Meta Form</title>
+</head>
+
+<body>
+  <h1>Preview</h1>
+  <div style="border: 2px solid black; padding: 13px">
+~preview~
+  </div>
+    <p><form action="~form_name~.tgz" method="get"><input type="hidden" name="form_name" value="~form_name.attr~" /><input type="hidden" name="fields" value="~fields.attr~" /><input type="submit" name="download_tar" value="Download tar ball" /></form></p>
+
+  <form action="~metaform_name~" method="get">
+  	<p><input type="hidden" name="form_name" value="~form_name.attr~" /><input type="hidden" name="fields" value="~fields.attr~" /><input type="submit" name="edit" value="Back to editing" /></p>
+
+    <p><input type="submit" name="view_sql" value="View SQL" /></p>
+
+    <p><input type="submit" name="view_php" value="View PHP" /></p>
+
+    <p><input type="submit" name="view_template" value="View template" /></p>
+
+    <p><input type="submit" name="view_email" value="View e-mail" /></p>
+
+  </form>
+</body>
+</html>
