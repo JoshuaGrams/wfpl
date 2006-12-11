@@ -159,11 +159,11 @@ function make_template($whole_file = true) {
 	$tem->set('name', 'save');
 	$tem->set('caption', 'Save');
 	$tem->sub('submit');
-	$tem->sub('body');
+	$tem->sub('form');
 	if($whole_file) {
 		return $tem->run();
 	} else {
-		return $tem->get('body');
+		return $tem->get('form');
 	}
 }
 
