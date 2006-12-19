@@ -33,6 +33,9 @@
 # tem_output('filename.html') to output the page. A more complex example
 # including the use of sub-templates can be found in tem_test.php
 
+# FIXME: sub-sub templates need to be cleared when the sub template containing
+# them is run
+
 require_once('code/wfpl/encode.php');
 require_once('code/wfpl/basics.php');
 
@@ -191,12 +194,15 @@ function template_filler($matches) {
 	list($tag, $enc) = explode('.', $matches[1], 2);
 	$value = $GLOBALS['wfpl_template_keyval'][$tag];
 	if($enc) {
-		$enc = "enc_$enc";
-		if(function_exists($enc)) {
-			$value = $enc($value);
-		} else {
-			print "ERROR: encoder function '$enc' not found.<br>\n";
-			exit(1);
+		$encs = explode('.', $enc);
+		foreach($encs as $enc) {
+			$enc = "enc_$enc";
+			if(function_exists($enc)) {
+				$value = $enc($value);
+			} else {
+				print "ERROR: encoder function '$enc' not found.<br>\n";
+				exit(1);
+			}
 		}
 	}
 	return $value;

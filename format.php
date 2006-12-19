@@ -44,6 +44,11 @@ function format_email($str) {
 	return format_oneline($str);
 }
 
+function format_url($str) {
+	# FIXME
+	return format_oneline($str);
+}
+
 function format_money($str, $display_cents = true) {
 	$str = ereg_replace('[^0-9.]', '', $str);
 	if($display_cents) {
