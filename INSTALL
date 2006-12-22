@@ -1,10 +1,11 @@
-This directory must be accessible to your PHP files vie the relative path: code/wfpl/
+This directory must be accessible to your PHP files via the relative path: code/wfpl/
 
 The recommended way to do this is to create a directory named "code" in the
 main folder of your website. And make symbolic links to that "code" directory
 from all directories in your website where you run PHP.
 
-Install wfpl within that "code" directory.
+Install wfpl within that "code" directory. That is, these files should be in a
+directory named "wfpl" in the "code" directory described above.
 
 
 
@@ -30,8 +31,8 @@ RewriteRule    .*\.tgz$  /metaform/index.php
 Note: the above .htaccess file assumes that the "metaform" directory you
 created in step one is in the root www directory. If it's in a sub directory
 (for example you access it via: http://example.com/my/sub/dir/metaform/) then
-replace the two occurences of "metaform" in the .htaccess file with the path to
-that directory (for example "my/sub/dir/metaform").
+replace the two occurrences of "metaform" in the .htaccess file with the path
+to that directory (for example "my/sub/dir/metaform").
 
 5) If php can't write to /tmp then you'll have to fix the $tmp_dir in
 code/wfpl/tar.php
