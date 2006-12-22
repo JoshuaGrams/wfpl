@@ -22,6 +22,10 @@
 
 # This file contains basic encodings
 
+function format_int($str) {
+	return ereg_replace('[^0-9]', '', $str);
+}
+
 function format_oneline($str) {
 	$str = str_replace("\r", '', $str);
 	return str_replace("\n", '', $str);

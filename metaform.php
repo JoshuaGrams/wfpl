@@ -30,6 +30,7 @@ $GLOBALS['types'] = array(
 #    type                  input          format        sql     
 	'name' =>       array('textbox',     'oneline',    'varchar(200)'),
 	'textbox' =>    array('textbox',     'oneline',    'varchar(200)'),
+	'int' =>        array('textbox',     'int',        'varchar(100)'),
 	'email' =>      array('textbox',     'email',      'varchar(100)'),
 	'phone' =>      array('textbox',     'phone',      'varchar(32)'),
 	'money' =>      array('textbox',     'money',      'varchar(32)'),
@@ -234,7 +235,10 @@ function preview() {
 	$tem->load('code/wfpl/metaform/preview.html');
 	$tem->set('form_name', $GLOBALS['form_name']);
 	$tem->set('fields', $_REQUEST['fields']);
-	$tem->set('preview', make_template(false));
+	$preview_tem = new tem();
+	$preview = $preview_tem->run(make_template(false));
+	unset($preview_tem);
+	$tem->set('preview', $preview);
 	set_form_action();
 	$tem->output();
 }
