@@ -156,10 +156,12 @@ function make_template($whole_file = true) {
 		$tem->set('name', $name);
 		$tem->set('caption', $name); # fixme
 		$tem->sub($input);
+		$tem->sub('row');
 	}
 	$tem->set('name', 'save');
 	$tem->set('caption', 'Save');
 	$tem->sub('submit');
+	$tem->sub('row');
 	$tem->sub('form');
 	if($whole_file) {
 		return $tem->run();
