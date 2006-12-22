@@ -41,19 +41,25 @@ require_once('code/wfpl/misc.php'); # to get read_whole_file()
 
 class tem {
 	var $keyval;        # an array containing key/value pairs 
-	var $filename;      # template filename (sometimes unset)
+	var $filename;      # template filename (sometimes not set)
 	var $template;      # contents of template
 	var $sub_templates; # tag-name/template-string pairs
+	var $sub_subs;      # key: sub-template name  value: array of names of the sub-templates of this one
 
 	# initialize variables
 	function tem() {
-		$this->keyval = array('' => '~');
+		$this->keyval = array('' => '~'); # so that ~~ in the template creates a single ~
 		$this->sub_templates = array();
 	}
 
 	# set a key/value pair. if a ~tag~ in the template matches key it will be replaced by value
 	function set($key, $value) {
 		$this->keyval[$key] = $value;
+	}
+
+	# clear a value. Functionally equivalent to set($key, '') but cleaner and more efficient
+	function clear($key) {
+		unset($this->keyval[$key]);
 	}
 
 	# grab a value you stuck in earlier with set()
@@ -66,10 +72,17 @@ class tem {
 	# this can be used.
 	function sub($sub_template_name) {
 		$this->keyval[$sub_template_name] .= template_run($this->sub_templates[$sub_template_name], $this->keyval);
+
+		# after running a sub-template, clear its sub-templates
+		if(isset($this->sub_subs[$sub_template_name])) {
+			foreach($this->sub_subs[$sub_template_name] as $sub_sub) {
+				$this->clear($sub_sub);
+			}
+		}
 	}
 
 	# this is used by tem::load() and should be otherwise useless
-	function _load(&$in, &$out) {
+	function _load(&$in, &$out, &$parents, &$parent) {
 		while($in) {
 			# scan for one of: 1) the begining of a sub-template 2) the end of this one 3) the end of the file
 			$n = strpos($in, '<!--~');
@@ -88,6 +101,7 @@ class tem {
 			# is it an end tag?
 			if(strcmp('<!--~end~-->', substr($in, 0, 12)) == 0) {
 				$in = substr($in, 12);
+				$parent = array_pop($parents);
 				return;
 			}
 
@@ -95,10 +109,19 @@ class tem {
 			# this limits sub_template names to 50 chars
 			if(ereg('^<!--~([^~]*) start~-->', substr($in, 0, 65), $matches)) {
 				list($start_tag, $tag_name) = $matches;
+
+				# keep track of the tree
+				if(!isset($this->sub_subs[$parent])) {
+					$this->sub_subs[$parent] = array();
+				}
+				array_push($this->sub_subs[$parent], $tag_name);
+				array_push($parents, $parent);
+				$parent = $tag_name;
+
 				$out .= '~' . $tag_name . '~';
 				$in = substr($in, strlen($start_tag));
 				$this->sub_templates[$tag_name] = '';
-				$this->_load($in, $this->sub_templates[$tag_name]);
+				$this->_load($in, $this->sub_templates[$tag_name], $parents, $parent);
 			} else {
 				# it's not a start tag or end tag, so let's pass it through:
 				$out .= substr($in, 0, 5);
@@ -114,7 +137,9 @@ class tem {
 		$this->filename = $filename;
 		$tmp = read_whole_file($filename);
 		$this->template = '';
-		$this->_load($tmp, $this->template);
+		$parents = array('top_level_subs' => array());
+		$parent = 'top_level_subs';
+		$this->_load($tmp, $this->template, $parents, $parent);
 	}
 		
 	# Run the template. Pass a filename, or a string, unless you've already

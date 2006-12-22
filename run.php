@@ -56,9 +56,20 @@ function run_php($basename = false) {
 		$html_file = "$basename.html";
 		$php_file = "$basename.php";
 	} else {
-		chdir('../..');
-		$html_file = $_SERVER['REDIRECT_URL'];
-		$html_file = ereg_replace('.*/', '', $html_file);
+
+		# first we must find the file and directory that was actually requested
+		# (before we messed it up with mod_rewrite)
+		$fs_path = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['REDIRECT_URL'];
+		$split = strrpos($fs_path, '/'); # find the last slash
+		$directory = substr($fs_path, 0, $split);
+		$file = substr($fs_path, $split + 1);
+
+		if($file == '') {
+			$file = 'index.html';
+		}
+
+		chdir($directory);
+		$html_file = $file;
 		$php_file = ereg_replace('\.html$', '.php', $html_file);
 	}
 	if($php_file != $html_file && file_exists($php_file)) {
