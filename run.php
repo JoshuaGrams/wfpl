@@ -51,11 +51,16 @@
 # RewriteBase    /foo/
 # RewriteRule    .*\.html$  /foo/code/wfpl/run.php
 
-function run_php() {
-	chdir('../..');
-	$html_file = $_SERVER['REDIRECT_URL'];
-	$html_file = ereg_replace('.*/', '', $html_file);
-	$php_file = ereg_replace('\.html$', '.php', $html_file);
+function run_php($basename = false) {
+	if($basename) {
+		$html_file = "$basename.html";
+		$php_file = "$basename.php";
+	} else {
+		chdir('../..');
+		$html_file = $_SERVER['REDIRECT_URL'];
+		$html_file = ereg_replace('.*/', '', $html_file);
+		$php_file = ereg_replace('\.html$', '.php', $html_file);
+	}
 	if($php_file != $html_file && file_exists($php_file)) {
 		require_once('code/wfpl/template.php');
 		if(file_exists($html_file)) tem_load($html_file);
@@ -66,7 +71,11 @@ function run_php() {
 			require $html_file;
 		} else {
 			header('HTTP/1.0 404 File Not Found');
-			echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html><head><title>404</title></head><body><h1>404 File Not Found</h1></body></html>';
+			if(file_exists('404.php') || file_exists('404.html')) {
+				run_php('404');
+			} else {
+				echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html><head><title>404</title></head><body><h1>404 File Not Found</h1></body></html>';
+			}
 		}
 	}
 }
