@@ -1,0 +1,62 @@
+div.calendar table { border: 1px solid #444; padding: 0; margin: 20px; }
+div.calendar th {
+	height: 15px;
+	width: 33px;
+	padding: 0px;
+	margin: 0px;
+	background: #565;
+	color: #fff;
+	font-size: 8px;
+	text-align: center;
+}
+div.calendar div.headerbox {
+	padding: 2px 5px;
+}
+	
+div.calendar td.nonday,td.busy_day,td.busy_weekend,td.empty_day,td.empty_weekend {
+	color: #000;
+	height: 25px;
+	width: 33px;
+	padding: 0px;
+	margin: 0px;
+	text-align: right;
+	vertical-align: top;
+	font-size: 13px;
+}
+
+div.calendar a {
+	display: block;
+	height: 100%;
+	border: 1px solid #444;
+	padding: 2px;
+	color: blue;
+}
+
+div.calendar div.daybox {
+	height: 100%;
+	border: 1px solid #444;
+	padding: 2px;
+}
+
+div.calendar td.busy_day {
+	background: #fbb;
+}
+div.calendar td.busy_day a:hover,a:focus {
+	background: #f99;
+}
+div.calendar td.busy_weekend {
+	background: #fcc;
+}
+div.calendar td.busy_weekend a:hover,a:focus {
+	background: #f99;
+}
+div.calendar td.empty_day {
+	background: #ddd;
+}
+div.calendar td.empty_weekend {
+	background: #fff;
+}
+
+div.calendar td.nonday { background: #999; }
+
+div.calendar td.year { text-align: center; font-size: 16px; height: auto; }

@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+  <link rel="stylesheet" href="calendar.css" type="text/css" />
+</head>
+
+<body>
+  <div class="calendar">
+    <table border="0" cellspacing="0" cellpadding="0" summary="">
+      <tr>
+        <td colspan="7" class="year">~month_year.html~</td>
+      </tr>
+      <tr>
+        <th><div class="headerbox">Sun</div></th>
+        <th><div class="headerbox">Mon</div></th>
+        <th><div class="headerbox">Tue</div></th>
+        <th><div class="headerbox">Wed</div></th>
+        <th><div class="headerbox">Thu</div></th>
+        <th><div class="headerbox">Fri</div></th>
+        <th><div class="headerbox">Sat</div></th>
+      </tr>
+      <!--~week start~-->
+      <tr><!--~day start~--><!--~nonday start~-->
+        <td class="nonday"><div class="daybox">&nbsp;</div></td><!--~end~--><!--~empty_day start~-->
+        <td class="empty_day"><div class="daybox">~day_number.html~</div></td><!--~end~--><!--~busy_day start~-->
+        <td class="busy_day"><a href="~day_page.attr~">~day_number.html~</a></td><!--~end~--><!--~empty_weekend start~-->
+        <td class="empty_weekend"><div class="daybox">~day_number.html~</div></td><!--~end~--><!--~busy_weekend start~-->
+        <td class="busy_weekend"><a href="~day_page.attr~">~day_number.html~</a></td><!--~end~--><!--~end~-->
+      </tr>
+      <!--~end~-->
+    </table>
+  </div>
+</body>
+</html>
