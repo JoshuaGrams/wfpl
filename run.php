@@ -42,34 +42,30 @@
 
 
 
-# To activate this script in a directory, you'll need to put something like the
-# following in you your .htaccess file (where /foo/ is the part of the url
-# between the hostname and the filename.) The example below would work for this
-# url: http://example.com/foo/bar.html
+# To activate this script in a directory, you'll need to:
+#
+# 1) make a symbolic link to (or copy of) this file in your directory. and
+#
+# 3) Set your webserver to run this script instead of html files. Here's how to
+# do that with apache: put something like the following in you your .htaccess
+# file (where /foo/ is the part of the url between the hostname and the
+# filename.) The example below would work for this url:
+# http://example.com/foo/bar.html
 
 # RewriteEngine  on
 # RewriteBase    /foo/
-# RewriteRule    .*\.html$  /foo/code/wfpl/run.php
+# RewriteRule    .*\.html$  /foo/run.php
 
 function run_php($basename = false) {
 	if($basename) {
 		$html_file = "$basename.html";
 		$php_file = "$basename.php";
 	} else {
-
-		# first we must find the file and directory that was actually requested
-		# (before we messed it up with mod_rewrite)
-		$fs_path = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['REDIRECT_URL'];
-		$split = strrpos($fs_path, '/'); # find the last slash
-		$directory = substr($fs_path, 0, $split);
-		$file = substr($fs_path, $split + 1);
-
-		if($file == '') {
-			$file = 'index.html';
+		$html_file = $_SERVER['REDIRECT_URL'];
+		$html_file = ereg_replace('.*/', '', $html_file);
+		if($html_file == '') {
+			$html_file = 'index.html';
 		}
-
-		chdir($directory);
-		$html_file = $file;
 		$php_file = ereg_replace('\.html$', '.php', $html_file);
 	}
 	if($php_file != $html_file && file_exists($php_file)) {
