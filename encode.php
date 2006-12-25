@@ -22,6 +22,14 @@
 
 # This file contains basic encodings
 
+# encode for putting within double-quotes in SQL
+function enc_sql($str) {
+	$str = str_replace("\\", "\\\\", $str);
+	$str = str_replace('"', "\\\"", $str);
+	return $str;
+}
+
+# encode for output in html. does nothing with whitespace
 function enc_html($str) {
 	$str = str_replace('&', '&amp;', $str);
 	$str = str_replace('<', '&lt;', $str);
