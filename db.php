@@ -207,4 +207,21 @@ function db_get_value($table, $columns, $where = '') {
 	return $value;
 }
 
+function db_insert($table, $columns, $values) {
+	$sql = "INSERT INTO $table ($columns) values(";
+
+	$first = true;
+	foreach($values as $value) {
+		if($first) {
+			$first = false;
+		} else {
+			$sql .= ',';
+		}
+		$sql .= '"' . enc_sql($value) . '"';
+	}
+	$sql .= ')';
+
+	db_send_query($sql);
+}
+
 ?>
