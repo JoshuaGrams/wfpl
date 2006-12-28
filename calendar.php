@@ -37,12 +37,6 @@
 # The html and CSS is completely customizable without opening a php file.
 
 
-# ACKNOWLEDGMENTS
-#
-# Thank you Oscar Merida for figuring out the necessary date() and strftime()
-# calls: http://freshmeat.net/projects/simplephpcalendar/
-
-
 
 require_once('code/wfpl/template.php');
 
