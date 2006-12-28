@@ -207,19 +207,24 @@ function db_get_value($table, $columns, $where = '') {
 	return $value;
 }
 
+# call either of these ways:
+#
+# db_insert('people', 'name,company', 'jason', 'widgets ltd');
+# or
+# db_insert('people', 'name,company', array('jason', 'widgets ltd'));
 function db_insert($table, $columns, $values) {
-	$sql = "INSERT INTO $table ($columns) values(";
+	if(!is_array($values)) {
+		$values = func_get_args();
+		$values = array_slice($values, 2);
+	}
 
-	$first = true;
+	$sql = '';
 	foreach($values as $value) {
-		if($first) {
-			$first = false;
-		} else {
-			$sql .= ',';
-		}
+		if($sql) $sql .= ',';
 		$sql .= '"' . enc_sql($value) . '"';
 	}
-	$sql .= ')';
+
+	$sql = "INSERT INTO $table ($columns) values($sql)";
 
 	db_send_query($sql);
 }
