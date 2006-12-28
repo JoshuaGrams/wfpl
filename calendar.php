@@ -49,9 +49,16 @@ function calendar_day($kind, &$template) {
 	$template->sub('day');
 }
 
-function calendar($year, $month, $events = 0, &$template = 0) {
-	if($template == 0) {
-		$template = $GLOBALS['wfpl_template'];
+# php4 is broken, in that you cannot set a default value for a parameter that
+# is passed by reference. So, this is set up to use the following screwy
+# syntax:
+#
+# calendar('2006', '12', $events, ref($my_template))
+function calendar($year, $month, $events = 0, $template = 0) {
+	if($template === 0) {
+		$template = &$GLOBALS['wfpl_template'];
+	} else {
+		$template = &$template->ref;
 	}
 
 	if(strlen($year) == 2) {

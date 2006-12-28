@@ -25,4 +25,29 @@ function this_month() {
 	return strftime('%m');
 }
 
+
+# php4 is broken, in that you cannot set a default value for a parameter that
+# is passed by reference. So, this is set up to use the following screwy
+# syntax:
+#
+# function foo($bar = 0) {
+#   if($bar !== 0) {
+#     $bar = $bar->ref;
+#   }
+#	...
+# }
+#
+# foo();
+# foo(ref($baz));
+
+class stupid_reference {
+	var $ref;
+	function stupid_reference(&$ref) {
+		$this->ref = &$ref;
+	}
+}
+function ref(&$foo) {
+	return new stupid_reference($foo);
+}
+
 ?>
