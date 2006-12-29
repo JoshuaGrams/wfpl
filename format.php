@@ -23,7 +23,8 @@
 # This file contains basic encodings
 
 function format_int($str) {
-	return ereg_replace('[^0-9]', '', $str);
+	$str = ereg_replace('[^0-9]', '', $str);
+	return ereg_replace('^0*([1-9])', '\1', $str);
 }
 
 function format_oneline($str) {
