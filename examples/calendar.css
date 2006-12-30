@@ -24,7 +24,15 @@ div.calendar td.nonday,td.busy_day,td.busy_weekend,td.empty_day,td.empty_weekend
 	font-size: 13px;
 }
 
-div.calendar a {
+div.calendar td.busy_weekend a {
+	display: block;
+	height: 100%;
+	border: 1px solid #444;
+	padding: 2px;
+	color: blue;
+}
+
+div.calendar td.busy_day a {
 	display: block;
 	height: 100%;
 	border: 1px solid #444;
@@ -59,4 +67,4 @@ div.calendar td.empty_weekend {
 
 div.calendar td.nonday { background: #999; }
 
-div.calendar td.year { text-align: center; font-size: 16px; height: auto; }
+div.calendar td.year { background: #ddd; text-align: center; font-size: 16px; height: auto; }

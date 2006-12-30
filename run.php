@@ -53,6 +53,7 @@
 # http://example.com/foo/bar.html
 
 # RewriteEngine  on
+# RewriteRule    ^$  /foo/run.php
 # RewriteRule    .*\.html$  /foo/run.php
 
 function run_php($basename = false) {
