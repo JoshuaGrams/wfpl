@@ -12,9 +12,11 @@ td.caption { text-align: right; font-weight: bold; }
 <!--~~form start~~--><!--~form start~-->
   <h2>~form_name~ entry form</h2>
 
-  <form action="~form_name~.php" method="post">
+  <form action="~form_name~.php" method="post"><!--~hidden start~--><input type="hidden" name="~name~" value="~~~name~.attr~~" /><!--~end~-->
     <table cellspacing="0" cellpadding="4" border="0" summary=""><!--~row start~-->
-      <tr><!--~textbox start~--><td class="caption">~caption.html~: </td><td><input type="text" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--></tr><!--~textarea start~--><td class="caption">~caption.html~: </td><td><textarea name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~checkbox start~--><td class="caption">~caption.html~: </td><td><input type="checkbox" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~submit start~--><tr><td class="submit_row" colspan="2"><input type="submit" name="~name~" value="~caption.attr~" /></td><!--~end~--></tr><!--~end~-->
+
+      <tr><!--~textbox start~--><td class="caption">~caption.html~: </td><td><input type="text" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~password start~--><td class="caption">~caption.html~: </td><td><input type="password" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~textarea start~--><td class="caption">~caption.html~: </td><td><textarea name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~checkbox start~--><td class="caption">~caption.html~: </td><td><input type="checkbox" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~submit start~--><td class="submit_row" colspan="2"><input type="submit" name="~name~" value="~caption.attr~" /></td><!--~end~--></tr><!--~end~-->
+
     </table>
   </form>
 <!--~end~--><!--~~end~~-->

@@ -36,6 +36,8 @@ $GLOBALS['types'] = array(
 	'money' =>      array('textbox',     'money',      'varchar(32)'),
 	'dollars' =>    array('textbox',     'dollars',    'varchar(32)'),
 	'url' =>        array('textbox',     'url',        'varchar(200)'),
+	'hidden' =>     array('hidden',      'unix',       'varchar(200)'),
+	'password' =>   array('password',    'oneline',    'varchar(200)'),
 	'textarea' =>   array('textarea',    'unix',       'text'),
 	'pulldown' =>   array('pulldown',    'options',    'int'),
 	'checkbox' =>   array('checkbox',    'yesno',      'int'),
@@ -156,7 +158,9 @@ function make_template($whole_file = true) {
 		$tem->set('name', $name);
 		$tem->set('caption', $name); # fixme
 		$tem->sub($input);
-		$tem->sub('row');
+		if($input != 'hidden') {
+			$tem->sub('row');
+		}
 	}
 	$tem->set('name', 'save');
 	$tem->set('caption', 'Save');
@@ -182,6 +186,7 @@ function make_php() {
 	$tem->set('form_name', $GLOBALS['form_name']);
 	$fields = get_fields();
 	$db_fields = '';
+	$php_fields = '';
 	$always_field = false;
 	foreach($fields as $field) {
 		list($name, $type, $input, $format, $sql) = $field;
@@ -190,9 +195,10 @@ function make_php() {
 			$tem->set('name', $name);
 			$tem->set('db_field', ''); # we don't want to use the value from last time
 			if($sql != 'n/a') {
-				$tem->sub('db_field');
 				if($db_fields != '') $db_fields .= ',';
 				$db_fields .= $name;
+				if($php_fields != '') $php_fields .= ', ';
+				$php_fields .= '$' . $name;
 			}
 			$tem->sub('formats');
 			if(!$always_field and $input != 'checkbox' and $input != 'radio') {
@@ -203,6 +209,7 @@ function make_php() {
 	# always_field is a form field that always submits (unlike say, checkboxes). It's used to detect if the form has submitted or not.
 	$tem->set('always_field', $always_field);
 	$tem->set('db_fields', $db_fields);
+	$tem->set('php_fields', $php_fields);
 	return $tem->run();
 }
 
