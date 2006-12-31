@@ -1,4 +1,4 @@
-<?php
+<?
 
 #  Copyright (C) 2005 Jason Woofenden
 #
@@ -20,39 +20,28 @@
 #  MA 02111-1307, USA.
 
 
-# return our best guess at the url used to access this page
-function this_url() {
-	list($protocol, $version) = explode('/', $_SERVER['SERVER_PROTOCOL']);
-	$url = strtolower($protocol);
+# This function makes it easier to put everything in functions like you should.
+#
+# Instead of putting everything in the global namespace and having it run when
+# you include the file, put everything in functions. This function makes it so
+# you can both include (require_once) the file, and call its main function in
+# one easy step.
 
-	if($url == 'http') {
-		$expected_port = 80;
-	} elseif ($url == 'https') {
-		$expected_port = 443;
-	} else {
-		$expected_port = -1;
-	}
+# EXAMPLE
+#
+# list($user, $pass) = file_run('db_password.php');
+#
+# the file db_password.php would be like so:
+#
+#     function db_password() {
+#           return array('me', 'secret');
+#     }
 
-	$url .= '://';
-	if($_SERVER['HTTP_HOST']) {
-		$url .= $_SERVER['HTTP_HOST'];
-	} else {
-		$url .= $_SERVER['SERVER_NAME'];
-		if($_SERVER['SERVER_PORT'] != $expected_port) {
-			$url .= ':' . $_SERVER['SERVER_PORT'];
-		}
-	}
-
-	$url .= $_SERVER['REQUEST_URI'];
-
-	return $url;
-}
-
-function redirect($url, $status = '302 Moved Temporarily', $message = '') {
-	header("HTTP/1.1 $status");
-	header("Location: $url");
-	echo($message);
-	exit();
+function file_run($filename) {
+    require_once($filename);
+    ereg_replace('.*/', '', $filename);
+    $func = basename($filename, '.php');
+    return $func();
 }
 
 ?>

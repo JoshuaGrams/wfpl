@@ -56,6 +56,8 @@
 # RewriteRule    ^$  /foo/run.php
 # RewriteRule    .*\.html$  /foo/run.php
 
+require_once('code/wfpl/file_run.php');
+
 function run_php($basename = false) {
 	if($basename) {
 		$html_file = "$basename.html";
@@ -71,11 +73,15 @@ function run_php($basename = false) {
 	if($php_file != $html_file && file_exists($php_file)) {
 		require_once('code/wfpl/template.php');
 		if(file_exists($html_file)) tem_load($html_file);
-		require $php_file;
+		$other = file_run($php_file);
+		if($other) {
+			run_php($other);
+			return;
+		}
 		if(file_exists($html_file)) tem_output();
 	} else {
 		if(file_exists($html_file)) {
-			require $html_file;
+			readfile($html_file);
 		} else {
 			header('HTTP/1.0 404 File Not Found');
 			if(file_exists('404.php') || file_exists('404.html')) {

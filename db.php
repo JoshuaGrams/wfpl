@@ -73,7 +73,7 @@ function db_connect($database = 'auto', $user = 'auto', $pass = 'auto', $host = 
 	}
 
 	if(!mysql_select_db($database, $GLOBALS['wfpl_db_handle'])) {
-		die("Couldn not access database \"$database\": " . mysql_error());
+		die("Couldn not access database \"$database\": " . mysql_error($GLOBALS['wfpl_db_handle']));
 	}
 
 	return $GLOBALS['wfpl_db_handle'];
@@ -82,9 +82,9 @@ function db_connect($database = 'auto', $user = 'auto', $pass = 'auto', $host = 
 # Unless you're doing something unusual like an ALTER TABLE don't call this directly
 function db_send_query($sql) {
 	#echo("Sending query: " . enc_html($sql) . "<br>\n");
-	$result = mysql_query($sql);
+	$result = mysql_query($sql, $GLOBALS['wfpl_db_handle']);
 	if(!$result) {
-		die(enc_html('DATABASE ERROR: ' . mysql_error() . ' in the following query: ' . $sql));
+		die(enc_html('DATABASE ERROR: ' . mysql_error($GLOBALS['wfpl_db_handle']) . ' in the following query: ' . $sql));
 	}
 
 	return $result;
@@ -140,7 +140,7 @@ function _db_printf($str, $args) {
 }
 
 
-function db_send_get($table, $columns, $where = '', $args) {
+function db_send_get($table, $columns, $where, $args) {
 	$sql = "SELECT $columns FROM $table";
 	if($where) {
 		$sql .= ' WHERE ' . _db_printf($where, $args);
@@ -217,6 +217,27 @@ function db_insert($table, $columns, $values) {
 		$values = func_get_args();
 		$values = array_slice($values, 2);
 	}
+	
+	db_insert_ish('INSERT', $table, $columns, $values);
+}
+# same as above, except uses the "replace" command instead of "insert"
+function db_replace($table, $columns, $values) {
+	if(!is_array($values)) {
+		$values = func_get_args();
+		$values = array_slice($values, 2);
+	}
+	
+	db_insert_ish('REPLACE', $table, $columns, $values);
+}
+	
+# return the value mysql made up for the auto_increment field (for the last insert)
+function db_auto_id() {
+	return mysql_insert_id($GLOBALS['wfpl_db_handle']);
+}
+
+
+# used to implement db_insert() and db_replace()
+function db_insert_ish($command, $table, $columns, $values) {
 
 	$sql = '';
 	foreach($values as $value) {
@@ -224,7 +245,89 @@ function db_insert($table, $columns, $values) {
 		$sql .= '"' . enc_sql($value) . '"';
 	}
 
-	$sql = "INSERT INTO $table ($columns) values($sql)";
+	$sql = "$command INTO $table ($columns) values($sql)";
+
+	db_send_query($sql);
+}
+
+# to be consistant with the syntax of the other db functions, $values can be an
+# array, a single value, or multiple parameters.
+#
+# as usual the where clause stuff is optional, but it will ofcourse update the
+# whole table if you leave it off.
+#
+# examples:
+#
+# # name everybody Bruce
+# db_update('users', 'name', 'Bruce');
+#
+# # name user #6 Bruce
+# db_update('users', 'name', 'Bruce', 'id= %"', 6);
+#
+# # update the whole bit for user #6
+# db_update('users', 'name,email,description', 'Bruce', 'bruce@example.com', 'is a cool guy', 'id= %"', 6);
+#
+# # update the whole bit for user #6 (passing data as an array)
+# $data = array('Bruce', 'bruce@example.com', 'is a cool guy');
+# db_update('users', 'name,email,description', $data, 'id= %"', 6);
+
+# The prototype is really something like this:
+# db_update(table, columns, values..., where(optional), where_args...(optional
+function db_update($table, $columns, $values) {
+	$args = func_get_args();
+	$args = array_slice($args, 2);
+	$columns = explode(',', $columns);
+	$num_fields = count($columns);
+
+	if(is_array($values)) {
+		$args = array_slice($args, 1);
+	} else {
+		$values = array_slice($args, 0, $num_fields);
+		$args = array_slice($args, $num_fields);
+	}
+
+	$sql = '';
+	for($i = 0; $i < $num_fields; ++$i) {
+		if($sql != '') {
+			$sql .= ', ';
+		}
+		$sql .= $columns[$i] . ' = "' . enc_sql($values[$i]) . '"';
+	}
+
+
+	$sql = "UPDATE $table SET $sql";
+
+	# if there's any more arguments
+	if($args) {
+		$where = $args[0];
+		$args = array_slice($args, 1);
+
+		$sql .= ' WHERE ';
+		# any left for where claus arguments?
+		if($args) {
+			$sql .= _db_printf($where, $args);
+		} else {
+			$sql .= $where;
+		}
+
+	}
+
+	db_send_query($sql);
+}
+
+# pass args for printf-style where clause as usual
+function db_delete($table, $where = '') {
+	$sql = "DELETE FROM $table";
+	if($where) {
+		$sql .= ' WHERE ';
+		$args = func_get_args();
+		$args = array_slice($args, 2);
+		if($args) {
+			$sql .= _db_printf($where, $args);
+		} else {
+			$sql .= $where;
+		}
+	}
 
 	db_send_query($sql);
 }
