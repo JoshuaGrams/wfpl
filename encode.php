@@ -20,7 +20,13 @@
 #  MA 02111-1307, USA.
 
 
-# This file contains basic encodings
+# This file contains basic encodings. These are used by the encoder. You can
+# specify any template tag to be encoded with this syntax: ~variable.encoding~
+#
+# this example: <p>~foo.html~</p>
+# will encode foo (using enc_html()) before displaying it, so that characters
+# such as < will display properly.
+
 
 # encode for putting within double-quotes in SQL
 function enc_sql($str) {
@@ -53,5 +59,20 @@ function enc_checked($str) {
 		return '';
 	}
 }
-	
 
+# add a tab at the begining of each non-empty line
+function enc_tab($str) {
+	$lines = explode("\n", $str);
+	$out = '';
+	foreach($lines as $line) {
+		if($line) {
+			$out .= "\t$line";
+		}
+		$out .= "\n";
+	}
+
+	# remove the extra newline added above
+	return substr($out, 0, -1);
+}
+
+?>

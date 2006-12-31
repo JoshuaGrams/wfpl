@@ -23,7 +23,7 @@ function ~form_name~_get_fields() {
 	$fields = array();
 	<!--~formats start~-->
 	$~name~ = format_~format~($_REQUEST['~name~']);<!--~end~-->
-	<!--~tem_sets~-->
+	<!--~tem_sets start~-->
 	tem_set('~name~', $~name~);<!--~end~-->
 
 	return array(~php_fields~);
@@ -90,7 +90,7 @@ function ~form_name~() {
 	} elseif($edit_id) {
 		# we've recieved an edit id, but no data. So we grab the values to be edited from the database
 		list(~php_fields~) = db_get_row('events', '~db_fields~', 'id = %"', $event_id);
-		~tem_sets~
+		~tem_sets.tab~
 	} else {
 		# form not submitted, you can set default values like so
 		#tem_set('~always_field~', 'Yes');
