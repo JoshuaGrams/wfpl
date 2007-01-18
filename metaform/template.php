@@ -23,17 +23,17 @@ function ~form_name~_get_fields() {
 	$fields = array();
 	<!--~formats start~-->
 	$~name~ = format_~format~($_REQUEST['~name~']);<!--~end~-->
-	<!--~tem_sets~-->
+	<!--~tem_sets start~-->
 	tem_set('~name~', $~name~);<!--~end~-->
 
 	return array(~php_fields~);
 }
 
 function ~form_name~() {
-	$event_id = format_int($_REQUEST['~form_name~_edit_id']);
+	$edit_id = format_int($_REQUEST['~form_name~_edit_id']);
 	if($edit_id) {
 		# add hidden field for database id of row we're editing
-		tem_set('~form_name~_event_id', $edit_id);
+		tem_set('~form_name~_edit_id', $edit_id);
 		tem_sub('editing');
 	}
 
@@ -51,7 +51,7 @@ function ~form_name~() {
 		if("you're happy with the POSTed values") {
 			# to enable saving to a database, create a file called 'db_connect.php'
 			# see: code/wfpl/examples/db_connect.php
-			if(file_exists('db_connect.php') {
+			if(file_exists('db_connect.php')) {
 				require_once('db_connect.php');
 				if($edit_id) {
 					db_update('~form_name~', '~db_fields~', ~php_fields~, 'id = %"', $edit_id);
@@ -86,11 +86,10 @@ function ~form_name~() {
 		# already put the posted values back into the template engine, so they will
 		# show up in the form fields. You should add some message asking people to
 		# fix their entry in whatever way you require.
-	}
 	} elseif($edit_id) {
 		# we've recieved an edit id, but no data. So we grab the values to be edited from the database
-		list(~php_fields~) = db_get_row('events', '~db_fields~', 'id = %"', $event_id);
-		~tem_sets~
+		list(~php_fields~) = db_get_row('~form_name~', '~db_fields~', 'id = %"', $edit_id);
+		~tem_sets.tab~
 	} else {
 		# form not submitted, you can set default values like so
 		#tem_set('~always_field~', 'Yes');

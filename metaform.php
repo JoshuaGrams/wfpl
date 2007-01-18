@@ -40,8 +40,8 @@ $GLOBALS['types'] = array(
 	'password' =>   array('password',    'oneline',    'varchar(200)'),
 	'textarea' =>   array('textarea',    'unix',       'text'),
 	'pulldown' =>   array('pulldown',    'options',    'int'),
-	'checkbox' =>   array('checkbox',    'yesno',      'int'),
-	'yesno' =>      array('checkbox',    'yesno',      'int'),
+	'checkbox' =>   array('checkbox',    'yesno',      'varchar(3)'),
+	'yesno' =>      array('checkbox',    'yesno',      'varchar(3)'),
 	'submit' =>     array('submit',      'oneline',    'n/a')
 );
 
