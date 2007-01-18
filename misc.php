@@ -22,7 +22,7 @@ function this_year() {
 
 # return the number of the current month (1..12)
 function this_month() {
-	return strftime('%m');
+	return ereg_replace('^0', '', strftime('%m'));
 }
 
 
