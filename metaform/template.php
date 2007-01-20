@@ -7,7 +7,11 @@
 
 # To send results by e-mail, all you have to do is set your e-mail address here:
 $GLOBALS['~form_name~_form_recipient'] = "fixme@example.com";
-
+<!--~upload_settings start~-->
+# Set this to the path to your uploads directory. It can be relative to the
+# location of this script. IT MUST END WITH A SLASH
+$GLOBALS['upload_directory'] = 'uploads/';
+<!--~end~-->
 # To save results to a database, you'll need to create the ~form_name~ table
 # (the file ~form_name~.sql should help with this), and create a file called
 # 'db_connect.php' which calls db_connect() see:
@@ -17,12 +21,14 @@ if(!file_exists('code/wfpl/template.php')) { die('This form requires <a href="ht
 require_once('code/wfpl/template.php');
 require_once('code/wfpl/format.php');
 require_once('code/wfpl/email.php');
-require_once('code/wfpl/db.php');
+require_once('code/wfpl/db.php');<!--~image_include start~-->
+require_once('code/wfpl/upload.php');<!--~end~-->
 
 function ~form_name~_get_fields() {
 	$fields = array();
 	<!--~formats start~-->
-	$~name~ = format_~format~($_REQUEST['~name~']);<!--~end~-->
+	$~name~ = format_~format~($_REQUEST['~name~']);<!--~end~--><!--~image_upload start~-->
+	$~name~ = save_uploaded_image('~name~', $GLOBALS['upload_directory']);<!--~end~-->
 	<!--~tem_sets start~-->
 	tem_set('~name~', $~name~);<!--~end~-->
 
@@ -53,7 +59,12 @@ function ~form_name~() {
 			# see: code/wfpl/examples/db_connect.php
 			if(file_exists('db_connect.php')) {
 				require_once('db_connect.php');
-				if($edit_id) {
+				if($edit_id) {<!--~image_db start~-->
+					# uploading nothing means leaving it as is.
+					if(!$~name~ && $delete_~name~ != 'Yes') {
+						$~name~ = db_get_value('~form_name~', '~name~', 'id = %"', $edit_id);
+					}
+					<!--~end~-->
 					db_update('~form_name~', '~db_fields~', ~php_fields~, 'id = %"', $edit_id);
 					tem_set('did', 'updated');
 				} else {
@@ -93,7 +104,9 @@ function ~form_name~() {
 	} else {
 		# form not submitted, you can set default values like so
 		#tem_set('~always_field~', 'Yes');
-	}
+	}<!--~upload_max start~-->
+
+	tem_set('upload_max_filesize', upload_max_filesize());<!--~end~-->
 
 	tem_sub('form');
 }

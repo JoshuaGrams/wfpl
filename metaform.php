@@ -42,6 +42,8 @@ $GLOBALS['types'] = array(
 	'pulldown' =>   array('pulldown',    'options',    'int'),
 	'checkbox' =>   array('checkbox',    'yesno',      'varchar(3)'),
 	'yesno' =>      array('checkbox',    'yesno',      'varchar(3)'),
+	'delete' =>     array('checkbox',    'yesno',      'n/a'),
+	'image' =>      array('image',       'oneline',    'varchar(200)'),
 	'submit' =>     array('submit',      'oneline',    'n/a')
 );
 
@@ -105,6 +107,7 @@ function get_fields() {
 	return $ret;
 }
 
+# this one, that you're using to create forms
 function set_form_action() {
 	$action = ereg_replace('.*/', '', $_SERVER['REQUEST_URI']);
 	if($action == '') $action = './';
@@ -149,6 +152,7 @@ function view_sql() {
 
 # pass false if you want to exclude the <head> and <body> tag etc.
 function make_template($whole_file = true) {
+	$uploads_output_already = false;
 	$tem = new tem();
 	$tem->load('code/wfpl/metaform/template.html');
 	$tem->set('form_name', $GLOBALS['form_name']);
@@ -160,6 +164,11 @@ function make_template($whole_file = true) {
 		$tem->sub($input);
 		if($input != 'hidden') {
 			$tem->sub('row');
+		}
+		if($input == 'image' && !$uploads_output_already) {
+			$tem->sub('uploads');
+			$tem->set('enctype_attr', '" enctype="multipart/form-data');
+			$uploads_output_already = true;
 		}
 	}
 	$tem->set('name', 'save');
@@ -188,6 +197,7 @@ function make_php() {
 	$db_fields = '';
 	$php_fields = '';
 	$always_field = false;
+	$image_included_yet = false;
 	foreach($fields as $field) {
 		list($name, $type, $input, $format, $sql) = $field;
 		if($input != 'submit') {
@@ -200,8 +210,19 @@ function make_php() {
 				if($php_fields != '') $php_fields .= ', ';
 				$php_fields .= '$' . $name;
 			}
-			$tem->sub('formats');
-			$tem->sub('tem_sets');
+			if($input == 'image') {
+				$tem->sub('image_upload');
+				$tem->sub('image_db');
+				if(!$image_included_yet) {
+					$tem->sub('image_include');
+					$tem->sub('upload_max');
+					$tem->sub('upload_settings');
+					$image_included_yet = true;
+				}
+			} else {
+				$tem->sub('formats');
+				$tem->sub('tem_sets');
+			}
 			if(!$always_field and $input != 'checkbox' and $input != 'radio') {
 				$always_field = $name;
 			}
