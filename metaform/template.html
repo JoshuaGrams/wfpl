@@ -5,12 +5,16 @@
   <title>~form_name~ entry</title>
   <style type="text/css"><!--
 td.caption { text-align: right; vertical-align: top; font-weight: bold; }
+td.errorcaption { text-align: right; vertical-align: top; font-weight: bold; color: red; }
+div.error { border: 2px solid red; padding: 13px; margin: 20px; background: #ffdddd; }
 --></style>
 </head>
 
 <body>
 <!--~~form start~~--><!--~form start~-->
   <h2>~form_name~ entry form</h2>
+
+  <!--~error start~--><div class="error"><h3>~error_message.html~</h3></div><!--~end~-->
 
   <form action="~form_name~.php~enctype_attr~" method="post"><!--~~editing start~~--><input type="hidden" name="~form_name~_edit_id" value="~~~form_name~_edit_id.attr~~" /><!--~~end~~--><!--~uploads start~--><input type="hidden" name="MAX_FILE_SIZE" value="~~upload_max_filesize~~" /><!--~end~-->
     <table cellspacing="0" cellpadding="4" border="0" summary=""><!--~row start~-->

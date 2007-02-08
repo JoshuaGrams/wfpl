@@ -86,12 +86,18 @@ function ~form_name~() {
 				$message = tem_run('~form_name~.email.txt');
 				$cc = '';
 				$bcc = '';
-				email($from, $to, $subject, $message, $cc, $bcc);
+				if(email($from, $to, $subject, $message, $cc, $bcc)) {
+					tem_set('error_message', 'Due to an internal error, your message could not be sent. Please try again later.');
+					tem_sub('error');
+					$error = true;
+				}
 			}
-			tem_load('~form_name~.html');
-			tem_sub('thankyou');
-			tem_output();
-			exit();
+			if($error !== true) {
+				tem_load('~form_name~.html');
+				tem_sub('thankyou');
+				tem_output();
+				exit();
+			}
 		}
 		# otherwise, we display the form again. ~form_name~_get_fields() has
 		# already put the posted values back into the template engine, so they will

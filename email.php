@@ -24,8 +24,13 @@
 # This function will SAFELY send e-mail (ie you can pass parameters to it
 # that you got from a form and not worry about header injection.) Weird
 # characters are stripped from the $subject and from the real names, but e-mail
-# addresses are not modified at all. If an e-mail address is invalid this
-# function will return non-zero.
+# addresses are not modified at all.
+
+# RETURN values:
+#     0: e-mail successfully accepted for delivery
+#     1: badly formatted "from" address
+#     2: badly formatted "to" address
+#     5: message rejected by mail() (reason unknown)
 
 # You cannot pass more than one address to any parameter
 # address fields (from, to, cc, bcc) can be in either of these formats:
@@ -40,7 +45,7 @@ function email($from, $to, $subject, $message, $cc = '', $bcc = '') {
 	if($to   == '') { return 2; }
 
 	#FIXME should allow many more characters here
-	$subject = ereg_replace("[^a-zA-Z _'-]", '_', $subject);
+	$subject = ereg_replace("[^a-zA-Z _'.-]", '_', $subject);
 
 	$headers = "From: $from";
 	if($cc) {

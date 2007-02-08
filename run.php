@@ -54,7 +54,7 @@
 
 # RewriteEngine  on
 # RewriteRule    ^$  /foo/run.php
-# RewriteRule    .*\.html$  /foo/run.php
+# RewriteRule    ^/foo/[^/]*\.html$  /foo/run.php
 
 require_once('code/wfpl/file_run.php');
 
