@@ -1,6 +1,12 @@
 <?php
 
-# This form requires wfpl. See: http://jasonwoof.org/wfpl
+# This form requires wfpl. If you didn't recieve wfpl along with this file,
+# see: http://jasonwoof.org/wfpl
+
+# This form was auto-generated. If you would like to alter the parameters and
+# generate a new one try this URL:
+#
+# ~metaform_url~
 
 # This code can send form results by e-mail and/or save them to a database. See
 # the next two comments to enable either or both.

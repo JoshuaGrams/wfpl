@@ -22,6 +22,7 @@
 # This file writes the code for you (sql, php, html, email) to handle a form.
 
 require_once('code/wfpl/template.php');
+require_once('code/wfpl/http.php');
 require_once('code/wfpl/tar.php');
 
 # see code/wfpl/metaform/template.html for the html templates for these elements
@@ -231,7 +232,16 @@ function make_php() {
 	$tem->set('always_field', $always_field);
 	$tem->set('db_fields', $db_fields);
 	$tem->set('php_fields', $php_fields);
+	$tem->set('metaform_url', edit_url());
 	return $tem->run();
+}
+
+# make a URL for the edit page with all the fields filled in
+function edit_url() {
+	$url = this_url();
+	$url = ereg_replace('view_php=[^&]*', 'edit=yes', $url);
+	$url = ereg_replace('download_tar=[^&]*', 'edit=yes', $url);
+	return $url;
 }
 
 function view_php() {
