@@ -3,8 +3,8 @@
 # Copyright (C) 2005 Jason Woofenden  PUBLIC DOMAIN
 
 
-# This file demonstrates, documents and tests the template system (along with
-# its html template.)
+# This file (along with its html template) demonstrates, documents and tests
+# the template system.
 
 # First we'll need the functions in wfpl/template.php:
 require_once('code/wfpl/template.php');

@@ -4,20 +4,19 @@
 #
 #  This file is part of wfpl.
 #
-#  wfpl is free software; you can redistribute it and/or modify it
-#  under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2, or (at your option)
+#  wfpl is free software; you can redistribute it and/or modify it under the
+#  terms of the GNU Lesser General Public License as published by the Free
+#  Software Foundation; either version 2.1 of the License, or (at your option)
 #  any later version.
 #
-#  wfpl is distributed in the hope that it will be useful, but
-#  WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  General Public License for more details.
+#  wfpl is distributed in the hope that it will be useful, but WITHOUT ANY
+#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+#  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+#  more details.
 #
-#  You should have received a copy of the GNU General Public License
-#  along with wfpl; see the file COPYING.  If not, write to the
-#  Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-#  MA 02111-1307, USA.
+#  You should have received a copy of the GNU Lesser General Public License
+#  along with wfpl; if not, write to the Free Software Foundation, Inc., 51
+#  Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 # This file is for making a tar archive out of some strings you pass. See
@@ -41,7 +40,8 @@ function write_file($name, $data) {
 # parameters:
 #    $dirname: the name of the tar file (sans "tgz"). Also the name of the directory within.
 #    $files: a hash. The keys are the filenames, the values the file data
-function make_tar($dirname, $files) {
+#    $extra: (optional) a function to be called right before tar-ing.
+function make_tar($dirname, $files, $extra = '') {
 	$tmpdir = '/tmp/make_tar';
 	$dirname = ereg_replace('[^a-z0-9_-]', '', $dirname);
 	if($dirname == '') $dirname = 'foo';
@@ -56,10 +56,26 @@ function make_tar($dirname, $files) {
 		}
 		write_file("$tmpdir/$dirname/$filename", $file_data);
 	}
+
+	if(function_exists($extra)) {
+		$extra("$tmpdir/$dirname");
+	}
+
 	header("Content-type: application/x-gzip");
 	passthru("tar -C $tmpdir -czf - $dirname/");
-	foreach($files as $filename => $file_data) {
-		unlink("$tmpdir/$dirname/$filename");
+	system("/bin/rm -rf '$tmpdir/$dirname'");
+}
+
+# like make_tar above, except it includes a copy of code/wfpl
+function make_wfpl_tar($dirname, $files) {
+	make_tar($dirname, $files, 'add_wfpl_dir');
+}
+
+function add_wfpl_dir($dir) {
+	mkdir("$dir/code");
+	system("/bin/cp -HRp 'code/wfpl' '$dir/code/'", $return_code);
+	if($return_code != 0) {
+		die("ERROR: while trying to copy wfpl into archive: cp returned $return_code");
 	}
-	rmdir("$tmpdir/$dirname");
+	system("/bin/rm -rf '$dir/code/wfpl/.git'");
 }

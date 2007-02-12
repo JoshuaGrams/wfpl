@@ -4,39 +4,42 @@
 #
 #  This file is part of wfpl.
 #
-#  wfpl is free software; you can redistribute it and/or modify it
-#  under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2, or (at your option)
+#  wfpl is free software; you can redistribute it and/or modify it under the
+#  terms of the GNU Lesser General Public License as published by the Free
+#  Software Foundation; either version 2.1 of the License, or (at your option)
 #  any later version.
 #
-#  wfpl is distributed in the hope that it will be useful, but
-#  WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  General Public License for more details.
+#  wfpl is distributed in the hope that it will be useful, but WITHOUT ANY
+#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+#  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+#  more details.
 #
-#  You should have received a copy of the GNU General Public License
-#  along with wfpl; see the file COPYING.  If not, write to the
-#  Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-#  MA 02111-1307, USA.
+#  You should have received a copy of the GNU Lesser General Public License
+#  along with wfpl; if not, write to the Free Software Foundation, Inc., 51
+#  Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 require_once('code/wfpl/encode.php');
 require_once('code/wfpl/format.php');
 
-# db_connect() parameters:
+# db_connect() -- connect to a mysql database
 #
-# database: the name of the database you want to connect to. Defaults to the
-# second-to-last part of the domain name. eg for foo.example.com it would be
-# "example".
+# PARAMETERS:
 #
-# user: username for connecting to the database. Defaults to
-# $GLOBALS['db_username'] or (if that's not set) "www".
+#   database: the name of the database you want to connect to. Defaults to the
+#   second-to-last part of the domain name. eg for foo.example.com it would be
+#   "example".
+# 
+#   user: username for connecting to the database. Defaults to
+#   $GLOBALS['db_username'] or (if that's not set) "www".
+# 
+#   password: password for connecting to the database. Defaults to
+#   $GLOBALS['db_password'] or (if that's not set "".
 #
-# password: password for connecting to the database. Defaults to
-# $GLOBALS['db_password'] or (if that's not set "".
+# RETURNS:
 #
-# RETURNS: the database connection handle. You'll only need this if you
-# want to have multiple databases open at once.
+#   the database connection handle. You'll only need this if you want to have
+#   multiple databases open at once.
 
 function db_connect($database = 'auto', $user = 'auto', $pass = 'auto', $host = 'localhost') {
 	if($database == 'auto') {
@@ -106,7 +109,7 @@ function db_printf($str) {
 	_db_printf($str, $args);
 }
 
-# This function does the work, but takes the parameters in an array, and backwards.
+# This function does the work, but takes the parameters in an array
 function _db_printf($str, $args) {
 	$args = array_reverse($args); # because array_pop() takes from the end
 	$out = '';
