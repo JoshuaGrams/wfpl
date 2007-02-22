@@ -26,6 +26,18 @@ function format_int($str) {
 	return ereg_replace('^0*([1-9])', '\1', $str);
 }
 
+function format_filename($str) {
+	$str = strtolower($str);
+	$str = ereg_replace('[^a-z0-9_.-]', '_', $str);
+	return ereg_replace('^[0-9.-]*', '', $str);
+}
+
+function format_varname($str) {
+	$str = strtolower($str);
+	$str = ereg_replace('[^a-z0-9_]', '_', $str);
+	return ereg_replace('^[0-9]*', '', $str);
+}
+
 function format_oneline($str) {
 	$str = str_replace("\r", '', $str);
 	return str_replace("\n", '', $str);
@@ -116,25 +128,5 @@ function format_phone($str) {
 
 	return $output;
 }
-
-
-#function ftest($val) {
-#	printf("$val: '%s'<br />\n", format_phone($val, true));
-#}
-#
-#echo "FORMAT TESTS<br><br>";
-#ftest("$3");
-#ftest("3.99");
-#ftest("3.5");
-#ftest("891234");
-#ftest("8221234");
-#ftest("82212334");
-#ftest("122313234");
-#ftest("1158221234");
-#ftest("1558221234");
-#ftest("12235513234");
-#ftest("122355123334");
-#ftest("1585552212334");
-#ftest("15855522123334");
 
 ?>
