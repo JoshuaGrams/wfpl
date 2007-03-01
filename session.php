@@ -132,12 +132,13 @@ function init_session() {
 
 # save a variable into the session
 function session_set($name, $value) {
-	db_replace('wfpl_session_data', 'name,value', $name, $value);
+	db_delete('wfpl_session_data', 'where session_id=%i && name=%"', $GLOBALS['session_id'], $name);
+	db_insert('wfpl_session_data', 'session_id,name,value', $GLOBALS['session_id'], $name, $value);
 }
 
 # get a variable into the session
 function session_get($name) {
-	return db_get_value('wfpl_session_data', 'value', 'where name=%"', $name);
+	return db_get_value('wfpl_session_data', 'value', 'where session_id=%i && name=%"', $GLOBALS['session_id'], $name);
 }
 
 ?>
