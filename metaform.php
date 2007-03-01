@@ -30,7 +30,8 @@ $GLOBALS['types'] = array(
 #    type                  input          format        sql     
 	'name' =>       array('textbox',     'oneline',    'varchar(200)'),
 	'textbox' =>    array('textbox',     'oneline',    'varchar(200)'),
-	'int' =>        array('textbox',     'int',        'varchar(100)'),
+	'int' =>        array('textbox',     'int',        'int'),
+	'bigint' =>     array('textbox',     'int',        'varchar(100)'), # up to 100 digits, stored as a string
 	'email' =>      array('textbox',     'email',      'varchar(100)'),
 	'phone' =>      array('textbox',     'phone',      'varchar(32)'),
 	'money' =>      array('textbox',     'money',      'varchar(32)'),

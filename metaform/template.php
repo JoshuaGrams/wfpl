@@ -26,6 +26,7 @@ $GLOBALS['upload_directory'] = 'uploads/';
 if(!file_exists('code/wfpl/template.php')) { die('This form requires <a href="http://jasonwoof.org/wfpl">wfpl</a>.'); }
 require_once('code/wfpl/template.php');
 require_once('code/wfpl/format.php');
+require_once('code/wfpl/messages.php');
 require_once('code/wfpl/email.php');
 require_once('code/wfpl/db.php');<!--~image_include start~-->
 require_once('code/wfpl/upload.php');<!--~end~-->
@@ -43,18 +44,26 @@ function ~form_name~_get_fields() {
 
 function ~form_name~() {
 	$edit_id = format_int($_REQUEST['~form_name~_edit_id']);
+	unset($_REQUEST['~form_name~_edit_id']);
 	if($edit_id) {
 		# add hidden field for database id of row we're editing
 		tem_set('~form_name~_edit_id', $edit_id);
 		tem_sub('editing');
+		tem_sub('edit_msg');
 	}
 
 	$delete_id = format_int($_REQUEST['~form_name~_delete_id']);
+	unset($_REQUEST['~form_name~_delete_id']);
 	if($delete_id) {
-		db_delete('~form_name~', 'id = %"', $delete_id);
+		db_delete('~form_name~', 'where id=%i', $delete_id);
+		message('Entry deleted.');
 
 		# FIXME: what to do after delete?
 		return;
+	}
+
+	if(!$edit_id && !$delet_id) {
+		tem_sub('new_msg');
 	}
 
 	if(isset($_REQUEST['~always_field~'])) {
@@ -68,14 +77,14 @@ function ~form_name~() {
 				if($edit_id) {<!--~image_db start~-->
 					# uploading nothing means leaving it as is.
 					if(!$~name~ && $delete_~name~ != 'Yes') {
-						$~name~ = db_get_value('~form_name~', '~name~', 'id = %"', $edit_id);
+						$~name~ = db_get_value('~form_name~', '~name~', 'where id=%i', $edit_id);
 					}
 					<!--~end~-->
-					db_update('~form_name~', '~db_fields~', ~php_fields~, 'id = %"', $edit_id);
-					tem_set('did', 'updated');
+					db_update('~form_name~', '~db_fields~', ~php_fields~, 'where id=%i', $edit_id);
+					message('Entry updated.');
 				} else {
 					db_insert('~form_name~', '~db_fields~', ~php_fields~);
-					tem_set('did', 'saved');
+					message('Entry saved.');
 				}
 			}
 			if($GLOBALS['~form_name~_form_recipient'] != "fixme@example.com") {
@@ -111,7 +120,7 @@ function ~form_name~() {
 		# fix their entry in whatever way you require.
 	} elseif($edit_id) {
 		# we've recieved an edit id, but no data. So we grab the values to be edited from the database
-		list(~php_fields~) = db_get_row('~form_name~', '~db_fields~', 'id = %"', $edit_id);
+		list(~php_fields~) = db_get_row('~form_name~', '~db_fields~', 'where id=%i', $edit_id);
 		~tem_sets.tab~
 	} else {
 		# form not submitted, you can set default values like so:
@@ -121,13 +130,6 @@ function ~form_name~() {
 	tem_set('upload_max_filesize', upload_max_filesize());<!--~end~-->
 
 	tem_sub('form');
-}
-
-# emulate run.php if it's not being used
-if(!function_exists('run_php')) {
-	tem_load('~form_name~.html');
-	~form_name~();
-	tem_output();
 }
 
 ?>
