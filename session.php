@@ -19,11 +19,13 @@
 #  Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 # you'll need this file that calles db_connect()
-require_once('db_connect.php');
+if(!isset($GLOBALS['wfpl_db_handle'])) {
+	require_once('db_connect.php');
+}
 
 # and these database tables:
-# create table sessions (id int unique auto_increment, session_key varchar(16), length int, expires int);
-# create table session_data (id int unique auto_increment, session_id int, name varchar(100), value text);
+# create table wfpl_sessions (id int unique auto_increment, session_key varchar(16), length int, expires int);
+# create table wfpl_session_data (id int unique auto_increment, session_id int, name varchar(100), value text);
 
 # GLOSSARY
 #
@@ -55,7 +57,7 @@ function session_generate_key() {
 function session_new($length = 86400) {
 	$session_key = session_generate_key();
 
-	db_insert('sessions', 'session_key,length', $session_key, $length);
+	db_insert('wfpl_sessions', 'session_key,length', $session_key, $length);
 	$GLOBALS['session_id'] = db_auto_id();
 	$GLOBALS['session_key'] = $session_key;
 	$_REQUEST['session_key'] = $session_key; #just in case someone calls session_exists() after session_new()
@@ -66,23 +68,23 @@ function session_new($length = 86400) {
 # assumes there's a session. call session_init() if you'd like one auto-create one if not found.
 function session_touch($length = false) {
 	if(!$length) {
-		$length = db_get_value('sessions', 'length', 'id = %i', $GLOBALS['session_id']);
+		$length = db_get_value('wfpl_sessions', 'length', 'where id=%i', $GLOBALS['session_id']);
 	}
 	$expires = time() + $length;
 
 	header('Set-Cookie: session_key=' . $GLOBALS['session_key']);
 
-	db_update('sessions', 'expires', $expires, 'id = %i', $GLOBALS['session_id']);
+	db_update('wfpl_sessions', 'expires', $expires, 'where id=%i', $GLOBALS['session_id']);
 }
 
 # delete expired sessions from database
 function session_purge_old() {
 	$now = time();
-	$exired_sessions = db_get_column('sessions', 'id', 'expires < %i', $now);
-	db_delete('sessions', 'expires < %i', $now);
+	$exired_sessions = db_get_column('wfpl_sessions', 'id', 'where expires < %i', $now);
+	db_delete('wfpl_sessions', 'where expires < %i', $now);
 	if($expired_sessions) {
 		foreach($expired_sessions as $expired_session) {
-			db_delete('session_data', 'session_id=%i', $expired_session);
+			db_delete('wfpl_session_data', 'where session_id=%i', $expired_session);
 		}
 	}
 }
@@ -102,7 +104,7 @@ function session_exists() {
 	$GLOBALS['session_key'] = $session_key;
 
 	session_purge_old();
-	$id = db_get_value('sessions', 'id', 'session_key = %"', $session_key);
+	$id = db_get_value('wfpl_sessions', 'id', 'where session_key=%"', $session_key);
 	if($id === false) {
 		return false;
 	}
@@ -130,12 +132,12 @@ function init_session() {
 
 # save a variable into the session
 function session_set($name, $value) {
-	db_replace('session_data', 'name,value', $name, $value);
+	db_replace('wfpl_session_data', 'name,value', $name, $value);
 }
 
 # get a variable into the session
 function session_get($name) {
-	return db_get_value('session_data', 'value', 'name=%"', $name);
+	return db_get_value('wfpl_session_data', 'value', 'where name=%"', $name);
 }
 
 ?>

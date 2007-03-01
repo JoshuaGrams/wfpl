@@ -114,7 +114,7 @@ function ~form_name~() {
 		list(~php_fields~) = db_get_row('~form_name~', '~db_fields~', 'id = %"', $edit_id);
 		~tem_sets.tab~
 	} else {
-		# form not submitted, you can set default values like so
+		# form not submitted, you can set default values like so:
 		#tem_set('~always_field~', 'Yes');
 	}<!--~upload_max start~-->
 

@@ -48,7 +48,7 @@ function this_url() {
 }
 
 function redirect($url, $status = '302 Moved Temporarily', $message = '') {
-	header("HTTP/1.1 $status");
+	header("HTTP/1.0 $status");
 	header("Location: $url");
 	echo($message);
 	exit();

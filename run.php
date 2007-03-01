@@ -53,9 +53,10 @@
 
 # RewriteEngine  on
 # RewriteRule    ^$  /foo/run.php
-# RewriteRule    ^/foo/[^/]*\.html$  /foo/run.php
+# RewriteRule    ^foo/[^/]*\.html$  /foo/run.php
 
 require_once('code/wfpl/file_run.php');
+require_once('code/wfpl/http.php');
 
 function run_php($basename = false) {
 	if($basename) {
@@ -71,9 +72,16 @@ function run_php($basename = false) {
 	}
 	if($php_file != $html_file && file_exists($php_file)) {
 		require_once('code/wfpl/template.php');
-		if(file_exists($html_file)) tem_load($html_file);
+		if(file_exists($html_file)) {
+			$GLOBALS['wfpl_template'] = new tem();
+			tem_load($html_file);
+		}
 		$other = file_run($php_file);
 		if($other) {
+			if(strpos($other, ':')) {
+				redirect($other);
+				exit();
+			}
 			run_php($other);
 			return;
 		}

@@ -101,12 +101,12 @@ function db_send_query($sql) {
 # %"  output double quotes, surrounding the variable which is encoded to be in there.
 # %s  output encoded to be in double quotes, but don't output the quotes
 #
-# complex example: db_get_rows('mytable', 'id', 'name=%" or company like "%%%s%%"', $name, $company_partial);
+# complex example: db_get_rows('mytable', 'id', 'where name=%" or company like "%%%s%%"', $name, $company_partial);
 
 function db_printf($str) {
 	$args = func_get_args();
 	$args = array_slice($args, 1);
-	_db_printf($str, $args);
+	return _db_printf($str, $args);
 }
 
 # This function does the work, but takes the parameters in an array
@@ -146,7 +146,7 @@ function _db_printf($str, $args) {
 function db_send_get($table, $columns, $where, $args) {
 	$sql = "SELECT $columns FROM $table";
 	if($where) {
-		$sql .= ' WHERE ' . _db_printf($where, $args);
+		$sql .= ' ' . _db_printf($where, $args);
 	}
 
 	return db_send_query($sql);
@@ -265,17 +265,17 @@ function db_insert_ish($command, $table, $columns, $values) {
 # db_update('users', 'name', 'Bruce');
 #
 # # name user #6 Bruce
-# db_update('users', 'name', 'Bruce', 'id= %"', 6);
+# db_update('users', 'name', 'Bruce', 'where id=%i', 6);
 #
 # # update the whole bit for user #6
-# db_update('users', 'name,email,description', 'Bruce', 'bruce@example.com', 'is a cool guy', 'id= %"', 6);
+# db_update('users', 'name,email,description', 'Bruce', 'bruce@example.com', 'is a cool guy', 'where id=%i', 6);
 #
 # # update the whole bit for user #6 (passing data as an array)
 # $data = array('Bruce', 'bruce@example.com', 'is a cool guy');
-# db_update('users', 'name,email,description', $data, 'id= %"', 6);
+# db_update('users', 'name,email,description', $data, 'where id=%i', 6);
 
 # The prototype is really something like this:
-# db_update(table, columns, values..., where(optional), where_args...(optional
+# db_update(table, columns, values..., where(optional), where_args...(optional))
 function db_update($table, $columns, $values) {
 	$args = func_get_args();
 	$args = array_slice($args, 2);
@@ -305,7 +305,7 @@ function db_update($table, $columns, $values) {
 		$where = $args[0];
 		$args = array_slice($args, 1);
 
-		$sql .= ' WHERE ';
+		$sql .= ' ';
 		# any left for where claus arguments?
 		if($args) {
 			$sql .= _db_printf($where, $args);
@@ -322,7 +322,7 @@ function db_update($table, $columns, $values) {
 function db_delete($table, $where = '') {
 	$sql = "DELETE FROM $table";
 	if($where) {
-		$sql .= ' WHERE ';
+		$sql .= ' ';
 		$args = func_get_args();
 		$args = array_slice($args, 2);
 		if($args) {
