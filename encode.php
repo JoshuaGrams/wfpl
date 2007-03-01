@@ -34,7 +34,9 @@ function enc_sql($str) {
 	return $str;
 }
 
-# encode for output in html. does nothing with whitespace
+# Encode for output in html. does nothing with whitespace
+#
+# Example: <p>~foo.html~</p>
 function enc_html($str) {
 	$str = str_replace('&', '&amp;', $str);
 	$str = str_replace('<', '&lt;', $str);
@@ -43,14 +45,27 @@ function enc_html($str) {
 }
 
 
-# html attributes (eg  <input value="...."
+# HTML attribute.
+#
+# Example: <input name="foo" value="~foo.attr~">
 function enc_attr($str) {
 	$str = str_replace('&', '&amp;', $str);
 	$str = str_replace('"', '&quot;', $str);
 	return $str;
 }
 
-# this is a stupid hack to work around html's stupid syntax for checkboxes
+# URI agument value.
+#
+# Example:  <a href="http://example.com?foo=~foo.url_val.attr~">http://example.com?foo=~foo.url_val~</a>
+function enc_url_val($str) {
+	return rawurlencode($str);
+}
+
+# This is a hack to work around html's stupid syntax for checkboxes.
+#
+# Place the template marker just before a " somewhere.
+#
+# Example: <input type="checkbox" name="foo~foo.checked~">
 function enc_checked($str) {
 	if($str == 'Yes') {
 		return '" checked="checked';
