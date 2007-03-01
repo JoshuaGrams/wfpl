@@ -242,7 +242,7 @@ function edit_url() {
 	$url = this_url();
 	$url = ereg_replace('view_php=[^&]*', 'edit=yes', $url);
 	$url = ereg_replace('download_tar=[^&]*', 'edit=yes', $url);
-	$url = ereg_replace('/[a-z0-9_.]*?', '/?', $url);
+	$url = ereg_replace('/[a-z0-9_.]*\?', '/?', $url);
 	return $url;
 }
 
