@@ -18,6 +18,9 @@
 #  along with wfpl; if not, write to the Free Software Foundation, Inc., 51
 #  Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+# This exists because file_get_contents() is not documented well. (It says that
+# the second parameter is optional, but does not specify what happens when you
+# do not pass anything.) And because it's nice to work in PHP4.2
 function read_whole_file($name) {
 	$fd = fopen($name, 'r');
 	if($fd === false) {

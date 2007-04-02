@@ -130,6 +130,15 @@ function init_session() {
 	}
 }
 
+# delete the current session
+function kill_session() {
+	if(!session_exists()) {
+		return;
+	}
+	db_delete('wfpl_session_data', 'where session_id=%i', $GLOBALS['session_id']);
+	db_delete('wfpl_sessions', 'where id=%i', $GLOBALS['session_id']);
+}
+
 # save a variable into the session
 function session_set($name, $value) {
 	db_delete('wfpl_session_data', 'where session_id=%i && name=%"', $GLOBALS['session_id'], $name);
