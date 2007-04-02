@@ -83,15 +83,26 @@ function session_touch($length = false) {
 	db_update('wfpl_sessions', 'expires', $expires, 'where id=%i', $GLOBALS['session_id']);
 }
 
+# delete the current session
+function kill_session() {
+	if(!session_exists()) {
+	    return;
+	}
+	_kill_session($GLOBALS['session_id']);
+}
+
+# for internal use. use kill_session() above
+function _kill_session($id) {
+	db_delete('wfpl_session_data', 'where session_id=%i', $id);
+	db_delete('wfpl_sessions', 'where id=%i', $id);
+}
+
 # delete expired sessions from database
 function session_purge_old() {
 	$now = time();
 	$exired_sessions = db_get_column('wfpl_sessions', 'id', 'where expires < %i', $now);
-	db_delete('wfpl_sessions', 'where expires < %i', $now);
-	if($expired_sessions) {
-		foreach($expired_sessions as $expired_session) {
-			db_delete('wfpl_session_data', 'where session_id=%i', $expired_session);
-		}
+	if($expired_sessions) foreach($expired_sessions as $expired_session) {
+		_kill_session($expired_session);
 	}
 }
 
@@ -136,19 +147,15 @@ function init_session() {
 	}
 }
 
-# delete the current session
-function kill_session() {
-	if(!session_exists()) {
-		return;
-	}
-	db_delete('wfpl_session_data', 'where session_id=%i', $GLOBALS['session_id']);
-	db_delete('wfpl_sessions', 'where id=%i', $GLOBALS['session_id']);
-}
-
 # save a variable into the session
 function session_set($name, $value) {
-	db_delete('wfpl_session_data', 'where session_id=%i && name=%"', $GLOBALS['session_id'], $name);
+	session_unset($name);
 	db_insert('wfpl_session_data', 'session_id,name,value', $GLOBALS['session_id'], $name, $value);
+}
+
+# remove variable from the session
+function session_unset($name) {
+	db_delete('wfpl_session_data', 'where session_id=%i && name=%"', $GLOBALS['session_id'], $name);
 }
 
 # get a variable into the session
