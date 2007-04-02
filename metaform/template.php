@@ -72,8 +72,12 @@ function ~form_name~() {
 		if("you're happy with the POSTed values") {
 			# to enable saving to a database, create a file called 'db_connect.php'
 			# see: code/wfpl/examples/db_connect.php
-			if(file_exists('db_connect.php')) {
-				require_once('db_connect.php');
+			if(file_exists('db_connect.php') || file_exists('code/db_connect.php')) {
+				if(file_exists('db_connect.php') {
+					require_once('db_connect.php');
+				} else {
+					require_once('code/db_connect.php');
+				}
 				if($edit_id) {<!--~image_db start~-->
 					# uploading nothing means leaving it as is.
 					if(!$~name~ && $delete_~name~ != 'Yes') {

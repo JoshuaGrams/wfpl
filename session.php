@@ -20,7 +20,13 @@
 
 # you'll need this file that calles db_connect()
 if(!isset($GLOBALS['wfpl_db_handle'])) {
-	require_once('db_connect.php');
+	if(file_exists('db_connect.php') {
+		require_once('db_connect.php');
+	} elseif(file_exists('code/db_connect.php') {
+		require_once('code/db_connect.php');
+	} else {
+		die("session.php requires a file db_connect.php or that you call db_connect() first. See code/wfpl/db.php for more information.");
+	}
 }
 
 # and these database tables:
