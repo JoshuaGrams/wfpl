@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>testing code/wfpl/session.php</title>
+</head>
+
+<body>
+
+<h1>testing code/wfpl/session.php</h1>
+
+<!--~block start~-->
+<div style="border: 2px solid black; padding: 10px; margin-top: -2px">
+  <h2>~message.html~</h2>
+  
+  <p>
+  <table cellpadding="5" cellspacing="0" border="1" summary="">
+    <tr><td colspan="4" style="font-weight: bold">wfpl_sessions table</td></tr>
+    <tr><td>id</td><td>session_key</td><td>length</td><td>expires</td></tr><!--~wfpl_sessions_row start~-->
+    <tr><td>~id.html~</td><td>~session_key.html~</td><td>~length.html~</td><td>~expires.html~</td></tr><!--~end~-->
+  </table>
+  </p>
+  <p>
+  <table cellpadding="5" cellspacing="0" border="1" summary="">
+    <tr><td colspan="4" style="font-weight: bold">wfpl_session_data table</td></tr>
+    <tr><td>id</td><td>session_id</td><td>name</td><td>value</td></tr><!--~wfpl_session_data_row start~-->
+    <tr><td>~id.html~</td><td>~session_id.html~</td><td>~name.html~</td><td>~value.html~</td></tr><!--~end~-->
+  </table>
+  </p>
+</div>
+<!--~end~-->
+</body>
+</html>

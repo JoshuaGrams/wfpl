@@ -20,9 +20,9 @@
 
 # you'll need this file that calles db_connect()
 if(!isset($GLOBALS['wfpl_db_handle'])) {
-	if(file_exists('db_connect.php') {
+	if(file_exists('db_connect.php')) {
 		require_once('db_connect.php');
-	} elseif(file_exists('code/db_connect.php') {
+	} elseif(file_exists('code/db_connect.php')) {
 		require_once('code/db_connect.php');
 	} else {
 		die("session.php requires a file db_connect.php or that you call db_connect() first. See code/wfpl/db.php for more information.");
@@ -149,12 +149,12 @@ function init_session() {
 
 # save a variable into the session
 function session_set($name, $value) {
-	session_unset($name);
+	session_clear($name);
 	db_insert('wfpl_session_data', 'session_id,name,value', $GLOBALS['session_id'], $name, $value);
 }
 
 # remove variable from the session
-function session_unset($name) {
+function session_clear($name) {
 	db_delete('wfpl_session_data', 'where session_id=%i && name=%"', $GLOBALS['session_id'], $name);
 }
 
