@@ -65,6 +65,7 @@ $GLOBALS['mime_to_ext'] = array(
 	'text/plain' => 'txt',
 	'text/html'  => 'html',
 	'image/jpeg' => 'jpg',
+	'image/jpe' => 'jpg',
 	'image/jpg'  => 'jpg',
 	'image/gif'  => 'gif',
 	'image/png'  => 'png',
@@ -116,7 +117,7 @@ function generate_filename($path, $mime = 'text/plain') {
 	# replace symbols with underscores
 	$filename = ereg_replace('[^a-z0-9_.]', '_', $filename);
 
-	# remove dots from the begning (no invisible files)
+	# remove dots from the beginning (no invisible files)
 	$filename = ereg_replace('^\.*', '', $filename);
 
 	# fix extension
@@ -181,7 +182,7 @@ function gif_to_png($filename, $new_filename = 'just change extension') {
 	if(!file_exists($convert)) {
 		$convert = `which convert`;
 	}
-	if(!file_exists($convert)) {
+	if($convert == '' || !file_exists($convert)) {
 		die("can't find imagemagick's 'convert' program");
 	}
 		
