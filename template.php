@@ -169,6 +169,23 @@ class tem {
 	function output($templ = false) {
 		print($this->run($templ));
 	}
+
+	# return the contents of the top-level sub-templates
+	#
+	# this does not run the sub-templates, so if you've not called tem_sub() on them, they will be blank.
+	#
+	# Return a hash.
+	#     keys: name of top level sub-template.
+	#     values: contents of said sub-template.
+	function top_subs() {
+		$ret = array();
+		if(isset($this->sub_subs['top_level_subs'])) {
+			foreach($this->sub_subs['top_level_subs'] as $name) {
+				$ret[$name] = $this->get($name);
+			}
+		}
+		return $ret;
+	}
 }
 
 # Below are functions so you can use the above class without allocating or
@@ -240,5 +257,9 @@ function template_run($template, &$keyval) {
 	return preg_replace_callback(array('|<!--~([^~]*)~-->|', '|~([^~]*)~|', '|<span class="template">([^<]*)</span>|', '|<p class="template">([^<]*)</p>|'), 'template_filler', $template);
 }
 
+function tem_top_subs() {
+	tem_init();
+	return $GLOBALS['wfpl_template']->top_subs();
+}
 
 ?>

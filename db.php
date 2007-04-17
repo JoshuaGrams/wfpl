@@ -130,6 +130,8 @@ function _db_printf($str, $args) {
 
 		if($chr == '"') {
 			$out .= '"' . enc_sql(array_pop($args)) . '"';
+		} elseif($chr == 's') {
+			$out .= enc_sql(array_pop($args));
 		} elseif($chr == 'i') {
 			$int = format_int(array_pop($args));
 			if($int == '') $int = '0';

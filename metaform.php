@@ -34,6 +34,7 @@ $GLOBALS['types'] = array(
 	'bigint' =>     array('textbox',     'int',        'varchar(100)'), # up to 100 digits, stored as a string
 	'email' =>      array('textbox',     'email',      'varchar(100)'),
 	'phone' =>      array('textbox',     'phone',      'varchar(32)'),
+	'state' =>      array('states',      'oneline',    'varchar(2)'),
 	'money' =>      array('textbox',     'money',      'varchar(32)'),
 	'dollars' =>    array('textbox',     'dollars',    'varchar(32)'),
 	'url' =>        array('textbox',     'url',        'varchar(200)'),
@@ -261,7 +262,11 @@ function make_email() {
 		list($name, $type, $input, $format, $sql) = $field;
 		$tem->set('name', $name);
 		$tem->set('caption', $name); # fixme
-		$tem->sub('fields');
+		if($type == 'textarea') {
+			$tem->sub('multi_line');
+		} else {
+			$tem->sub('fields');
+		}
 	}
 	return $tem->run();
 }

@@ -21,8 +21,8 @@
 require_once('code/wfpl/misc.php');
 
 function dwt_reset() {
-	$GLOBALS['_dwt_keys'] = array();
-	$GLOBALS['_dwt_values'] = array();
+	$GLOBALS['_dwt_keys'] = array('<!-- TemplateEndEditable -->');
+	$GLOBALS['_dwt_values'] = array('');
 }
 
 function dwt_init() {
@@ -46,9 +46,35 @@ function dwt_set($name, $value) {
 	dwt_set_raw("<!-- TemplateBeginEditable name=\"$name\" -->", $value);
 }
 
+# returns index into arrays
+function dwt_find_raw($name) {
+	for($i = 0; $i < count($GLOBALS['_dwt_keys']); ++$i) {
+		if($GLOBALS['_dwt_keys'][$i] == $name) {
+			return $i;
+		}
+	}
+	return null;
+}
+
+# returns index into arrays
+function dwt_find($name) {
+	return dwt_find_raw("<!-- TemplateBeginEditable name=\"$name\" -->");
+}
+
+function dwt_append($name, $value) {
+	$index = dwt_find($name);
+	if($index !== null) {
+		$GLOBALS['_dwt_values'][$index] .= $value;
+	} else {
+		dwt_set($name, $value);
+	}
+}
+
 function dwt_output($filename = null) {
 	if($filename !== null) {
 		dwt_load($filename);
 	}
 	print(str_replace($GLOBALS['_dwt_keys'], $GLOBALS['_dwt_values'], $GLOBALS['_dwt_template']));
 }
+
+?>

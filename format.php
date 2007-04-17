@@ -26,6 +26,10 @@ function format_int($str) {
 	return ereg_replace('^0*([1-9])', '\1', $str);
 }
 
+function format_zip($str) {
+	return ereg_replace('[^0-9]', '', $str);
+}
+
 function format_filename($str) {
 	$str = strtolower($str);
 	$str = ereg_replace('[^a-z0-9_.-]', '_', $str);
