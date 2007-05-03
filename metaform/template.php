@@ -32,7 +32,6 @@ require_once('code/wfpl/db.php');<!--~image_include start~-->
 require_once('code/wfpl/upload.php');<!--~end~-->
 
 function ~form_name~_get_fields() {
-	$fields = array();
 	<!--~formats start~-->
 	$~name~ = format_~format~($_REQUEST['~name~']);<!--~end~--><!--~image_upload start~-->
 	$~name~ = save_uploaded_image('~name~', $GLOBALS['upload_directory']);<!--~end~-->
