@@ -57,36 +57,22 @@
 
 require_once('code/wfpl/file_run.php');
 require_once('code/wfpl/http.php');
+require_once('code/wfpl/template.php');
 
 function run_php($basename = false) {
-	if($basename) {
-		$html_file = "$basename.html";
-		$php_file = "$basename.php";
-	} else {
-		$html_file = $_SERVER['REDIRECT_URL'];
-		$html_file = ereg_replace('.*/', '', $html_file);
-		if($html_file == '') {
-			$html_file = 'index.html';
+	if(!$basename) {
+		$basename = $_SERVER['REDIRECT_URL'];
+		$basename = ereg_replace('.*/', '', $basename);
+		$basename = ereg_replace('\.html$', '', $basename);
+		if($basename == '') {
+			$basename = 'index';
 		}
-		$php_file = ereg_replace('\.html$', '.php', $html_file);
 	}
-	if($php_file != $html_file && file_exists($php_file)) {
-		require_once('code/wfpl/template.php');
-		if(file_exists($html_file)) {
-			$GLOBALS['wfpl_template'] = new tem();
-			tem_load($html_file);
-		}
-		$other = file_run($php_file);
-		if($other) {
-			if(strpos($other, ':')) {
-				redirect($other);
-				exit();
-			}
-			run_php($other);
-			return;
-		}
-		if(file_exists($html_file)) tem_output();
-	} else {
+
+	$html_file = "$basename.html";
+	$php_file = "$basename.php";
+
+	if(!file_exists($php_file)) {
 		if(file_exists($html_file)) {
 			readfile($html_file);
 		} else {
@@ -97,6 +83,39 @@ function run_php($basename = false) {
 				echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html><head><title>404</title></head><body><h1>404 File Not Found</h1></body></html>';
 			}
 		}
+		exit();
+	}
+
+	if(file_exists($html_file)) {
+		$GLOBALS['wfpl_template'] = new tem();
+		tem_load($html_file);
+	}
+
+	$other = file_run($php_file);
+	if($other) {
+		if(strpos($other, ':')) {
+			redirect($other);
+			exit();
+		}
+		run_php($other);
+		return;
+	}
+
+	if($GLOBALS['wfpl_template']) {
+		if(file_exists('template.html')) {
+			$tem = new tem();
+			$tem->load("template.html");
+			$sections = tem_top_subs();
+			if($sections) foreach($sections as $name => $val) {
+				$tem->set($name, $val);
+			}
+			$GLOBALS['wfpl_template'] = $tem;
+		}
+
+		if(function_exists('display_messages')) {
+			display_messages();
+		}
+		tem_output();
 	}
 }
 
