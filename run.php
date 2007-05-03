@@ -109,6 +109,12 @@ function run_php($basename = false) {
 			if($sections) foreach($sections as $name => $val) {
 				$tem->set($name, $val);
 			}
+
+			if(file_exists("$basename.css")) {
+				$tem->set('basename', $basename);
+				$tem->sub('css_links');
+			}
+
 			$GLOBALS['wfpl_template'] = $tem;
 		}
 
