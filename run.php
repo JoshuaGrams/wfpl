@@ -111,7 +111,7 @@ function run_php($basename = false) {
 			}
 
 			if(file_exists("$basename.css")) {
-				$tem->set('basename', $basename);
+				$tem->set('css_link', "$basename.css");
 				$tem->sub('css_links');
 			}
 
