@@ -24,6 +24,7 @@
 require_once('code/wfpl/template.php');
 require_once('code/wfpl/http.php');
 require_once('code/wfpl/tar.php');
+require_once('code/wfpl/format.php');
 
 # see code/wfpl/metaform/template.html for the html templates for these elements
 $GLOBALS['types'] = array(
@@ -41,6 +42,7 @@ $GLOBALS['types'] = array(
 	'hidden' =>     array('hidden',      'unix',       'varchar(200)'),
 	'password' =>   array('password',    'oneline',    'varchar(200)'),
 	'textarea' =>   array('textarea',    'unix',       'text'),
+	'html' =>       array('html',        'unix',       'text'),
 	'pulldown' =>   array('pulldown',    'options',    'int'),
 	'radio' =>      array('radio',       'oneline',    'varchar(200)'),
 	'checkbox' =>   array('checkbox',    'yesno',      'varchar(3)'),
@@ -50,43 +52,62 @@ $GLOBALS['types'] = array(
 	'submit' =>     array('submit',      'oneline',    'n/a')
 );
 
-if(isset($_REQUEST['form_name'])) {
-	$GLOBALS['form_name'] = ereg_replace('[^a-z0-9_-]', '', $_REQUEST['form_name']);
-} else {
-	$GLOBALS['form_name'] = 'some_form';
-}
-
-if(isset($_REQUEST['fields'])) {
-	if(isset($_REQUEST['view_sql'])) {
-		view_sql();
-		exit();
-	} elseif(isset($_REQUEST['view_php'])) {
-		view_php();
-		exit();
-	} elseif(isset($_REQUEST['view_template'])) {
-		view_template();
-		exit();
-	} elseif(isset($_REQUEST['view_email'])) {
-		view_email();
-		exit();
-	} elseif(isset($_REQUEST['download_tar'])) {
-		download_tar();
-		exit();
-	} elseif(isset($_REQUEST['preview'])) {
-		preview();
-		exit();
-	} elseif(isset($_REQUEST['edit'])) {
-		tem_set('fields', $_REQUEST['fields']);
-		tem_set('form_name', $GLOBALS['form_name']);
-		# fall through
-	} else {
-		die("Sorry... couldn't tell which button you pressed");
+function list_available_types() {
+	$types = '';
+	foreach($GLOBALS['types'] as $key => $value) {
+		if($types) {
+			$types .= ', ';
+		}
+		$types .= $key;
 	}
+	tem_set('available_types', $types);
 }
 
-set_form_action();
-tem_output('code/wfpl/metaform/main.html');
-exit();
+
+function metaform() {
+	if(isset($_REQUEST['form_name'])) {
+		$GLOBALS['form_name'] = ereg_replace('[^a-z0-9_-]', '', $_REQUEST['form_name']);
+		$GLOBALS['opt_email'] = format_yesno($_REQUEST['opt_email']);
+		tem_set('opt_email', $GLOBALS['opt_email']);
+		$GLOBALS['opt_db'] = format_yesno($_REQUEST['opt_db']);
+		tem_set('opt_db', $GLOBALS['opt_db']);
+	} else {
+		$GLOBALS['form_name'] = 'some_form';
+	}
+
+	if(isset($_REQUEST['fields'])) {
+		if(isset($_REQUEST['view_sql'])) {
+			view_sql();
+			exit();
+		} elseif(isset($_REQUEST['view_php'])) {
+			view_php();
+			exit();
+		} elseif(isset($_REQUEST['view_html'])) {
+			view_html();
+			exit();
+		} elseif(isset($_REQUEST['view_email'])) {
+			view_email();
+			exit();
+		} elseif(isset($_REQUEST['download_tar'])) {
+			download_tar();
+			exit();
+		} elseif(isset($_REQUEST['preview'])) {
+			preview();
+			exit();
+		} elseif(isset($_REQUEST['edit'])) {
+			tem_set('fields', $_REQUEST['fields']);
+			tem_set('form_name', $GLOBALS['form_name']);
+			# fall through
+		} else {
+			die("Sorry... couldn't tell which button you pressed");
+		}
+	}
+
+
+	set_form_action();
+	list_available_types();
+	tem_output('code/wfpl/metaform/main.html');
+}
 
 
 function field_input($type)  { return $GLOBALS['types'][$type][0]; }
@@ -154,8 +175,9 @@ function view_sql() {
 	
 
 # pass false if you want to exclude the <head> and <body> tag etc.
-function make_template($whole_file = true) {
+function make_html($whole_file = true) {
 	$uploads_output_already = false;
+	$has_html_editors = false;
 	$tem = new tem();
 	$tem->load('code/wfpl/metaform/template.html');
 	$tem->set('form_name', $GLOBALS['form_name']);
@@ -172,13 +194,28 @@ function make_template($whole_file = true) {
 			$tem->sub('uploads');
 			$tem->set('enctype_attr', '" enctype="multipart/form-data');
 			$uploads_output_already = true;
+		} elseif($input == 'html') {
+			$has_html_editors = true;
+			$tem->set('html_field_name', $name);
+			$tem->sub('replace_textarea');
 		}
+	}
+
+	if($GLOBALS['opt_db'] == 'Yes') {
+		$tem->sub('opt_db_1');
+	} else {
+		$tem->sub('opt_db_1_else');
 	}
 	$tem->set('name', 'save');
 	$tem->set('caption', 'Save');
 	$tem->sub('submit');
 	$tem->sub('row');
 	$tem->sub('form');
+
+	if($has_html_editors) {
+		$tem->sub('html_editor_headers');
+	}
+
 	if($whole_file) {
 		return $tem->run();
 	} else {
@@ -186,9 +223,9 @@ function make_template($whole_file = true) {
 	}
 }
 
-function view_template() {
+function view_html() {
 	view_headers();
-	echo make_template();
+	echo make_html();
 }
 
 
@@ -236,6 +273,17 @@ function make_php() {
 	$tem->set('db_fields', $db_fields);
 	$tem->set('php_fields', $php_fields);
 	$tem->set('metaform_url', edit_url());
+	if($GLOBALS['opt_db'] == 'Yes') {
+		$tem->sub('opt_db_1');
+		$tem->sub('opt_db_2');
+		$tem->sub('opt_db_3');
+		$tem->sub('opt_db_4');
+		$tem->sub('opt_db_5');
+	}
+	if($GLOBALS['opt_email'] == 'Yes') {
+		$tem->sub('opt_email_1');
+		$tem->sub('opt_email_2');
+	}
 	return $tem->run();
 }
 
@@ -272,6 +320,12 @@ function make_email() {
 	return $tem->run();
 }
 
+function make_htaccess() {
+	$tem = new tem();
+	$tem->set('form', $GLOBALS['form_name']);
+	return $tem->run('code/wfpl/metaform/template.htaccess');
+}
+
 function view_email() {
 	view_headers();
 	echo make_email();
@@ -279,26 +333,33 @@ function view_email() {
 
 
 function preview() {
-	$tem = new tem();
-	$tem->load('code/wfpl/metaform/preview.html');
-	$tem->set('form_name', $GLOBALS['form_name']);
-	$tem->set('fields', $_REQUEST['fields']);
+	tem_load('code/wfpl/metaform/preview.html');
+	tem_set('form_name', $GLOBALS['form_name']);
+	tem_set('fields', $_REQUEST['fields']);
 	$preview_tem = new tem();
-	$preview = $preview_tem->run(make_template(false));
+	$preview = $preview_tem->run(make_html(false));
 	unset($preview_tem);
-	$tem->set('preview', $preview);
+	tem_set('preview', $preview);
 	set_form_action();
-	$tem->output();
+	tem_output();
 }
 
 function download_tar() {
 	$name = $GLOBALS['form_name'];
 	$data = array(
-		"$name.html" => make_template(),
+		".htaccess" => make_htaccess(),
+		"run.php ->" => 'code/wfpl/run.php',
+		"$name.html" => make_html(),
 		"$name.sql" => make_sql(),
-		"$name.email.txt" => make_email(),
 		"$name.php" => make_php());
+	if($GLOBALS['opt_email'] == 'Yes') {
+		$data["$name.email.txt"] = make_email();
+	}
 	make_wfpl_tar($name, $data);
 }
+
+
+metaform();
+exit();
 
 ?>
