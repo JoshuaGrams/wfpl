@@ -50,11 +50,22 @@ function make_tar($dirname, $files, $extra = '') {
 	}
 	mkdir("$tmpdir/$dirname");
 	foreach($files as $filename => $file_data) {
+		if(substr($filename, -3) == ' ->') {
+			$filename = substr($filename, 0, -3);
+			$link = true;
+		} else {
+			$link = false;
+		}
 		$filename_fixed = ereg_replace('[^a-zA-Z0-9_.-]', '', $filename);
 		if($filename != $filename_fixed) {
 			die("Invalid filename for tar archive");
 		}
-		write_file("$tmpdir/$dirname/$filename", $file_data);
+		if($link) {
+			$target = ereg_replace('[^a-zA-Z0-9_./-]', '', $file_data);
+			system("/bin/ln -s $file_data \"$tmpdir/$dirname/$filename\"");
+		} else {
+			write_file("$tmpdir/$dirname/$filename", $file_data);
+		}
 	}
 
 	if(function_exists($extra)) {
@@ -73,9 +84,8 @@ function make_wfpl_tar($dirname, $files) {
 
 function add_wfpl_dir($dir) {
 	mkdir("$dir/code");
-	system("/bin/cp -HRp 'code/wfpl' '$dir/code/'", $return_code);
+	system("rsync -plr --exclude=\".git\" --exclude=\"*.swp\" 'code/wfpl/' '$dir/code/wfpl/'", $return_code);
 	if($return_code != 0) {
-		die("ERROR: while trying to copy wfpl into archive: cp returned $return_code");
+		die("ERROR: while trying to copy wfpl into archive: rsync returned $return_code");
 	}
-	system("/bin/rm -rf '$dir/code/wfpl/.git'");
 }

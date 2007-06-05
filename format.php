@@ -52,10 +52,10 @@ function format_unix($str) {
 }
 
 function format_yesno($str) {
-	if($str) {
-		return "Yes";
+	if($str && $str != 'No') {
+		return 'Yes';
 	} else {
-		return "No";
+		return 'No';
 	}
 }
 

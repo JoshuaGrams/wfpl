@@ -36,7 +36,8 @@
 # them is run
 
 require_once('code/wfpl/encode.php');
-require_once('code/wfpl/misc.php'); # to get read_whole_file()
+require_once('code/wfpl/misc.php');
+require_once('code/wfpl/file.php');
 
 class tem {
 	var $keyval;        # an array containing key/value pairs 
