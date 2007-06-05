@@ -261,8 +261,8 @@ function make_php() {
 				}
 			} else {
 				$tem->sub('formats');
-				$tem->sub('tem_sets');
 			}
+			$tem->sub('tem_sets');
 			if(!$always_field and $input != 'checkbox' and $input != 'radio') {
 				$always_field = $name;
 			}
