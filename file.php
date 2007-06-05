@@ -41,4 +41,11 @@ function write_whole_file($name, $data) {
 	fclose($fd);
 }
 
+function read_whole_file_or_false($name) {
+	if(!file_exists($name)) {
+		return false;
+	}
+	return read_whole_file($name);
+}
+
 ?>

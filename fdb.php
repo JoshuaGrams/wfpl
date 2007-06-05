@@ -23,13 +23,16 @@
 # very simple database.
 
 # Keys are truncated to 32 bytes, made lowercase, and all characters that are
-# not alpha/numeric are replaced with underscores.
+# not alpha/numeric are replaced with underscores. Periods and hyphens are only
+# replaced if they are at the begining.
 
 # Data can be either a string or an array.
 
 # To set up the database, make a directory that's writeable by PHP and call
 # fdb_set_dir() passing the path to that directory.
 
+
+require_once('code/wfpl/file.php');
 
 # call this to set what directory is used to store the files
 function fdb_set_dir($dir) {
@@ -59,12 +62,18 @@ function int_at($string, $index) {
 }
 
 # remove the first 4 bytes of the string, and return them as an int
-function pop_int($&string) {
-	$int = from_raw_int(substring($string, 0 4));
+function pop_int(&$string) {
+	$int = from_raw_int(substr($string, 0, 4));
 	$string = substr($string, 4);
 	return $int;
 }
 
+
+function fdb_fix_key($key) {
+	$key = ereg_replace('[^a-z0-9.-]', '_', strtolower($key));
+	$key = ereg_replace('^[-.]', '_', strtolower($key));
+	return substr($key, 0, 32);
+}
 
 
 function fdb_get_raw($key) {
@@ -80,14 +89,14 @@ function fdb_set_raw($key, $data) {
 # like fdb_get() except it returns an array even when there's just one element
 function fdb_geta($key) {
 	$key = fdb_fix_key($key);
-	$data = fd_get_raw($key);
+	$data = fdb_get_raw($key);
 	if($data === false) {
 		return false;
 	}
 	$header_count = pop_int($data);
 	$out = array();
 	while($header_count--) {
-		$size = int_at($data);
+		$size = pop_int($data);
 		$out[] = substr($data, 0, $size);
 		$data = substr($data, $size);
 	}
@@ -104,6 +113,9 @@ function fdb_geta($key) {
 # array in this case too)
 function fdb_get($key) {
 	$ret = fdb_geta($key);
+	if($ret == false) {
+		return false;
+	}
 	if(count($ret) == 1) {
 		return $ret[0];
 	} else {
@@ -112,7 +124,7 @@ function fdb_get($key) {
 }
 
 # data can be a string or array
-function fdb_put($key, $data) {
+function fdb_set($key, $data) {
 	$key = fdb_fix_key($key);
 	if(!is_array($data)) {
 		$data = array($data);
@@ -122,7 +134,7 @@ function fdb_put($key, $data) {
 		$out .= to_raw_int(strlen($dat));
 		$out .= $dat;
 	}
-	return $out;
+	fdb_set_raw($key, $out);
 }
 
 ?>
