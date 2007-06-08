@@ -71,6 +71,8 @@ function metaform() {
 		tem_set('opt_email', $GLOBALS['opt_email']);
 		$GLOBALS['opt_db'] = format_yesno($_REQUEST['opt_db']);
 		tem_set('opt_db', $GLOBALS['opt_db']);
+		$GLOBALS['opt_http_pass'] = format_yesno($_REQUEST['opt_http_pass']);
+		tem_set('opt_http_pass', $GLOBALS['opt_http_pass']);
 	} else {
 		$GLOBALS['form_name'] = 'some_form';
 	}
@@ -284,6 +286,10 @@ function make_php() {
 		$tem->sub('opt_email_1');
 		$tem->sub('opt_email_2');
 	}
+	if($GLOBALS['opt_http_pass'] == 'Yes') {
+		$tem->sub('opt_http_pass_1');
+		$tem->sub('opt_http_pass_2');
+	}
 	return $tem->run();
 }
 
@@ -293,6 +299,7 @@ function edit_url() {
 	$url = ereg_replace('view_php=[^&]*', 'edit=yes', $url);
 	$url = ereg_replace('download_tar=[^&]*', 'edit=yes', $url);
 	$url = ereg_replace('/[a-z0-9_.]*\?', '/?', $url);
+	$url = str_replace('jasonwoof.l', 'jasonwoof.com', $url); # so that code generated on Jason's home computer will display a publically accessible link.
 	return $url;
 }
 

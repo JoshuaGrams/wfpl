@@ -8,6 +8,7 @@
 #
 # ~metaform_url~
 
+
 # SETUP
 <!--~opt_email_1 start~-->
 # To send results by e-mail, all you have to do is set your e-mail address here:
@@ -21,6 +22,11 @@ $GLOBALS['~form_name~_form_recipient'] = "fixme@example.com";
 # Set this to the path to your uploads directory. It can be relative to the
 # location of this script. IT MUST END WITH A SLASH
 $GLOBALS['upload_directory'] = 'uploads/';
+<!--~end~--><!--~opt_http_pass_1 start~-->
+# Define the username and password required to view this form:
+define('AUTH_REALM', '~form_name~ administration area');
+define('AUTH_USER', 'fixme');
+define('AUTH_PASS', 'fixme');
 <!--~end~-->
 
 if(!file_exists('code/wfpl/template.php')) { die('This form requires <a href="http://jasonwoof.org/wfpl">wfpl</a>.'); }
@@ -44,7 +50,15 @@ function ~form_name~_get_fields() {<!--~formats start~-->
 	return array(~php_fields~);
 }
 
-function ~form_name~() {<!--~opt_db_3 start~-->
+function ~form_name~() {<!--~opt_http_pass_2 start~-->
+	# To remove password protection, just delete this block:
+	if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != AUTH_USER || $_SERVER['PHP_AUTH_PW'] != AUTH_PASS) {
+		header('WWW-Authenticate: Basic realm="' . AUTH_REALM . '"');
+		header('HTTP/1.0 401 Unauthorized');
+		echo '401 Unauthorized';
+		exit;
+	}
+	<!--~end~--><!--~opt_db_3 start~-->
 	$edit_id = format_int($_REQUEST['~form_name~_edit_id']);
 	unset($_REQUEST['~form_name~_edit_id']);
 	if($edit_id) {
