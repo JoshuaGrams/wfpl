@@ -137,4 +137,13 @@ function fdb_set($key, $data) {
 	fdb_set_raw($key, $out);
 }
 
+function fdb_delete($key) {
+	$key = fdb_fix_key($key);
+	$path = fdb_get_dir() . "/$key";
+	if(file_exists($path)) {
+		return unlink($path);
+	}
+	return false;
+}
+
 ?>
