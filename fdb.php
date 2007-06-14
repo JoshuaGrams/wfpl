@@ -33,6 +33,7 @@
 
 
 require_once('code/wfpl/file.php');
+require_once('code/wfpl/binary.php');
 
 # call this to set what directory is used to store the files
 function fdb_set_dir($dir) {

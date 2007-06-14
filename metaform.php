@@ -357,8 +357,10 @@ function download_tar() {
 		".htaccess" => make_htaccess(),
 		"run.php ->" => 'code/wfpl/run.php',
 		"$name.html" => make_html(),
-		"$name.sql" => make_sql(),
 		"$name.php" => make_php());
+	if($GLOBALS['opt_db'] == 'Yes') {
+		$data["$name.sql"] = make_sql();
+	}
 	if($GLOBALS['opt_email'] == 'Yes') {
 		$data["$name.email.txt"] = make_email();
 	}
