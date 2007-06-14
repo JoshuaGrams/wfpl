@@ -165,7 +165,7 @@ class tem {
 			$template_string = read_whole_file($template_file);
 		}
 		
-		return template_run($this->template, $this->keyval);
+		return template_run($template_string, $this->keyval);
 	}	
 
 	# same as run() except the output is print()ed
