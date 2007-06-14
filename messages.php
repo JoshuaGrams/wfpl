@@ -74,6 +74,10 @@ function display_messages($template = 0) {
 		$template = &$template->ref;
 	}
 
+	if(function_exists('session_restore_messages')) {
+		session_restore_messages();
+	}
+
 	if($GLOBALS['wfpl_messages']) {
 		foreach($GLOBALS['wfpl_messages'] as $msg) {
 			if($first) {

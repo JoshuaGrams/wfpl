@@ -48,6 +48,9 @@ function this_url() {
 }
 
 function redirect($url, $status = '302 Moved Temporarily', $message = '') {
+	if(function_exists('session_save_messages')) {
+		session_save_messages();
+	}
 	header("HTTP/1.0 $status");
 	header("Location: $url");
 	echo($message);
