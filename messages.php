@@ -43,12 +43,12 @@
 # Full-featured example:
 #
 #    <!--~message_container start~-->
-#         <div style="border: 2px solid red; background: #800; padding: 15px">
+#         <div style="border: 2px solid red; background: #f88; padding: 5px">
 #         <!--~message_box start~-->
 #             <!--~message_divider start~-->
 #                 <hr />
 #             <!--~end~-->
-#             <p>~message_text.html~</p>
+#             <p style="font-size: 120%">~message_text.html~</p>
 #         <!--~end~-->
 #         </div>
 #    <!--~end~-->

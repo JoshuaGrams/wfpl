@@ -61,13 +61,17 @@ function dwt_find($name) {
 	return dwt_find_raw("<!-- TemplateBeginEditable name=\"$name\" -->");
 }
 
-function dwt_append($name, $value) {
-	$index = dwt_find($name);
+function dwt_append_raw($name, $value) {
+	$index = dwt_find_raw($name);
 	if($index !== null) {
 		$GLOBALS['_dwt_values'][$index] .= $value;
 	} else {
-		dwt_set($name, $value);
+		dwt_set_raw($name, $value);
 	}
+}
+
+function dwt_append($name, $value) {
+	dwt_append_raw("<!-- TemplateBeginEditable name=\"$name\" -->", $value);
 }
 
 function dwt_output($filename = null) {

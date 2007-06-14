@@ -33,7 +33,7 @@ function format_zip($str) {
 function format_filename($str) {
 	$str = strtolower($str);
 	$str = ereg_replace('[^a-z0-9_.-]', '_', $str);
-	return ereg_replace('^[0-9.-]*', '', $str);
+	return ereg_replace('^[.-]', '_', $str);
 }
 
 function format_varname($str) {
