@@ -18,7 +18,7 @@
 #  along with wfpl; if not, write to the Free Software Foundation, Inc., 51
 #  Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require_once('code/wfpl/misc.php');
+require_once('code/wfpl/file.php');
 
 function dwt_reset() {
 	$GLOBALS['_dwt_keys'] = array('<!-- TemplateEndEditable -->');

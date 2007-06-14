@@ -4,23 +4,35 @@
 <head>
   <title>~form_name~ entry</title>
   <style type="text/css"><!--
+td.field { vertical-align: bottom; }
 td.caption { text-align: right; vertical-align: top; font-weight: bold; }
 td.errorcaption { text-align: right; vertical-align: top; font-weight: bold; color: red; }
 div.error { border: 2px solid red; padding: 13px; margin: 20px; background: #ffdddd; }
---></style>
+--></style><!--~html_editor_headers start~-->
+<script type="text/javascript" src="fckeditor/fckeditor.js"></script>
+  <script type="text/javascript" src="fckeditor/fckconfig.js"></script>
+  <script type="text/javascript">
+<!--
+	window.onload = function()
+	{<!--~replace_textarea start~-->
+		var fck_~html_field_name~ = new FCKeditor('~html_field_name~');
+		fck_~html_field_name~.Height = 550;
+		fck_~html_field_name~.ReplaceTextarea();<!--~end~-->
+	}
+-->
+  </script><!--~end~-->
 </head>
 
 <body>
 <!--~~form start~~--><!--~form start~-->
-  <h2><!--~~new_msg start~~-->Add a new entry<!--~~end~~--><!--~~edit_msg start~~-->Edit entry "~~name.html~~"<!--~~end~~--></h2>
+  <h2><!--~opt_db_1 start~--><!--~~new_msg start~~-->Add a new entry<!--~~end~~--><!--~~edit_msg start~~-->Edit entry "~~name.html~~"<!--~~end~~--><!--~end~--><!--~opt_db_1_else start~-->~form_name~ entry form<!--~end~--></h2>
 
   <!--~error start~--><div class="error"><h3>~error_message.html~</h3></div><!--~end~-->
 
   <form action="~form_name~.html~enctype_attr~" method="post"><!--~~editing start~~--><input type="hidden" name="~form_name~_edit_id" value="~~~form_name~_edit_id.attr~~" /><!--~~end~~--><!--~uploads start~--><input type="hidden" name="MAX_FILE_SIZE" value="~~upload_max_filesize~~" /><!--~end~-->
     <table cellspacing="0" cellpadding="4" border="0" summary=""><!--~row start~-->
 
-      <tr><!--~image start~--><td class="caption">~caption.html~: </td><td><input type="file" name="~name~" /></td><!--~end~--><!--~textbox start~--><td class="caption">~caption.html~: </td><td><input type="text" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~password start~--><td class="caption">~caption.html~: </td><td><input type="password" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~textarea start~--><td class="caption">~caption.html~: </td><td><textarea rows="20" cols="50" name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~checkbox start~--><td class="caption">~caption.html~: </td><td><input type="checkbox" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~submit start~--><td class="submit_row" colspan="2"><input type="submit" name="~name~" value="~caption.attr~" /></td><!--~end~--></tr><!--~end~-->
-
+      <tr><!--~image start~--><td class="caption">~caption.html~: </td><td><input type="file" name="~name~" /></td><!--~end~--><!--~textbox start~--><td class="caption">~caption.html~: </td><td><input type="text" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~password start~--><td class="caption">~caption.html~: </td><td><input type="password" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~textarea start~--><td class="caption">~caption.html~: </td><td><textarea rows="20" cols="50" name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~html start~--><td class="caption">~caption.html~: </td><td></td></tr><tr><td colspan="2"><textarea rows="20" cols="50" name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~radio start~--><td class="caption">~caption.html~: </td><td class="field"><input type="radio" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~checkbox start~--><td class="caption">~caption.html~: </td><td><input type="checkbox" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~submit start~--><td class="submit_row" colspan="2"><input type="submit" name="~name~" value="~caption.attr~" /></td><!--~end~--></tr><!--~end~-->
     </table>
   </form>
 <!--~end~--><!--~~end~~-->

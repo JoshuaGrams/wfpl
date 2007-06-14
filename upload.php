@@ -60,11 +60,11 @@
 # the type you specified, it will convert the image for you.
 
 
-
 $GLOBALS['mime_to_ext'] = array(
 	'text/plain' => 'txt',
 	'text/html'  => 'html',
 	'image/jpeg' => 'jpg',
+	'image/jpe' => 'jpg',
 	'image/jpg'  => 'jpg',
 	'image/gif'  => 'gif',
 	'image/png'  => 'png',
@@ -116,7 +116,7 @@ function generate_filename($path, $mime = 'text/plain') {
 	# replace symbols with underscores
 	$filename = ereg_replace('[^a-z0-9_.]', '_', $filename);
 
-	# remove dots from the begning (no invisible files)
+	# remove dots from the beginning (no invisible files)
 	$filename = ereg_replace('^\.*', '', $filename);
 
 	# fix extension
@@ -156,12 +156,31 @@ function save_uploaded_file($key, $path) {
 	}
 
 	if(!move_uploaded_file($_FILES[$key]['tmp_name'], $filename)) {
-		die('file upload failed');
+		return false;
 	}
 
 	return $filename;
 }
 
+function path_to_convert() {
+	if(!isset($GLOBALS['path_to_convert'])) {
+		$convert = '/usr/local/bin/convert';
+		if(!file_exists($convert)) {
+			$convert = '/usr/bin/convert';
+		}
+		if(!file_exists($convert)) {
+			$convert = `which convert`;
+		}
+		if($convert == '' || !file_exists($convert)) {
+			die("can't find imagemagick's 'convert' program");
+		}
+
+		$GLOBALS['path_to_convert'] = $convert;
+	}
+
+	return $GLOBALS['path_to_convert'];
+}
+		
 
 # returns new filename with .png extension
 function gif_to_png($filename, $new_filename = 'just change extension') {
@@ -174,17 +193,8 @@ function gif_to_png($filename, $new_filename = 'just change extension') {
 		$new_filename .= '.png';
 	}
 
-	$convert = '/usr/local/bin/convert';
-	if(!file_exists($convert)) {
-		$convert = '/usr/bin/convert';
-	}
-	if(!file_exists($convert)) {
-		$convert = `which convert`;
-	}
-	if(!file_exists($convert)) {
-		die("can't find imagemagick's 'convert' program");
-	}
-		
+	$convert = path_to_convert();
+
 	$command = "$convert " . escapeshellarg($filename) . ' ' . escapeshellarg($new_filename);
 
 	exec($command, $dummy, $ret);
@@ -193,6 +203,41 @@ function gif_to_png($filename, $new_filename = 'just change extension') {
 	}
 	unlink($filename);
 	return $new_filename;
+}
+
+# make a thumbnail image.
+#
+# Thumbnail will have the same filename, except "_thumb" will be added right
+# before the dot preceding the extension. so foo.png yields foo_thumb.png
+#
+# Thumbnail will retain aspect ratio, and be either $max_width wide or
+# $max_height tall (or, if the aspect is just right, both)
+function make_thumbnail($filename, $max_width = '70', $max_height = '70') {
+	$thumb = ereg_replace('[.]([a-z]+)$', "_thumb.\\1", $filename);
+	if($thumb == $filename) {
+		die("couldn't make thumbnail because filename has no extension.");
+	}
+
+	$convert = path_to_convert();
+
+	# can't be too careful
+	$max_width = ereg_replace('[^0-9]', '', $max_width);
+	if($max_width == '') {
+		$max_width = '70';
+	}
+	$max_height = ereg_replace('[^0-9]', '', $max_height);
+	if($max_height == '') {
+		$max_height = '70';
+	}
+	
+	$command = "$convert -geometry ${max_width}x$max_height " . escapeshellarg($filename) . ' ' . escapeshellarg($thumb);
+
+	exec($command, $dummy, $ret);
+	if($ret != 0) {
+		die("Thumbnail creatin failed. convert did exit($ret)");
+	}
+
+	return $thumb;
 }
 
 # like save_uploaded_file() (above) except it converts gifs to pngs.
