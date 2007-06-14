@@ -39,18 +39,22 @@ function session_save_messages() {
 	}
 
 	init_session();
-	session_set('wfpl_messages', array_to_string($GLOBALS['wfpl_messages']);
+	session_set('wfpl_messages', array_to_string($GLOBALS['wfpl_messages']));
 }
 
 function session_restore_messages() {
-	if(!session()) {
+	if(!session_exists()) {
 		return false;
 	}
 	$messages = session_get('wfpl_messages');
 	if($messages !== false) {
 		$messages = string_to_array($messages);
+		if(!(isset($GLOBALS['wfpl_messages']) && is_array($GLOBALS['wfpl_messages']))) {
+			$GLOBALS['wfpl_messages'] = array();
+		}
 		# messages from the previous run happened first
 		$GLOBALS['wfpl_messages'] = array_merge($messages, $GLOBALS['wfpl_messages']);
+
 	}
 	session_clear('wfpl_messages');
 }

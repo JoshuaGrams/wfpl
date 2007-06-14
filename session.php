@@ -100,7 +100,7 @@ function _kill_session($id) {
 # delete expired sessions from database
 function session_purge_old() {
 	$now = time();
-	$exired_sessions = db_get_column('wfpl_sessions', 'id', 'where expires < %i', $now);
+	$expired_sessions = db_get_column('wfpl_sessions', 'id', 'where expires < %i', $now);
 	if($expired_sessions) foreach($expired_sessions as $expired_session) {
 		_kill_session($expired_session);
 	}
@@ -110,6 +110,10 @@ function session_purge_old() {
 function session_exists() {
 	if(!isset($_REQUEST['session_key'])) {
 		return false;
+	}
+
+	if(isset($GLOBALS['session_id'])) {
+		return true;
 	}
 
 	$session_key = ereg_replace('[^a-zA-Z0-9]', '', $_REQUEST['session_key']);
