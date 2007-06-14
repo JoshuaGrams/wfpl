@@ -91,6 +91,7 @@ function run_php($basename = false) {
 		tem_load($html_file);
 	}
 
+	# files can return a basename or URL of a page to be run/displayed
 	$other = file_run($php_file);
 	if($other) {
 		if(strpos($other, ':')) {
