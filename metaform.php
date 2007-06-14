@@ -205,6 +205,7 @@ function make_html($whole_file = true) {
 
 	if($GLOBALS['opt_db'] == 'Yes') {
 		$tem->sub('opt_db_1');
+		$tem->sub('opt_db_2');
 	} else {
 		$tem->sub('opt_db_1_else');
 	}
