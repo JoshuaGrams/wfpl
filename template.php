@@ -145,22 +145,24 @@ class tem {
 	# Run the template. Pass a filename, or a string, unless you've already
 	# specified a template with load()
 	function run($templ = false) {
+		$template_string = $this->template;
+		$template_file = $this->file;
 		if($templ !== false) {
 			if(strlen($templ) < 150 && file_exists($templ)) {
-				$this->filename = $templ;
-				unset($this->template);
+				$template_file = $templ;
+				unset($template_string);
 			} else {
-				$this->template = $templ;
+				$template_string = $templ;
 			}
 		}
 
-		if(!$this->template) {
-			if(!$this->filename) {
+		if(!$template_string) {
+			if(!$template_file) {
 				print "sorry, no template to run\n";
 				exit(1);
 			}
 
-			$this->template = read_whole_file($this->filename);
+			$template_string = read_whole_file($template_file);
 		}
 		
 		return template_run($this->template, $this->keyval);

@@ -116,8 +116,7 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 				$cc = '';
 				$bcc = '';
 				if(email($from, $to, $subject, $message, $cc, $bcc)) {
-					tem_set('error_message', 'Due to an internal error, your message could not be sent. Please try again later.');
-					tem_sub('error');
+					message('Due to an internal error, your message could not be sent. Please try again later.');
 					$error = true;
 				}
 			}<!--~end~-->
@@ -143,6 +142,7 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 
 	tem_set('upload_max_filesize', upload_max_filesize());<!--~end~-->
 
+	display_messages();
 	tem_sub('form');
 }
 

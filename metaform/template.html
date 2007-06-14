@@ -27,7 +27,16 @@ div.error { border: 2px solid red; padding: 13px; margin: 20px; background: #ffd
 <!--~~form start~~--><!--~form start~-->
   <h2><!--~opt_db_1 start~--><!--~~new_msg start~~-->Add a new entry<!--~~end~~--><!--~~edit_msg start~~-->Edit entry "~~name.html~~"<!--~~end~~--><!--~end~--><!--~opt_db_1_else start~-->~form_name~ entry form<!--~end~--></h2>
 
-  <!--~error start~--><div class="error"><h3>~error_message.html~</h3></div><!--~end~-->
+  <!--~~message_container start~~-->
+       <div style="border: 2px solid red; background: #fbb; padding: 5px; margin: 20px 0px">
+       <!--~~message_box start~~-->
+           <!--~~message_divider start~~-->
+               <hr />
+           <!--~~end~~-->
+           <p style="font-size: 120%; padding: 5px; margin: 0px">~~message_text.html~~</p>
+       <!--~~end~~-->
+       </div>
+  <!--~~end~~-->
 
   <form action="~form_name~.html~enctype_attr~" method="post"><!--~opt_db_2 start~--><!--~~editing start~~--><input type="hidden" name="~form_name~_edit_id" value="~~~form_name~_edit_id.attr~~" /><!--~~end~~--><!--~end~--><!--~uploads start~--><input type="hidden" name="MAX_FILE_SIZE" value="~~upload_max_filesize~~" /><!--~end~-->
     <table cellspacing="0" cellpadding="4" border="0" summary=""><!--~row start~-->
