@@ -19,8 +19,8 @@
 #  Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
-# return our best guess at the url used to access this page
-function this_url() {
+# return our best guess at the url used to access this page, without the path or query string
+function this_url_sans_path() {
 	list($protocol, $version) = explode('/', $_SERVER['SERVER_PROTOCOL']);
 	$url = strtolower($protocol);
 
@@ -42,15 +42,37 @@ function this_url() {
 		}
 	}
 
+	return $url;
+}
+
+# return our best guess at the url used to access this page
+function this_url() {
+	$url = this_url_sans_path();
+
 	$url .= $_SERVER['REQUEST_URI'];
 
 	return $url;
 }
 
+# sends an HTTP redirect
+#
+# $url can be:
+#   1) a full URL
+#   2) an absolute path
+#   3) a filename (you can pass a directory/file.html and such, but "../" prefix is not supported)
 function redirect($url, $status = '302 Moved Temporarily', $message = '') {
+	if(!strpos($url, ':')) {
+		if(substr($url, 0, 1) == '/') {
+			$url = this_url_sans_path() . $url;
+		} else {
+			$url = ereg_replace('/[^/]*([?].*)?$', "/$url", this_url());
+		}
+	}
+			
 	if(function_exists('session_save_messages')) {
 		session_save_messages();
 	}
+
 	header("HTTP/1.0 $status");
 	header("Location: $url");
 	echo($message);
