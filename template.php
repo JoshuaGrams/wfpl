@@ -246,7 +246,7 @@ function template_filler($matches) {
 		foreach($encs as $enc) {
 			$enc = "enc_$enc";
 			if(function_exists($enc)) {
-				$value = $enc($value);
+				$value = $enc($value, $tag);
 			} else {
 				print "ERROR: encoder function '$enc' not found.<br>\n";
 				exit(1);

@@ -43,8 +43,9 @@ $GLOBALS['types'] = array(
 	'password' =>   array('password',    'oneline',    'varchar(200)'),
 	'textarea' =>   array('textarea',    'unix',       'text'),
 	'html' =>       array('html',        'unix',       'text'),
-	'pulldown' =>   array('pulldown',    'options',    'int'),
+	'pulldown' =>   array('pulldown',    'options',    'varchar(100)'),
 	'radio' =>      array('radio',       'oneline',    'varchar(200)'),
+	'leftcheck' =>  array('leftcheck',   'yesno',      'varchar(3)'),
 	'checkbox' =>   array('checkbox',    'yesno',      'varchar(3)'),
 	'yesno' =>      array('checkbox',    'yesno',      'varchar(3)'),
 	'delete' =>     array('checkbox',    'yesno',      'n/a'),
@@ -117,8 +118,13 @@ function field_format($type) { return $GLOBALS['types'][$type][1]; }
 function field_sql($type)    { return $GLOBALS['types'][$type][2]; }
 
 function get_fields() {
+	# no sense in doing all this so many times
+	if(isset($GLOBALS['gotten_fields'])) {
+		return $GLOBALS['gotten_fields'];
+	}
+
 	$fields_str = unix_newlines($_REQUEST['fields']);
-	$ret = array();
+	$GLOBALS['gotten_fields'] = array();
 	$fields_str = rtrim($fields_str);
 	$fields = split("\n", $fields_str);
 	foreach($fields as $field) {
@@ -128,9 +134,9 @@ function get_fields() {
 		$input = field_input($type);
 		$format = field_format($type);
 		$sql = field_sql($type);
-		$ret[] = array($name, $type, $input, $format, $sql, $options);
+		$GLOBALS['gotten_fields'][] = array($name, $type, $input, $format, $sql, $options);
 	}
-	return $ret;
+	return $GLOBALS['gotten_fields'];
 }
 
 # this one, that you're using to create forms
@@ -209,10 +215,17 @@ function make_html($whole_file = true) {
 	} else {
 		$tem->sub('opt_db_1_else');
 	}
-	$tem->set('name', 'save');
-	$tem->set('caption', 'Save');
+
+	if($GLOBALS['opt_email'] == 'Yes' && $GLOBALS['opt_db'] != 'Yes') {
+		$tem->set('name', 'send');
+		$tem->set('caption', 'Send');
+	} else {
+		$tem->set('name', 'save');
+		$tem->set('caption', 'Save');
+	}
 	$tem->sub('submit');
 	$tem->sub('row');
+
 	$tem->sub('form');
 
 	if($has_html_editors) {
@@ -263,6 +276,10 @@ function make_php() {
 					$image_included_yet = true;
 				}
 			} else {
+				if($input == 'pulldown') {
+					$tem->sub('pulldowns');
+					$tem->sub('pulldown_format_extra');
+				}
 				$tem->sub('formats');
 			}
 			$tem->sub('tem_sets');
@@ -331,7 +348,7 @@ function make_email() {
 function make_htaccess() {
 	$tem = new tem();
 	$tem->set('form', $GLOBALS['form_name']);
-	return $tem->run('code/wfpl/metaform/template.htaccess');
+	return $tem->run('code/wfpl/metaform/htaccess');
 }
 
 function view_email() {
@@ -349,6 +366,13 @@ function preview() {
 	if($GLOBALS['opt_db'] == 'Yes') {
 		$preview_tem->sub('new_msg');
 	}
+	$fields = get_fields();
+	foreach($fields as $field) {
+		list($name, $type, $input, $format, $sql) = $field;
+		if($type == 'pulldown') {
+			pulldown($name, array('option 1', 'option 2', 'option 3'));
+		}
+	}
 	$preview = $preview_tem->run();
 	unset($preview_tem);
 	tem_set('preview', $preview);
@@ -361,6 +385,7 @@ function download_tar() {
 	$data = array(
 		".htaccess" => make_htaccess(),
 		"run.php ->" => 'code/wfpl/run.php',
+		"style.css" => read_whole_file('code/wfpl/metaform/style.css'),
 		"$name.html" => make_html(),
 		"$name.php" => make_php());
 	if($GLOBALS['opt_db'] == 'Yes') {

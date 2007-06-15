@@ -22,8 +22,22 @@
 # This file contains basic encodings
 
 function format_caption($str) {
+	$str = str_replace('_', ' ', $str);
 	$str = ucwords($str);
 	return str_replace('Email', 'E-mail', $str);
+}
+
+# This function makes sure that $str is in the list of options, and returns "" otherwise
+function format_options($str, $name) {
+	if(!isset($GLOBALS[$name . '_options'])) {
+		die("Couldn't find options for \"$name\". Be sure to call pulldown().");
+	}
+
+	if(!in_array($str, array_keys($GLOBALS[$name . '_options']['options']), $strict = true)) {
+		return '';
+	}
+
+	return $str;
 }
 
 function format_int($str) {

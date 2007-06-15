@@ -18,6 +18,10 @@ $GLOBALS['~form_name~_form_recipient'] = "fixme@example.com";
 # (the file ~form_name~.sql should help with this), and create a file called
 # 'db_connect.php' or 'code/db_connect.php' which calls db_connect() see:
 # code/wfpl/examples/db_connect.php
+#
+# if you rename any of the database fields, you'll need to update this:
+
+define('~form_name.upper~_DB_FIELDS', '~db_fields~');
 <!--~end~--><!--~upload_settings start~-->
 # Set this to the path to your uploads directory. It can be relative to the
 # location of this script. IT MUST END WITH A SLASH
@@ -38,16 +42,20 @@ require_once('code/wfpl/db.php');<!--~end~--><!--~image_include start~-->
 require_once('code/wfpl/upload.php');<!--~end~-->
 
 function ~form_name~_get_fields() {<!--~formats start~-->
-	$~name~ = format_~format~($_REQUEST['~name~']);<!--~end~--><!--~image_upload start~-->
+	$~name~ = format_~format~($_REQUEST['~name~']<!--~pulldown_format_extra start~-->, '~name~'<!--~end~-->);<!--~end~--><!--~image_upload start~-->
 	if($_FILE['~name~'] && $_FILE['~name~']['error'] == 0) {
 		$~name~ = substr(save_uploaded_image('~name~', $GLOBALS['upload_directory']), strlen($GLOBALS['upload_directory']));
 	} else {
 		$~name~ = format_filename($_REQUEST['old_~name~']);
 	}<!--~end~-->
-	<!--~tem_sets start~-->
-	tem_set('~name~', $~name~);<!--~end~-->
+
+	~form_name~_tem_sets(~php_fields~);
 
 	return array(~php_fields~);
+}
+
+function ~form_name~_tem_sets(~php_fields~) {<!--~tem_sets start~-->
+	tem_set('~name~', $~name~);<!--~end~-->
 }
 
 function ~form_name~() {<!--~opt_http_pass_2 start~-->
@@ -58,6 +66,8 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 		echo '401 Unauthorized';
 		exit;
 	}
+	<!--~end~--><!--~pulldowns start~-->
+	pulldown('~name~', array('option 1', 'option 2', 'option 3'));
 	<!--~end~--><!--~opt_db_3 start~-->
 	$edit_id = format_int($_REQUEST['~form_name~_edit_id']);
 	unset($_REQUEST['~form_name~_edit_id']);
@@ -94,10 +104,10 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 						$~name~ = db_get_value('~form_name~', '~name~', 'where id=%i', $edit_id);
 					}
 					<!--~end~-->
-					db_update('~form_name~', '~db_fields~', ~php_fields~, 'where id=%i', $edit_id);
+					db_update('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~, 'where id=%i', $edit_id);
 					message('Entry updated.');
 				} else {
-					db_insert('~form_name~', '~db_fields~', ~php_fields~);
+					db_insert('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~);
 					message('Entry saved.');
 				}
 			}<!--~end~--><!--~opt_email_2 start~-->
@@ -133,8 +143,8 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 		# fix their entry in whatever way you require.<!--~opt_db_5 start~-->
 	} elseif($edit_id) {
 		# we've recieved an edit id, but no data. So we grab the values to be edited from the database
-		list(~php_fields~) = db_get_row('~form_name~', '~db_fields~', 'where id=%i', $edit_id);
-		~tem_sets.tab~<!--~end~-->
+		list(~php_fields~) = db_get_row('~form_name~', ~form_name.upper~_DB_FIELDS, 'where id=%i', $edit_id);
+		~form_name~_tem_sets(~php_fields~);<!--~end~-->
 	} else {
 		# form not submitted, you can set default values like so:
 		#tem_set('~always_field~', 'Yes');
