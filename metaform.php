@@ -187,7 +187,7 @@ function make_html($whole_file = true) {
 	foreach($fields as $field) {
 		list($name, $type, $input, $format, $sql) = $field;
 		$tem->set('name', $name);
-		$tem->set('caption', $name); # fixme
+		$tem->set('caption', format_caption($name));
 		$tem->sub($input);
 		if($input != 'hidden') {
 			$tem->sub('row');
@@ -345,7 +345,11 @@ function preview() {
 	tem_set('form_name', $GLOBALS['form_name']);
 	tem_set('fields', $_REQUEST['fields']);
 	$preview_tem = new tem();
-	$preview = $preview_tem->run(make_html(false));
+	$preview_tem->load_str(make_html(false));
+	if($GLOBALS['opt_db'] == 'Yes') {
+		$preview_tem->sub('new_msg');
+	}
+	$preview = $preview_tem->run();
 	unset($preview_tem);
 	tem_set('preview', $preview);
 	set_form_action();

@@ -130,16 +130,20 @@ class tem {
 		} #repeat
 	}
 
+	# like load() except you pass a string instead of a filename
+	function load_str($str) {
+		$this->template = '';
+		$parents = array('top_level_subs' => array());
+		$parent = 'top_level_subs';
+		$this->_load($str, $this->template, $parents, $parent);
+	}
+
 	# This is useful when you have sub-templates that you want to mess with
 	# before the main template is run. But can also be used to simply specify
 	# the filename ahead of time.
 	function load($filename) {
 		$this->filename = $filename;
-		$tmp = read_whole_file($filename);
-		$this->template = '';
-		$parents = array('top_level_subs' => array());
-		$parent = 'top_level_subs';
-		$this->_load($tmp, $this->template, $parents, $parent);
+		$this->load_str(read_whole_file($filename));
 	}
 		
 	# Run the template. Pass a filename, or a string, unless you've already

@@ -21,6 +21,11 @@
 
 # This file contains basic encodings
 
+function format_caption($str) {
+	$str = ucwords($str);
+	return str_replace('Email', 'E-mail', $str);
+}
+
 function format_int($str) {
 	$str = ereg_replace('[^0-9]', '', $str);
 	return ereg_replace('^0*([1-9])', '\1', $str);
