@@ -32,9 +32,13 @@ function dwt_init() {
 	dwt_reset();
 }
 
-function dwt_load($filename) {
-	$GLOBALS['_dwt_template'] = read_whole_file($filename);
+function dwt_load_str($str) {
+	$GLOBALS['_dwt_template'] = $str;
 	dwt_init();
+}
+
+function dwt_load($filename) {
+	dwt_load_str(read_whole_file($filename));
 }
 
 function dwt_set_raw($name, $value) {

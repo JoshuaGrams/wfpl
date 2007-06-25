@@ -27,6 +27,12 @@
 # such as < will display properly.
 
 
+function enc_jsdq($str) {
+	$str = enc_sql($str);
+	$str = str_replace("\n", "\\n", $str);
+	return str_replace("\r", "\\r", $str);
+}
+
 # encode for putting within double-quotes in SQL
 function enc_sql($str) {
 	$str = str_replace("\\", "\\\\", $str);
