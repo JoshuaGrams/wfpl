@@ -45,6 +45,15 @@ function format_int($str) {
 	return ereg_replace('^0*([1-9])', '\1', $str);
 }
 
+# return 0 of there's no digits
+function format_int_0($str) {
+	$str = format_int($str);
+	if($str == '') {
+		return '0';
+	}
+	return $str;
+}
+
 function format_zip($str) {
 	return ereg_replace('[^0-9]', '', $str);
 }
