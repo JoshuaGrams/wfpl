@@ -38,7 +38,7 @@ require_once('code/wfpl/template.php');
 require_once('code/wfpl/format.php');
 require_once('code/wfpl/messages.php');
 require_once('code/wfpl/email.php');<!--~opt_db_2 start~-->
-require_once('code/wfpl/db.php');<!--~end~--><!--~image_include start~-->
+require_once('db_connect.php');<!--~end~--><!--~image_include start~-->
 require_once('code/wfpl/upload.php');<!--~end~-->
 
 function ~form_name~_get_fields() {<!--~formats start~-->
@@ -57,7 +57,27 @@ function ~form_name~_get_fields() {<!--~formats start~-->
 function ~form_name~_tem_sets(~php_fields~) {<!--~tem_sets start~-->
 	tem_set('~name~', $~name~);<!--~end~-->
 }
+<!--~opt_listing_2 start~-->
+# You may pass a "where clause" for the db query.
+function ~form_name~_display_listing($where = 'order by ~always_field~ limit 100') {
+	$rows = db_get_rows('~form_name~', 'id,~always_field~', $where);
+	if($rows == false || count($rows) == 0) {
+		return false;
+	}
 
+	foreach($rows as $row) {
+		list($id, $~always_field~) = $row;
+		tem_set('id', $id);
+		if($~always_field~ == '') {
+			$~always_field~ = '--';
+		}
+		tem_set('~always_field~', $~always_field~);
+		tem_sub('listing_row');
+	}
+	tem_sub('listings');
+	return true;
+}
+<!--~end~-->
 function ~form_name~() {<!--~opt_http_pass_2 start~-->
 	# To remove password protection, just delete this block:
 	if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != AUTH_USER || $_SERVER['PHP_AUTH_PW'] != AUTH_PASS) {
@@ -75,20 +95,30 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 		# add hidden field for database id of row we're editing
 		tem_set('~form_name~_edit_id', $edit_id);
 		tem_sub('editing');
-		tem_sub('edit_msg');
 	}
 
 	$delete_id = format_int($_REQUEST['~form_name~_delete_id']);
 	unset($_REQUEST['~form_name~_delete_id']);
 	if($delete_id) {
 		db_delete('~form_name~', 'where id=%i', $delete_id);
-		message('Entry deleted.');
+		message('Entry deleted.');<!--~opt_listing_3 start~-->
+
+		if(~form_name~_display_listing()) {
+			return;
+		}
+		unset($delete_id);<!--~end~--><!--~opt_listing_3_else start~-->
 
 		# FIXME: what to do after delete?
-		return;
+		return;<!--~end~-->
 	}
 
-	if(!$edit_id && !$delet_id) {
+	if(!$edit_id && !$delet_id) {<!--~opt_listing_1 start~-->
+		if(!isset($_REQUEST['~form_name~_new']) && !isset($_REQUEST['~always_field~'])) {
+			if(~form_name~_display_listing()) {
+				return;
+			}
+		}
+		<!--~end~-->
 		tem_sub('new_msg');
 	}<!--~end~-->
 
@@ -96,20 +126,17 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 		list(~php_fields~) = ~form_name~_get_fields();
 
 		if("you're happy with the POSTed values") {<!--~opt_db_4 start~-->
-			if(file_exists($db_connector = 'db_connect.php') || file_exists($db_connector = 'code/db_connect.php')) {
-				require_once($db_connector);
-				if($edit_id) {<!--~image_db start~-->
-					# uploading nothing means leaving it as is.
-					if(!$~name~ && $delete_~name~ != 'Yes') {
-						$~name~ = db_get_value('~form_name~', '~name~', 'where id=%i', $edit_id);
-					}
-					<!--~end~-->
-					db_update('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~, 'where id=%i', $edit_id);
-					message('Entry updated.');
-				} else {
-					db_insert('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~);
-					message('Entry saved.');
+			if($edit_id) {<!--~image_db start~-->
+				# uploading nothing means leaving it as is.
+				if(!$~name~ && $delete_~name~ != 'Yes') {
+					$~name~ = db_get_value('~form_name~', '~name~', 'where id=%i', $edit_id);
 				}
+				<!--~end~-->
+				db_update('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~, 'where id=%i', $edit_id);
+				message('Entry updated.');
+			} else {
+				db_insert('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~);
+				message('Entry saved.');
 			}<!--~end~--><!--~opt_email_2 start~-->
 			if($GLOBALS['~form_name~_form_recipient'] != "fixme@example.com") {
 				$to = $GLOBALS['~form_name~_form_recipient'];
@@ -130,11 +157,10 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 					$error = true;
 				}
 			}<!--~end~-->
-			if($error !== true) {
-				tem_load('~form_name~.html');
-				tem_sub('thankyou');
-				tem_output();
-				exit();
+			if($error !== true) {<!--~opt_listing_4 start~-->
+				~form_name~_display_listing();<!--~end~--><!--~opt_listing_4_else start~-->
+				tem_sub('thankyou');<!--~end~-->
+				return;
 			}
 		}
 		# otherwise, we display the form again. ~form_name~_get_fields() has
@@ -152,7 +178,11 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 
 	tem_set('upload_max_filesize', upload_max_filesize());<!--~end~-->
 
-	display_messages();
+	# this has to be later in the file because it requres that ~always_field~ be set already
+	if($edit_id) {
+		tem_sub('edit_msg');
+	}
+
 	tem_sub('form');
 }
 

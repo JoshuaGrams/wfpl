@@ -190,7 +190,7 @@ function encode_options($selected, $options, $keys_from) {
 	foreach($options as $value => $display) {
 		$out .= '<option';
 
-		if(in_array($value, $selected, $strict = true)) {
+		if(in_array($value, $selected)) {
 			$out .= ' selected="selected"';
 		}
 

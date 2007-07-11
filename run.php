@@ -59,6 +59,10 @@ require_once('code/wfpl/file_run.php');
 require_once('code/wfpl/http.php');
 require_once('code/wfpl/template.php');
 
+if(file_exists('code/config.php')) {
+	file_run('code/config.php');
+}
+
 function run_php($basename = false) {
 	if(!$basename) {
 		$basename = $_SERVER['REDIRECT_URL'];
@@ -72,36 +76,51 @@ function run_php($basename = false) {
 	$html_file = "$basename.html";
 	$php_file = "$basename.php";
 
-	if(!file_exists($php_file)) {
-		if(file_exists($html_file)) {
-			readfile($html_file);
+	$html_exists = file_exists($html_file);
+	$php_exists = file_exists($php_file);
+
+	if(!$php_exists && !$html_exists) {
+		header('HTTP/1.0 404 File Not Found');
+		if(file_exists('404.php') || file_exists('404.html')) {
+			run_php('404');
 		} else {
-			header('HTTP/1.0 404 File Not Found');
-			if(file_exists('404.php') || file_exists('404.html')) {
-				run_php('404');
-			} else {
-				echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html><head><title>404</title></head><body><h1>404 File Not Found</h1></body></html>';
-			}
+			echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html><head><title>404</title></head><body><h1>404 File Not Found</h1></body></html>';
 		}
+	}
+
+	# If there's no template.html we don't want to parse $html_file.
+	if($html_exists && !$php_exists && !file_exists('template.html')) {
+		readfile($html_file);
 		exit();
 	}
 
-	if(file_exists($html_file)) {
-		$GLOBALS['wfpl_template'] = new tem();
-		tem_load($html_file);
+	if($html_exists) {
+		tem_load_new($html_file);
 	}
 
-	# files can return a basename or URL of a page to be run/displayed
-	$other = file_run($php_file);
-	if($other) {
-		if(strpos($other, ':')) {
-			redirect($other);
-			exit();
+	if($php_exists) {
+		# files can return a basename or URL of a page to be run/displayed
+		$other = file_run($php_file);
+		if($other) {
+			if(strpos($other, ':')) {
+				redirect($other);
+				exit();
+			}
+			if(substr($other, 0, 2) == './') {
+				redirect(ereg_replace('/[^/]*$', substr($other, 1), this_url()));
+				exit();
+			}
+			run_php($other);
+			return;
 		}
-		run_php($other);
-		return;
+	} else {
+		$sub_names = tem_top_sub_names();
+		foreach($sub_names as $sub_name) {
+			tem_sub($sub_name);
+		}
 	}
 
+	# Check for $GLOBALS['wfpl_template'] because it might have been set (or unset) by the php script.
 	if($GLOBALS['wfpl_template']) {
 		if(file_exists('template.html')) {
 			$tem = new tem();

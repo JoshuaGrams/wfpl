@@ -32,7 +32,9 @@ $GLOBALS['types'] = array(
 	'name' =>       array('textbox',     'oneline',    'varchar(200)'),
 	'textbox' =>    array('textbox',     'oneline',    'varchar(200)'),
 	'int' =>        array('textbox',     'int',        'int'),
+	'decimal' =>    array('textbox',     'decimal',    'decimal(12,12)'),
 	'bigint' =>     array('textbox',     'int',        'varchar(100)'), # up to 100 digits, stored as a string
+	'zip' =>        array('textbox',     'zip',        'varchar(20)'),
 	'email' =>      array('textbox',     'email',      'varchar(100)'),
 	'phone' =>      array('textbox',     'phone',      'varchar(32)'),
 	'state' =>      array('states',      'oneline',    'varchar(2)'),
@@ -72,6 +74,8 @@ function metaform() {
 		tem_set('opt_email', $GLOBALS['opt_email']);
 		$GLOBALS['opt_db'] = format_yesno($_REQUEST['opt_db']);
 		tem_set('opt_db', $GLOBALS['opt_db']);
+		$GLOBALS['opt_listing'] = format_yesno($_REQUEST['opt_listing']);
+		tem_set('opt_listing', $GLOBALS['opt_listing']);
 		$GLOBALS['opt_http_pass'] = format_yesno($_REQUEST['opt_http_pass']);
 		tem_set('opt_http_pass', $GLOBALS['opt_http_pass']);
 	} else {
@@ -180,6 +184,19 @@ function view_sql() {
 	view_headers();
 	echo make_sql();
 }
+
+# always_field is a form field that always submits (unlike say, checkboxes). It's used to detect if the form has submitted or not.
+function find_always_field($fields) {
+	foreach($fields as $field) {
+		list($name, $type, $input, $format, $sql) = $field;
+		if($input != 'submit' && $input != 'checkbox' && $input != 'radio') {
+			return $name;
+		}
+	}
+
+	return false;
+}
+	
 	
 
 # pass false if you want to exclude the <head> and <body> tag etc.
@@ -190,6 +207,7 @@ function make_html($whole_file = true) {
 	$tem->load('code/wfpl/metaform/template.html');
 	$tem->set('form_name', $GLOBALS['form_name']);
 	$fields = get_fields();
+	$tem->set('always_field', find_always_field($fields));
 	foreach($fields as $field) {
 		list($name, $type, $input, $format, $sql) = $field;
 		$tem->set('name', $name);
@@ -214,6 +232,12 @@ function make_html($whole_file = true) {
 		$tem->sub('opt_db_2');
 	} else {
 		$tem->sub('opt_db_1_else');
+	}
+
+	if($GLOBALS['opt_listing'] == 'Yes') {
+		$tem->sub('opt_listing_1');
+	} else {
+		$tem->sub('opt_listing_1_else');
 	}
 
 	if($GLOBALS['opt_email'] == 'Yes' && $GLOBALS['opt_db'] != 'Yes') {
@@ -252,7 +276,7 @@ function make_php() {
 	$fields = get_fields();
 	$db_fields = '';
 	$php_fields = '';
-	$always_field = false;
+	$always_field = find_always_field($fields);
 	$image_included_yet = false;
 	foreach($fields as $field) {
 		list($name, $type, $input, $format, $sql) = $field;
@@ -283,16 +307,22 @@ function make_php() {
 				$tem->sub('formats');
 			}
 			$tem->sub('tem_sets');
-			if(!$always_field and $input != 'checkbox' and $input != 'radio') {
-				$always_field = $name;
-			}
 		}
 	}
-	# always_field is a form field that always submits (unlike say, checkboxes). It's used to detect if the form has submitted or not.
+
 	$tem->set('always_field', $always_field);
 	$tem->set('db_fields', $db_fields);
 	$tem->set('php_fields', $php_fields);
 	$tem->set('metaform_url', edit_url());
+	if($GLOBALS['opt_listing'] == 'Yes') {
+		$tem->sub('opt_listing_1');
+		$tem->sub('opt_listing_2');
+		$tem->sub('opt_listing_3');
+		$tem->sub('opt_listing_4');
+	} else {
+		$tem->sub('opt_listing_3_else');
+		$tem->sub('opt_listing_4_else');
+	}
 	if($GLOBALS['opt_db'] == 'Yes') {
 		$tem->sub('opt_db_1');
 		$tem->sub('opt_db_2');

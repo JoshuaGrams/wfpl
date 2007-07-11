@@ -19,9 +19,6 @@
 </head>
 
 <body>
-<!--~~form start~~--><!--~form start~-->
-  <h2><!--~opt_db_1 start~--><!--~~new_msg start~~-->Add a new entry<!--~~end~~--><!--~~edit_msg start~~-->Edit entry "~~name.html~~"<!--~~end~~--><!--~end~--><!--~opt_db_1_else start~-->~form_name~ entry form<!--~end~--></h2>
-
   <!--~~message_container start~~-->
        <div style="border: 2px solid red; background: #fbb; padding: 5px; margin: 20px 0px">
        <!--~~message_box start~~-->
@@ -33,6 +30,9 @@
        </div>
   <!--~~end~~-->
 
+<!--~~form start~~--><!--~form start~-->
+  <h2><!--~opt_db_1 start~--><!--~~new_msg start~~-->Add a new entry<!--~~end~~--><!--~~edit_msg start~~-->Edit entry "~~~always_field~.html~~"<!--~~end~~--><!--~end~--><!--~opt_db_1_else start~-->~form_name~ entry form<!--~end~--></h2>
+
   <form action="~form_name~.html~enctype_attr~" method="post"><!--~opt_db_2 start~--><!--~~editing start~~--><input type="hidden" name="~form_name~_edit_id" value="~~~form_name~_edit_id.attr~~" /><!--~~end~~--><!--~end~--><!--~uploads start~--><input type="hidden" name="MAX_FILE_SIZE" value="~~upload_max_filesize~~" /><!--~end~-->
     <table cellspacing="0" cellpadding="4" border="0" summary=""><!--~row start~-->
 
@@ -40,8 +40,18 @@
     </table>
   </form>
 <!--~end~--><!--~~end~~-->
+<!--~opt_listing_1 start~--><!--~~listings start~~-->
+  <h2>~form_name~ Listing</h2>
+
+  <table cellspacing="0" cellpadding="4" border="1" summary=""><!--~~listing_row start~~-->
+  <tr><td class="listing"><a href="~form_name~.html?~form_name~_edit_id=~~id~~">~~~always_field~.html~~</a></td><td><a href="~form_name~.html?~form_name~_delete_id=~~id~~" onclick="return confirm('Permanently delete?')">[delete this record]</a></td></tr><!--~~end~~-->
+
+  </table>
+
+  <p><a href="~form_name~.html?~form_name~_new=1">[Add a new record]</a></p>
+<!--~~end~~--><!--~end~--><!--~opt_listing_1_else start~-->
 <!--~~thankyou start~~-->
   <p>Thank you for taking the time to fill out this form.</p>
-<!--~~end~~-->
+<!--~~end~~--><!--~end~-->
 </body>
 </html>
