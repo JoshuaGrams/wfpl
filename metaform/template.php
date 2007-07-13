@@ -112,7 +112,7 @@ function ~form_name~() {<!--~opt_http_pass_2 start~-->
 		return;<!--~end~-->
 	}
 
-	if(!$edit_id && !$delet_id) {<!--~opt_listing_1 start~-->
+	if(!$edit_id) {<!--~opt_listing_1 start~-->
 		if(!isset($_REQUEST['~form_name~_new']) && !isset($_REQUEST['~always_field~'])) {
 			if(~form_name~_display_listing()) {
 				return;
