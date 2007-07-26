@@ -29,6 +29,7 @@ require_once('code/wfpl/format.php');
 # see code/wfpl/metaform/template.html for the html templates for these elements
 $GLOBALS['types'] = array(
 #    type                  input          format        sql     
+	'varname' =>    array('textbox',     'varname',    'varchar(50)'),
 	'name' =>       array('textbox',     'oneline',    'varchar(200)'),
 	'textbox' =>    array('textbox',     'oneline',    'varchar(200)'),
 	'int' =>        array('textbox',     'int',        'int'),
