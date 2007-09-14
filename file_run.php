@@ -39,9 +39,6 @@
 function file_run($filename) {
 	require_once($filename);
 	$func = basename($filename, '.php') . '_main';
-	if(!function_exists($func)) {
-		$func = basename($filename, '.php');
-	}
 
 	return $func();
 }
