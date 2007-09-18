@@ -32,14 +32,14 @@
 #
 # the file db_password.php would be like so:
 #
-#     function db_password() {
+#     function db_password_main() {
 #           return array('me', 'secret');
 #     }
 
 function file_run($filename) {
     require_once($filename);
     ereg_replace('.*/', '', $filename);
-    $func = basename($filename, '.php');
+    $func = basename($filename, '.php') . '_main';
     return $func();
 }
 
