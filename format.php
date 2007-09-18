@@ -33,7 +33,7 @@ function format_options($str, $name) {
 		die("Couldn't find options for \"$name\". Be sure to call pulldown().");
 	}
 
-	if(!in_array($str, array_keys($GLOBALS[$name . '_options']['options']), $strict = true)) {
+	if(!in_array($str, array_keys($GLOBALS[$name . '_options']['options']))) {
 		return '';
 	}
 
@@ -45,8 +45,37 @@ function format_int($str) {
 	return ereg_replace('^0*([1-9])', '\1', $str);
 }
 
+function format_decimal($str) {
+	$str = ereg_replace('[^0-9.]', '', $str);
+	$pos = strpos($str, '.');
+	if($pos !== false) {
+		$str = str_replace('.', '', $str);
+		if($pos == 0) {
+			return '0.' . $str;
+		} elseif($pos == strlen($str)) {
+			return $str;
+		} else {
+			return substr($str, 0, $pos) . '.' . substr($str, $pos);
+		}
+	}
+	return $str;
+}
+
+# return 0 of there's no digits
+function format_int_0($str) {
+	$str = format_int($str);
+	if($str == '') {
+		return '0';
+	}
+	return $str;
+}
+
 function format_zip($str) {
-	return ereg_replace('[^0-9]', '', $str);
+	$str = ereg_replace('[^0-9]', '', $str);
+	if(strlen($str) > 5) {
+		return substr($str, 0, 5) . '-' . substr($str, 5);
+	}
+	return $str;
 }
 
 function format_filename($str) {

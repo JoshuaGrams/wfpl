@@ -50,7 +50,7 @@ function enc_html($str) {
 	return $str;
 }
 
-# Encode for output in html. converts \n to <br />
+# Encode for output in html. Convert newlines to <br />
 #
 # Example: <p>~foo.html~</p>
 function enc_htmlbr($str) {
@@ -128,6 +128,17 @@ function enc_states($str) {
 
 	return encode_options($str, $states_assoc, $use_keys = true);
 }
+
+# display <option>s
+function enc_provinces($str) {
+	$provinces_assoc = array("AB" => "Alberta", "BC" => "British Columbia", "MB" => "Manitoba", "NF" => "Newfoundland", "NB" => "New Brunswick", "NS" => "Nova Scotia", "NT" => "Northwest Territories", "NU" => "Nunavut", "ON" => "Ontario", "PE" => "Prince Edward Island", "QC" => "Quebec", "SK" => "Saskatchewan", "YT" => "Yukon Territory");
+	$ret = '';
+
+	return encode_options($str, $provinces_assoc, $use_keys = true);
+}
+
+
+
 
 
 define('PULLDOWN_ARRAY', 0); define('PULLDOWN_HASH', 1); define('PULLDOWN_2D', 2);
@@ -211,7 +222,7 @@ function encode_options($selected, $options, $keys_from) {
 	foreach($options as $value => $display) {
 		$out .= '<option';
 
-		if(in_array($value, $selected, $strict = true)) {
+		if(in_array($value, $selected)) {
 			$out .= ' selected="selected"';
 		}
 

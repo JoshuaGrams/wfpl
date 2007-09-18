@@ -18,7 +18,7 @@
 #  along with wfpl; if not, write to the Free Software Foundation, Inc., 51
 #  Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# you'll need this file that calles db_connect()
+# you'll need this file that calls db_connect()
 if(!isset($GLOBALS['wfpl_db_handle'])) {
 	if(file_exists('db_connect.php')) {
 		require_once('db_connect.php');
@@ -32,6 +32,9 @@ if(!isset($GLOBALS['wfpl_db_handle'])) {
 # and these database tables:
 # create table wfpl_sessions (id int unique auto_increment, session_key varchar(16), length int, expires int);
 # create table wfpl_session_data (id int unique auto_increment, session_id int, name varchar(100), value text);
+# run this command to install/clear the tables:
+#   mysql DATABASE_NAME < code/wfpl/examples/session.sql
+# note: you may need these parameters for mysql:  -u USERNAME -p
 
 # GLOSSARY
 #

@@ -37,10 +37,10 @@
 #     }
 
 function file_run($filename) {
-    require_once($filename);
-    ereg_replace('.*/', '', $filename);
-    $func = basename($filename, '.php') . '_main';
-    return $func();
+	require_once($filename);
+	$func = basename($filename, '.php') . '_main';
+
+	return $func();
 }
 
 ?>
