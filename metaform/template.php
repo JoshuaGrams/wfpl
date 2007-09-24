@@ -43,7 +43,7 @@ require_once('code/wfpl/upload.php');<!--~end~-->
 
 function ~form_name~_get_fields() {<!--~formats start~-->
 	$~name~ = format_~format~($_REQUEST['~name~']<!--~pulldown_format_extra start~-->, '~name~'<!--~end~-->);<!--~end~--><!--~image_upload start~-->
-	if($_FILE['~name~'] && $_FILE['~name~']['error'] == 0) {
+	if($_FILES['~name~'] && $_FILES['~name~']['error'] == 0) {
 		$~name~ = substr(save_uploaded_image('~name~', $GLOBALS['upload_directory']), strlen($GLOBALS['upload_directory']));
 	} else {
 		$~name~ = format_filename($_REQUEST['old_~name~']);

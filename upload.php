@@ -162,22 +162,38 @@ function save_uploaded_file($key, $path) {
 	return $filename;
 }
 
-function path_to_convert() {
-	if(!isset($GLOBALS['path_to_convert'])) {
-		$GLOBALS['path_to_convert'] = _path_to_convert();
+# this function exists to deal with cases where binaries are installed in very
+# standard places (like /usr/bin or /usr/local bin) and PHP's PATH environment
+# variable is not set appropriately.
+function path_to($prog, $or_die = true) {
+	$prog = ereg_replace('[^a-zA-Z0-9_.-]', '', $prog);
+	$prog = ereg_replace('^[-.]*', '', $prog);
+	if($prog == '') {
+		die('Invalid argument to path_to()');
 	}
 
-	return $GLOBALS['path_to_convert'];
-}
+	if(!isset($GLOBALS["path_to_$prog"])) {
+		$ret = _path_to($prog, $or_die);
+		if($ret == false) {
+			return false;
+		}
+		$GLOBALS["path_to_$prog"] = $ret;
+	}
 
-function _path_to_convert() {
+	return $GLOBALS["path_to_$prog"];
+}
+	
+function _path_to($prog, $or_die) {
 	# relies on PHP's short-circuit mechanism
-	if(file_exists($convert = '/usr/local/bin/convert') ||
-	   file_exists($convert = '/usr/bin/convert') ||
+	if(file_exists($convert = "/usr/local/bin/$prog") ||
+	   file_exists($convert = "/usr/bin/$prog") ||
 	   ($convert = `which convert` != '' && file_exists($convert))) {
 		return $convert;
 	} else {
-		die("can't find imagemagick's 'convert' program");
+		if($or_die) {
+			die("Failed to locate '$prog' executable.");
+		}
+		return false;
 	}
 }
 
@@ -193,7 +209,7 @@ function gif_to_png($filename, $new_filename = 'just change extension') {
 		$new_filename .= '.png';
 	}
 
-	$convert = path_to_convert();
+	$convert = path_to('convert');
 
 	$command = "$convert " . escapeshellarg($filename) . ' ' . escapeshellarg($new_filename);
 
@@ -213,12 +229,16 @@ function gif_to_png($filename, $new_filename = 'just change extension') {
 # Thumbnail will retain aspect ratio, and be either $max_width wide or
 # $max_height tall (or, if the aspect is just right, both)
 function make_thumbnail($filename, $max_width = '70', $max_height = '70') {
-	$thumb = ereg_replace('[.]([a-z]+)$', "_thumb.\\1", $filename);
-	if($thumb == $filename) {
+	$last_dot = strrpos($filename, '.');
+	if($last_dot === false) {
 		die("couldn't make thumbnail because filename has no extension.");
 	}
 
-	$convert = path_to_convert();
+	$thumb = substr($filename, 0, $last_dot);
+	$thumb .= '_thumb';
+	$thumb .= substr($filename, $last_dot);
+
+	$convert = path_to('convert');
 
 	# can't be too careful
 	$max_width = ereg_replace('[^0-9]', '', $max_width);
@@ -234,10 +254,26 @@ function make_thumbnail($filename, $max_width = '70', $max_height = '70') {
 
 	exec($command, $dummy, $ret);
 	if($ret != 0) {
-		die("Thumbnail creatin failed. convert did exit($ret)");
+		die("Thumbnail creation failed. Convert called exit($ret)");
 	}
 
 	return $thumb;
+}
+
+# Argument: path to image file
+#
+# Return: string in the format WIDTHxHEIGHT, or boolean false
+#
+# Example: image_dimensions('uploads/foo.png'); ==> "124x58"
+function image_dimensions($image) {
+	$identify = path_to('identify');
+	$command = "$identify -format '%wx%h' " . escapeshellarg($image);
+	$dimensions = substr(`$command`, 0, -1); # substr() to remove newline
+	if($dimensions == '') {
+		return false;
+	} else {
+		return $dimensions;
+	}
 }
 
 # like save_uploaded_file() (above) except it converts gifs to pngs.
