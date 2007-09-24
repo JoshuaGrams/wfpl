@@ -15,8 +15,8 @@
 $GLOBALS['~form_name~_form_recipient'] = "fixme@example.com";
 <!--~end~--><!--~opt_db_1 start~-->
 # To save results to a database, you'll need to create the ~form_name~ table
-# (the file ~form_name~.sql should help with this), and create a file called
-# 'db_connect.php' or 'code/db_connect.php' which calls db_connect() see:
+# (the file ~form_name~.sql should help with this), and create the file
+# 'code/db_connect.php' which calls db_connect() see:
 # code/wfpl/examples/db_connect.php
 #
 # if you rename any of the database fields, you'll need to update this:
@@ -38,7 +38,7 @@ require_once('code/wfpl/template.php');
 require_once('code/wfpl/format.php');
 require_once('code/wfpl/messages.php');
 require_once('code/wfpl/email.php');<!--~opt_db_2 start~-->
-require_once('db_connect.php');<!--~end~--><!--~image_include start~-->
+require_once('code/db_connect.php');<!--~end~--><!--~image_include start~-->
 require_once('code/wfpl/upload.php');<!--~end~-->
 
 function ~form_name~_get_fields() {<!--~formats start~-->
@@ -78,7 +78,7 @@ function ~form_name~_display_listing($where = 'order by ~always_field~ limit 100
 	return true;
 }
 <!--~end~-->
-function ~form_name~() {<!--~opt_http_pass_2 start~-->
+function ~form_name~_main() {<!--~opt_http_pass_2 start~-->
 	# To remove password protection, just delete this block:
 	if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != AUTH_USER || $_SERVER['PHP_AUTH_PW'] != AUTH_PASS) {
 		header('WWW-Authenticate: Basic realm="' . AUTH_REALM . '"');
