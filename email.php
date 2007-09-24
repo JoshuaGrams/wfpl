@@ -44,7 +44,7 @@ function email($from, $to, $subject, $message, $cc = '', $bcc = '') {
 	if($to   == '') { return 2; }
 
 	#FIXME should allow many more characters here
-	$subject = ereg_replace("[^a-zA-Z _'.-]", '_', $subject);
+	$subject = ereg_replace("[^a-zA-Z _'.:-]", '_', $subject);
 
 	$headers = "From: $from";
 	if($cc) {

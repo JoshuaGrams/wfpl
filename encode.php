@@ -50,14 +50,11 @@ function enc_html($str) {
 	return $str;
 }
 
-
-# Encode for output in html. Converts newlines to <br />
+# Encode for output in html. Convert newlines to <br />
 #
 # Example: <p>~foo.html~</p>
 function enc_htmlbr($str) {
-	$str = str_replace('&', '&amp;', $str);
-	$str = str_replace('<', '&lt;', $str);
-	$str = str_replace('>', '&gt;', $str);
+	$str = enc_html($str);
 	$str = str_replace("\n", "<br />\n", $str);
 	return $str;
 }
@@ -78,6 +75,14 @@ function enc_attr($str) {
 function enc_url_val($str) {
 	return rawurlencode($str);
 }
+
+# FIXME
+function enc_url_path($str) {
+	$str = rawurlencode($str);
+	$str = str_replace('%2F', '/', $str);
+	return $str;
+}
+
 
 # This is a hack to work around html's stupid syntax for checkboxes.
 #
@@ -109,6 +114,10 @@ function enc_tab($str) {
 
 function enc_upper($str) {
 	return strtoupper($str);
+}
+
+function enc_ddmmyyyyhhmm($seconds) {
+	return date('m/d/Y g:ia', (int)$seconds);
 }
 
 
