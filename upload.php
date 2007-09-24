@@ -164,23 +164,23 @@ function save_uploaded_file($key, $path) {
 
 function path_to_convert() {
 	if(!isset($GLOBALS['path_to_convert'])) {
-		$convert = '/usr/local/bin/convert';
-		if(!file_exists($convert)) {
-			$convert = '/usr/bin/convert';
-		}
-		if(!file_exists($convert)) {
-			$convert = `which convert`;
-		}
-		if($convert == '' || !file_exists($convert)) {
-			die("can't find imagemagick's 'convert' program");
-		}
-
-		$GLOBALS['path_to_convert'] = $convert;
+		$GLOBALS['path_to_convert'] = _path_to_convert();
 	}
 
 	return $GLOBALS['path_to_convert'];
 }
-		
+
+function _path_to_convert() {
+	# relies on PHP's short-circuit mechanism
+	if(file_exists($convert = '/usr/local/bin/convert') ||
+	   file_exists($convert = '/usr/bin/convert') ||
+	   ($convert = `which convert` != '' && file_exists($convert))) {
+		return $convert;
+	} else {
+		die("can't find imagemagick's 'convert' program");
+	}
+}
+
 
 # returns new filename with .png extension
 function gif_to_png($filename, $new_filename = 'just change extension') {
