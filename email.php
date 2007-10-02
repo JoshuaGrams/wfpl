@@ -35,7 +35,7 @@
 # address fields (from, to, cc, bcc) can be in either of these formats:
 # 1) me@foo.com  2) Me Who <me@foo.com>
 # returns 0 on success
-function email($from, $to, $subject, $message, $cc = '', $bcc = '') {
+function email($from, $to, $subject, $message, $reply_to = '', $cc = '', $bcc = '') {
 	if(($from = email_header($from)) === false) { return 1; }
 	if(($to   = email_header($to))   === false) { return 2; }
 	if(($cc   = email_header($cc))   === false) { return 3; }
@@ -44,15 +44,21 @@ function email($from, $to, $subject, $message, $cc = '', $bcc = '') {
 	if($to   == '') { return 2; }
 
 	#FIXME should allow many more characters here
-	$subject = ereg_replace("[^a-zA-Z _'.:-]", '_', $subject);
+	$subject = ereg_replace("[^a-zA-Z0-9 _'.:-]", '_', $subject);
 
 	$headers = "From: $from";
+	if($reply_to) {
+		$headers .= "\r\nReply-To: $reply_to";
+	}
 	if($cc) {
 		$headers .= "\r\nCC: $cc";
 	}
 	if($bcc) {
 		$headers .= "\r\nBCC: $bcc";
 	}
+	#header('Content-Type: text/plain');
+	#print_r(array($to, $subject, $message, $headers));
+	#exit();
 	if(mail($to, $subject, $message, $headers)) {
 		return 0;
 	} else {
@@ -74,9 +80,10 @@ function email_header($addr) {
 
 	if(ereg('<.*>$', $addr) !== false) {
 		# format 2
-		list($name, $email) = split('<', $addr);
+		$div = strrpos($addr, '<');
+		$name = substr($addr, 0 , $div);
 		$name = rtrim($name);
-		$email = substr($email, 0, -1); # get rid of the '>' at the end
+		$email = substr($addr, $div + 1, -1);
 	} else {
 		$email = $addr;
 		$name = ereg_replace('@.*', '', $addr);
@@ -87,7 +94,7 @@ function email_header($addr) {
 	}
 
 	#FIXME should allow many more characters here
-	$name = ereg_replace("[^a-zA-Z _'-]", '_', $name);
+	$name = ereg_replace("[^a-zA-Z0-9 _'.-]", '_', $name);
 
 	return $name . ' <' . $email . '>';
 }

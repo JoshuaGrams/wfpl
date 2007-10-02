@@ -212,6 +212,10 @@ function db_get_value($table, $columns, $where = '') {
 	return $value;
 }
 
+function db_count($table, $where = '') {
+	return db_get_value($table, 'count(*)', $where);
+}
+
 # call either of these ways:
 #
 # db_insert('people', 'name,company', 'jason', 'widgets ltd');
