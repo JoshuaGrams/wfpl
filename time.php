@@ -45,3 +45,78 @@ function days_to_weekday_name($days) {
 #		echo ", ymd_to_days($year, $month, $day): $days\n<br>";
 #	}
 #}
+
+
+# pass anything, and get a valid date
+#
+# returns array($year, $month, $day)
+function clean_ymd($year, $month, $day) {
+	$year = intval($year, 10);
+	$month = intval($month, 10);
+	$day = intval($day, 10);
+
+	if($year < 100) {
+		$year += 2000;
+	}
+	if($month < 1) {
+		$month = 1;
+	} elseif($month > 12) {
+		$month = 12;
+	}
+	if($day < 1) {
+		$day = 1;
+	} elseif($day > 31) {
+		# FIXME this should check the month
+		$day = 31;
+	}
+
+	return array($year, $month, $day);
+}
+
+# convert date string from mm/dd/yyyy to yyy-mm-dd
+function mdy_to_ymd($date) {
+	$date = ereg_replace('[^0-9/-]', '', $date);
+	$date = ereg_replace('-', '/', $date);
+	$parts = explode('/', $date);
+	switch(count($parts)) {
+		case 1:
+			$year = $parts[0];
+			list($month, $day) = explode('/', date('m/d'));
+		break;
+		case 2:
+			list($month, $year) = $parts;
+			$year = date('d');
+		break;
+		default:
+			list($month, $day, $year) = $parts;
+	}
+
+	list($year, $month, $day) = clean_ymd($year, $month, $day);
+
+	return sprintf('%04u-%02u-%02u', $year, $month, $day);
+}
+
+# convert date string from yyy-mm-dd to mm/dd/yyyy
+function ymd_to_mdy($date) {
+	$date = ereg_replace('[^0-9/-]', '', $date);
+	$date = ereg_replace('/', '-', $date);
+	$parts = explode('-', $date);
+	switch(count($parts)) {
+		case 1:
+			$year = $parts[0];
+			list($month, $day) = explode('-', date('m-d'));
+		break;
+		case 2:
+			list($year, $month) = $parts;
+			$year = date('d');
+		break;
+		default:
+			list($year, $month, $day) = $parts;
+	}
+
+	list($year, $month, $day) = clean_ymd($year, $month, $day);
+
+	return sprintf('%02u/%02u/%04u', $month, $day, $year);
+}
+
+?>

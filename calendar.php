@@ -71,7 +71,7 @@ function calendar($year, $month, $events = 0, $template = 0) {
 	$template->set('month_year', strftime('%B', $start_timestamp) . " " . $year);
 
 	# number of non-day slots at the begining of the month
-	$pre_non_days = date( 'w', $start_timestamp );
+	$pre_non_days = date('w', $start_timestamp );
 
 	# first display empty cells so the 1st can be in the right column
 	while($cell < $pre_non_days) {
@@ -80,7 +80,7 @@ function calendar($year, $month, $events = 0, $template = 0) {
 	}
 
 	# do the days in this month
-	$days_count = date( 't', $start_timestamp );
+	$days_count = date('t', $start_timestamp );
 	for($day = 1; $day <= $days_count; $day++ ) {
 		$template->set('day_number', $day);
 		if(($cell + 1) % 7 < 2) {
