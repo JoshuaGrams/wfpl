@@ -67,10 +67,15 @@ class tem {
 		return $this->keyval[$key];
 	}
 
+	# depricated (renamed show())
+	function sub($sub_template_name) {
+		$this->show($sub_template_name);
+	}
+
 	# run the template engine on one of the sub-templates and append the result
 	# to the keyval in the main array. See tem_test.php for an example of how
 	# this can be used.
-	function sub($sub_template_name) {
+	function show($sub_template_name) {
 		$this->keyval[$sub_template_name] .= template_run($this->sub_templates[$sub_template_name], $this->keyval);
 
 		# after running a sub-template, clear its sub-templates
@@ -188,7 +193,7 @@ class tem {
 
 	# return the contents of the top-level sub-templates
 	#
-	# this does not run the sub-templates, so if you've not called tem_sub() on them, they will be blank.
+	# this does not run the sub-templates, so if you've not called tem_show() on them, they will be blank.
 	#
 	# Return a hash.
 	#     keys: name of top level sub-template.
@@ -228,9 +233,14 @@ function tem_run($templ = false) {
 	return $GLOBALS['wfpl_template']->run($templ);
 }
 
+# depricated (renamed tem_show())
 function tem_sub($sub_template_name) {
+	tem_show($sub_template_name);
+}
+
+function tem_show($sub_template_name) {
 	tem_init();
-	$GLOBALS['wfpl_template']->sub($sub_template_name);
+	$GLOBALS['wfpl_template']->show($sub_template_name);
 }
 
 function tem_load($filename) {
