@@ -40,6 +40,7 @@ $GLOBALS['types'] = array(
 	'phone' =>      array('textbox',     'phone',      'varchar(32)'),
 	'state' =>      array('states',      'oneline',    'varchar(2)'),
 	'money' =>      array('textbox',     'money',      'varchar(32)'),
+	'date' =>       array('textbox',     'mdy_to_ymd', 'char(10)'),
 	'dollars' =>    array('textbox',     'dollars',    'varchar(32)'),
 	'url' =>        array('textbox',     'url',        'varchar(200)'),
 	'hidden' =>     array('hidden',      'unix',       'varchar(200)'),

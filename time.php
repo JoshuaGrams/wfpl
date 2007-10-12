@@ -119,4 +119,8 @@ function ymd_to_mdy($date) {
 	return sprintf('%02u/%02u/%04u', $month, $day, $year);
 }
 
+function enc_mdy($date) {
+	return ymd_to_mdy($date);
+}
+
 ?>

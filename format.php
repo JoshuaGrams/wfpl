@@ -150,6 +150,11 @@ function format_dollars($str) {
 	return format_money($str, false);
 }
 
+# date is edited as mm/dd/yyyy but stored as yyyy-mm-dd
+function format_mdy_to_ymd($str) {
+	return mdy_to_ymd(format_oneline($str));
+}
+
 function format_phone($str) {
 	$str = ereg_replace('[^0-9]', '', $str);
 	$str = ereg_replace('^1*', '', $str);
