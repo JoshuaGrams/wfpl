@@ -46,7 +46,11 @@ function ~form_name~_get_fields() {<!--~formats start~-->
 	if($_FILES['~name~'] && $_FILES['~name~']['error'] == 0) {
 		$~name~ = substr(save_uploaded_image('~name~', $GLOBALS['upload_directory']), strlen($GLOBALS['upload_directory']));
 	} else {
-		$~name~ = format_filename($_REQUEST['old_~name~']);
+		if($_REQUEST['delete_~name~'] == 'Yes') {
+			$name = '';
+		} else {
+			$~name~ = format_filename($_REQUEST['old_~name~']);
+		}
 	}<!--~end~-->
 
 	~form_name~_tem_sets(~php_fields~);
@@ -126,12 +130,7 @@ function ~form_name~_main() {<!--~opt_http_pass_2 start~-->
 		list(~php_fields~) = ~form_name~_get_fields();
 
 		if("you're happy with the POSTed values") {<!--~opt_db_4 start~-->
-			if($edit_id) {<!--~image_db start~-->
-				# uploading nothing means leaving it as is.
-				if(!$~name~ && $delete_~name~ != 'Yes') {
-					$~name~ = db_get_value('~form_name~', '~name~', 'where id=%i', $edit_id);
-				}
-				<!--~end~-->
+			if($edit_id) {
 				db_update('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~, 'where id=%i', $edit_id);
 				message('Entry updated.');
 			} else {
