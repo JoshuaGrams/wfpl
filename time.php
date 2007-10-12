@@ -81,7 +81,11 @@ function mdy_to_ymd($date) {
 	switch(count($parts)) {
 		case 1:
 			$year = $parts[0];
-			list($month, $day) = explode('/', date('m/d'));
+			if(strlen($year) == 0) {
+				list($month, $day, $year) = explode('/', date('m/d/Y'));
+			} else {
+				list($month, $day) = explode('/', date('m/d'));
+			}
 		break;
 		case 2:
 			list($month, $year) = $parts;
@@ -104,7 +108,11 @@ function ymd_to_mdy($date) {
 	switch(count($parts)) {
 		case 1:
 			$year = $parts[0];
-			list($month, $day) = explode('-', date('m-d'));
+			if(strlen($year) == 0) {
+				list($year, $month, $day) = explode('-', date('Y-m-d'));
+			} else {
+				list($month, $day) = explode('-', date('m-d'));
+			}
 		break;
 		case 2:
 			list($year, $month) = $parts;
