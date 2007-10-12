@@ -82,7 +82,15 @@ function ~form_name~_display_listing($where = 'order by ~always_field~ limit 100
 	return true;
 }
 <!--~end~-->
-function ~form_name~_main() {<!--~opt_http_pass_2 start~-->
+function ~form_name~_main() {
+	$ret = _~form_name~_main();
+	if($ret) {
+		return $ret;
+	}
+	display_messages()
+}
+
+function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
 	# To remove password protection, just delete this block:
 	if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != AUTH_USER || $_SERVER['PHP_AUTH_PW'] != AUTH_PASS) {
 		header('WWW-Authenticate: Basic realm="' . AUTH_REALM . '"');

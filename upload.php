@@ -185,10 +185,10 @@ function path_to($prog, $or_die = true) {
 	
 function _path_to($prog, $or_die) {
 	# relies on PHP's short-circuit mechanism
-	if(file_exists($convert = "/usr/local/bin/$prog") ||
-	   file_exists($convert = "/usr/bin/$prog") ||
-	   ($convert = `which convert` != '' && file_exists($convert))) {
-		return $convert;
+	if(file_exists($path = "/usr/local/bin/$prog") ||
+	   file_exists($path = "/usr/bin/$prog") ||
+	   ($path = `which $prog` != '' && file_exists($path))) {
+		return $path;
 	} else {
 		if($or_die) {
 			die("Failed to locate '$prog' executable.");
@@ -268,7 +268,7 @@ function make_thumbnail($filename, $max_width = '70', $max_height = '70') {
 function image_dimensions($image) {
 	$identify = path_to('identify');
 	$command = "$identify -format '%wx%h' " . escapeshellarg($image);
-	$dimensions = substr(`$command`, 0, -1); # substr() to remove newline
+	$dimensions = rtrim(`$command`);
 	if($dimensions == '') {
 		return false;
 	} else {
