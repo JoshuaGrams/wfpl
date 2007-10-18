@@ -42,7 +42,7 @@ function format_options($str, $name) {
 
 function format_int($str) {
 	$str = ereg_replace('[^0-9]', '', $str);
-	return ereg_replace('^0*([1-9])', '\1', $str);
+	return ereg_replace('^0*([0-9])', '\1', $str);
 }
 
 function format_decimal($str) {
