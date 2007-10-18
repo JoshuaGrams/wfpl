@@ -79,7 +79,13 @@ function run_php($basename = false) {
 	$html_exists = file_exists($html_file);
 	$php_exists = file_exists($php_file);
 
-	if(!$php_exists && !$html_exists) {
+	if(function_exists('cms_get')) {
+		$cms_content = cms_get($basename);
+	} else {
+		$cms_content = false;
+	}
+
+	if(!$php_exists && !$html_exists && !$cms_content) {
 		header('HTTP/1.0 404 File Not Found');
 		if(file_exists('404.php') || file_exists('404.html')) {
 			run_php('404');
@@ -125,9 +131,12 @@ function run_php($basename = false) {
 		if(file_exists('template.html')) {
 			$tem = new tem();
 			$tem->load("template.html");
+			if($cms_content) foreach($cms_content as $name => $val) {
+				$tem->append($name, $val);
+			}
 			$sections = tem_top_subs();
 			if($sections) foreach($sections as $name => $val) {
-				$tem->set($name, $val);
+				$tem->append($name, $val);
 			}
 
 			if(file_exists("$basename.css")) {

@@ -59,6 +59,15 @@ function enc_htmlbr($str) {
 	return $str;
 }
 
+# Encode for output in html. Spaces converted to &nbsp;
+#
+# Example: <option value="12">~foo.htmlnbsp~</option>
+function enc_htmlnbsp($str) {
+	$str = enc_html($str);
+	$str = str_replace(' ', '&nbsp;', $str);
+	return $str;
+}
+
 
 # HTML attribute.
 #
@@ -234,7 +243,7 @@ function encode_options($selected, $options, $keys_from) {
 			
 		$out .= '>';
 
-		$out .= enc_html($display);
+		$out .= enc_htmlnbsp($display);
 
 		$out .= "</option>\n";
 	}

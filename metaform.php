@@ -172,6 +172,8 @@ function make_sql() {
 			$tem->set('type', $sql);
 			if($sql == 'int') {
 				$tem->set('default', '0');
+			} elseif($format == 'yesno') {
+				$tem->set('default', '"No"');
 			} else {
 				$tem->set('default', '""');
 			}
