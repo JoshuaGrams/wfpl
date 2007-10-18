@@ -152,27 +152,27 @@ function enc_provinces($str) {
 
 define('PULLDOWN_ARRAY', 0); define('PULLDOWN_HASH', 1); define('PULLDOWN_2D', 2);
 
-function pulldown_options_to_hash($options, $keys_from) {
+function pulldown_options_to_2d($options, $keys_from) {
 	# convert other types of input to value=>display hash
 	switch($keys_from) {
 		case PULLDOWN_HASH:
-			return $options;
+			$new_options = array();
+			foreach($options as $value => $display) {
+				$new_options[] = array($value, $display);
+			}
+			return $new_options;
 		case PULLDOWN_ARRAY:
 			$new_options = array();
 			foreach($options as $opt) {
-				$new_options[$opt] = $opt;
+				$new_options[] = array($opt, $opt);
 			}
 			return $new_options;
 		break;
 		case PULLDOWN_2D:
-			$new_options = array();
-			foreach($options as $opt) {
-				$new_options[$opt[0]] = $opt[1];
-			}
-			return $new_options;
+			return $options;
 		break;
 		default:
-			die('unknown value: "' . print_r($keys_from) . '" passed in $keys_from parameter');
+			die('pulldown_options_to_2d(): unknown value: "' . print_r($keys_from) . '" passed in $keys_from parameter');
 	}
 }
 
@@ -196,7 +196,7 @@ function pulldown_options_to_hash($options, $keys_from) {
 #   multiple: UNTESTED set to true for multiple-select boxes. 
 
 function pulldown($name, $options, $keys_from = PULLDOWN_ARRAY, $multiple = false) {
-	$options = pulldown_options_to_hash($options, $keys_from);
+	$options = pulldown_options_to_2d($options, $keys_from);
 	$GLOBALS[$name . '_options'] = array();
 	$GLOBALS[$name . '_options']['options'] = $options;
 	$GLOBALS[$name . '_options']['multiple'] = $multiple;
@@ -210,7 +210,7 @@ function enc_options($values, $name) {
 	if($GLOBALS[$name . '_options']['multiple']) { # FIXME test this
 		$values = explode(', ', $values);
 	}
-	return encode_options($values, $GLOBALS[$name . '_options']['options'], PULLDOWN_HASH);
+	return encode_options($values, $GLOBALS[$name . '_options']['options'], PULLDOWN_2D);
 }
 
 # use this function along with a special template to generate the html for pulldowns and multiple select boxes.
@@ -225,10 +225,13 @@ function encode_options($selected, $options, $keys_from) {
 		$selected = array($selected);
 	}
 
-	$options = pulldown_options_to_hash($options, $keys_from);
+	if($keys_from != PULLDOWN_2D) {
+		$options = pulldown_options_to_2d($options, $keys_from);
+	}
 
 	$out = '';
-	foreach($options as $value => $display) {
+	foreach($options as $valdisp) {
+		list($value, $display) = $valdisp;
 		$out .= '<option';
 
 		if(in_array($value, $selected)) {
