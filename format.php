@@ -33,8 +33,11 @@ function format_options($str, $name) {
 		die("Couldn't find options for \"$name\". Be sure to call pulldown().");
 	}
 
-	if(!in_array($str, array_keys($GLOBALS[$name . '_options']['options']))) {
-		return '';
+	foreach($GLOBALS[$name . '_options']['options'] as $keyval) {
+		list($key, $value) = $keyval;
+		if($str == $key) {
+			return $str;
+		}
 	}
 
 	return $str;
