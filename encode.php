@@ -253,4 +253,19 @@ function enc_provinces($str) {
 	return encode_options($str, $provinces_assoc, PULLDOWN_HASH);
 }
 
+# returns "odd", then "even", then "odd" etc.
+function enc_evenodd($values, $name) {
+	if(!isset($GLOBALS['wfpl_even_odds'])) {
+		$GLOBALS['wfpl_even_odds'] = array();
+	}
+
+	if($GLOBALS['wfpl_even_odds'][$name]) {
+		$GLOBALS['wfpl_even_odds'][$name] = false;
+		return 'even';
+	} else {
+		$GLOBALS['wfpl_even_odds'][$name] = true;
+		return 'odd';
+	}
+}
+
 ?>
