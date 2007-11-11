@@ -42,8 +42,14 @@ function dwt_load($filename) {
 }
 
 function dwt_set_raw($name, $value) {
-	$GLOBALS['_dwt_keys'][] = $name;
-	$GLOBALS['_dwt_values'][] = $value;
+	$index = dwt_find_raw($name);
+	if($index) {
+		$GLOBALS['_dwt_keys'][$index] = $name;
+		$GLOBALS['_dwt_values'][$index] = $value;
+	} else {
+		$GLOBALS['_dwt_keys'][] = $name;
+		$GLOBALS['_dwt_values'][] = $value;
+	}
 }
 
 function dwt_set($name, $value) {
@@ -76,6 +82,19 @@ function dwt_append_raw($name, $value) {
 
 function dwt_append($name, $value) {
 	dwt_append_raw("<!-- TemplateBeginEditable name=\"$name\" -->", $value);
+}
+
+function dwt_prepend_raw($name, $value) {
+	$index = dwt_find_raw($name);
+	if($index !== null) {
+		$GLOBALS['_dwt_values'][$index] = $value . $GLOBALS['_dwt_values'][$index];
+	} else {
+		dwt_set_raw($name, $value);
+	}
+}
+
+function dwt_prepend($name, $value) {
+	dwt_prepend_raw("<!-- TemplateBeginEditable name=\"$name\" -->", $value);
 }
 
 function dwt_output($filename = null) {

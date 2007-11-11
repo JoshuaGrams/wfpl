@@ -111,7 +111,6 @@ function db_printf($str) {
 
 # This function does the work, but takes the parameters in an array
 function _db_printf($str, $args) {
-	$args = array_reverse($args); # because array_pop() takes from the end
 	$out = '';
 	while($str) {
 		$pos = strpos($str, '%');
@@ -129,11 +128,11 @@ function _db_printf($str, $args) {
 		$str = substr($str, $pos + 2);
 
 		if($chr == '"') {
-			$out .= '"' . enc_sql(array_pop($args)) . '"';
+			$out .= '"' . enc_sql(array_shift($args)) . '"';
 		} elseif($chr == 's') {
-			$out .= enc_sql(array_pop($args));
+			$out .= enc_sql(array_shift($args));
 		} elseif($chr == 'i') {
-			$int = format_int(array_pop($args));
+			$int = format_int(array_shift($args));
 			if($int == '') $int = '0';
 			$out .= $int;
 		} else {
