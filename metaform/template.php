@@ -87,7 +87,7 @@ function ~form_name~_main() {
 	if($ret) {
 		return $ret;
 	}
-	display_messages()
+	display_messages();
 }
 
 function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
