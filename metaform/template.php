@@ -76,9 +76,9 @@ function ~form_name~_display_listing($where = 'order by ~always_field~ limit 100
 			$~always_field~ = '--';
 		}
 		tem_set('~always_field~', $~always_field~);
-		tem_sub('listing_row');
+		tem_show('listing_row');
 	}
-	tem_sub('listings');
+	tem_show('listings');
 	return true;
 }
 <!--~end~-->
@@ -106,7 +106,7 @@ function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
 	if($edit_id) {
 		# add hidden field for database id of row we're editing
 		tem_set('~form_name~_edit_id', $edit_id);
-		tem_sub('editing');
+		tem_show('editing');
 	}
 
 	$delete_id = format_int($_REQUEST['~form_name~_delete_id']);
@@ -131,7 +131,7 @@ function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
 			}
 		}
 		<!--~end~-->
-		tem_sub('new_msg');
+		tem_show('new_msg');
 	}<!--~end~-->
 
 	if(isset($_REQUEST['~always_field~'])) {
@@ -166,7 +166,7 @@ function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
 			}<!--~end~-->
 			if($error !== true) {<!--~opt_listing_4 start~-->
 				~form_name~_display_listing();<!--~end~--><!--~opt_listing_4_else start~-->
-				tem_sub('thankyou');<!--~end~-->
+				tem_show('thankyou');<!--~end~-->
 				return;
 			}
 		}
@@ -187,10 +187,10 @@ function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
 
 	# this has to be later in the file because it requres that ~always_field~ be set already
 	if($edit_id) {
-		tem_sub('edit_msg');
+		tem_show('edit_msg');
 	}
 
-	tem_sub('form');
+	tem_show('form');
 }
 
 ?>
