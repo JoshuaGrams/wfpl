@@ -4,17 +4,29 @@
 <head>
   <title>~form_name~ entry</title>
   <link rel="stylesheet" href="style.css" type="text/css" /><!--~html_editor_headers start~-->
-<script type="text/javascript" src="fckeditor/fckeditor.js"></script>
-  <script type="text/javascript" src="fckeditor/fckconfig.js"></script>
-  <script type="text/javascript">
-<!--
-	window.onload = function()
-	{<!--~replace_textarea start~-->
-		var fck_~html_field_name~ = new FCKeditor('~html_field_name~');
-		fck_~html_field_name~.Height = 550;
-		fck_~html_field_name~.ReplaceTextarea();<!--~end~-->
-	}
--->
+  <script type="text/javascript" src="code/tiny_mce/tiny_mce.js"></script>
+  <script language="javascript" type="text/javascript">
+//<![CDATA[
+    tinyMCE.init({
+      mode : 'textareas',
+      theme : 'advanced',
+      plugins : 'contextmenu,table,filemanager',
+      editor_selector : 'html_editor',
+      gecko_spellcheck : true,
+      object_resizing : false,
+      theme_advanced_toolbar_location : "top",
+      theme_advanced_toolbar_align : "left",
+      theme_advanced_path_location : "bottom",
+      inline_styles : true,
+      theme_advanced_blockformats : "p,h1,h2,h3,pre",
+      theme_advanced_buttons3 : "hr,removeformat,visualaid,|,tablecontrols,|,charmap",
+      doctype: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
+      content_css : 'style.css',
+      //document_base_url : 'http://example.com/',
+      width: '448',
+      height: '550',
+    });
+//]]>
   </script><!--~end~-->
 </head>
 
@@ -36,7 +48,7 @@
   <form action="~form_name~.html~enctype_attr~" method="post"><!--~opt_db_2 start~--><!--~~editing start~~--><input type="hidden" name="~form_name~_edit_id" value="~~~form_name~_edit_id.attr~~" /><!--~~end~~--><!--~end~--><!--~uploads start~--><input type="hidden" name="MAX_FILE_SIZE" value="~~upload_max_filesize~~" /><!--~end~-->
     <table cellspacing="0" cellpadding="4" border="0" summary=""><!--~row start~-->
 
-      <tr><!--~image start~--><td class="caption">~caption.html~: </td><td class="field"><input type="file" name="~name~" /><input type="hidden" name="old_~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~textbox start~--><td class="caption">~caption.html~: </td><td class="field"><input type="text" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~date start~--><td class="caption">~caption.html~: </td><td class="field"><input type="text" name="~name~" value="~~~name~.dmy.attr~~" /> dd/mm/yy</td><!--~end~--><!--~password start~--><td class="caption">~caption.html~: </td><td class="field"><input type="password" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~textarea start~--><td class="caption">~caption.html~: </td><td class="field"><textarea rows="9" cols="22" name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~html start~--><td class="caption">~caption.html~: </td><td></td></tr><tr><td colspan="2"><textarea rows="20" cols="50" name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~pulldown start~--><td class="caption">~caption.html~: </td><td class="field"><select name="~name~"><option value="">Choose One:</option><!--~~~name~.options~~--></select></td><!--~end~--><!--~states start~--><td class="caption">~caption.html~: </td><td class="field"><select name="~name~"><option value="">Choose One:</option><!--~~~name~.states~~--></select></td><!--~end~--><!--~radio start~--><td class="caption">~caption.html~: </td><td class="field"><input type="radio" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~checkbox start~--><td class="caption">~caption.html~? </td><td class="field"><input type="checkbox" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~leftcheck start~--><td class="caption"><input type="checkbox" name="~name~~~~name~.checked~~" /></td><td class="right_caption">~caption.html~?</td><!--~end~--><!--~submit start~--><td class="submit_row" colspan="2"><input type="submit" name="~name~" value="~caption.attr~" /></td><!--~end~--></tr><!--~end~-->
+      <tr><!--~image start~--><td class="caption">~caption.html~: </td><td class="field"><input type="file" name="~name~" /><input type="hidden" name="old_~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~textbox start~--><td class="caption">~caption.html~: </td><td class="field"><input type="text" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~date start~--><td class="caption">~caption.html~: </td><td class="field"><input type="text" name="~name~" value="~~~name~.dmy.attr~~" /> dd/mm/yy</td><!--~end~--><!--~password start~--><td class="caption">~caption.html~: </td><td class="field"><input type="password" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~textarea start~--><td class="caption">~caption.html~: </td><td class="field"><textarea rows="9" cols="22" name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~html start~--><td class="caption">~caption.html~: </td><td></td></tr><tr><td colspan="2"><textarea class="html_editor" rows="20" cols="50" name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~pulldown start~--><td class="caption">~caption.html~: </td><td class="field"><select name="~name~"><option value="">Choose One:</option><!--~~~name~.options~~--></select></td><!--~end~--><!--~states start~--><td class="caption">~caption.html~: </td><td class="field"><select name="~name~"><option value="">Choose One:</option><!--~~~name~.states~~--></select></td><!--~end~--><!--~radio start~--><td class="caption">~caption.html~: </td><td class="field"><input type="radio" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~checkbox start~--><td class="caption">~caption.html~? </td><td class="field"><input type="checkbox" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~leftcheck start~--><td class="caption"><input type="checkbox" name="~name~~~~name~.checked~~" /></td><td class="right_caption">~caption.html~?</td><!--~end~--><!--~submit start~--><td class="submit_row" colspan="2"><input type="submit" name="~name~" value="~caption.attr~" /></td><!--~end~--></tr><!--~end~-->
     </table>
   </form>
 <!--~end~--><!--~~end~~-->
