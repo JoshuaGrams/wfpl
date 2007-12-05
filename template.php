@@ -62,6 +62,11 @@ class tem {
 		$this->keyval[$key] .= $value;
 	}
 
+	# like set() but prepends
+	function prepend($key, $value) {
+		$this->keyval[$key] = $value . $this->keyval[$key];
+	}
+
 	# clear a value. Functionally equivalent to set($key, '') but cleaner and more efficient
 	function clear($key) {
 		unset($this->keyval[$key]);
@@ -233,6 +238,11 @@ function tem_init() {
 function tem_append($key, $value) {
 	tem_init();
 	$GLOBALS['wfpl_template']->append($key, $value);
+}
+	
+function tem_prepend($key, $value) {
+	tem_init();
+	$GLOBALS['wfpl_template']->prepend($key, $value);
 }
 	
 function tem_set($key, $value) {

@@ -112,7 +112,7 @@ function format_yesno($str) {
 
 function format_email($str) {
 	# FIXME
-	return format_oneline($str);
+	return trim(format_oneline($str));
 }
 
 function format_url($str) {
