@@ -236,21 +236,37 @@ function encode_options($selected, $options, $keys_from) {
 	return $out;
 }
 
+$GLOBALS['wfpl_states_assoc'] = array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => "Arkansas", "CA" => "California", "CO" => "Colorado", "CT" => "Connecticut", "DE" => "Delaware", "FL" => "Florida", "GA" => "Georgia", "HI" => "Hawaii", "ID" => "Idaho", "IL" => "Illinois", "IN" => "Indiana", "IA" => "Iowa", "KS" => "Kansas", "KY" => "Kentucky", "LA" => "Louisiana", "ME" => "Maine", "MD" => "Maryland", "MA" => "Massachusetts", "MI" => "Michigan", "MN" => "Minnesota", "MS" => "Mississippi", "MO" => "Missouri", "MT" => "Montana", "NE" => "Nebraska", "NV" => "Nevada", "NH" => "New Hampshire", "NJ" => "New Jersey", "NM" => "New Mexico", "NY" => "New York", "NC" => "North Carolina", "ND" => "North Dakota", "OH" => "Ohio", "OK" => "Oklahoma", "OR" => "Oregon", "PA" => "Pennsylvania", "RI" => "Rhode Island", "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont", "VA" => "Virginia", "WA" => "Washington", "DC" => "Washington, DC", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming");
 
 # display <option>s
 function enc_states($str) {
-	$states_assoc = array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => "Arkansas", "CA" => "California", "CO" => "Colorado", "CT" => "Connecticut", "DE" => "Delaware", "FL" => "Florida", "GA" => "Georgia", "HI" => "Hawaii", "ID" => "Idaho", "IL" => "Illinois", "IN" => "Indiana", "IA" => "Iowa", "KS" => "Kansas", "KY" => "Kentucky", "LA" => "Louisiana", "ME" => "Maine", "MD" => "Maryland", "MA" => "Massachusetts", "MI" => "Michigan", "MN" => "Minnesota", "MS" => "Mississippi", "MO" => "Missouri", "MT" => "Montana", "NE" => "Nebraska", "NV" => "Nevada", "NH" => "New Hampshire", "NJ" => "New Jersey", "NM" => "New Mexico", "NY" => "New York", "NC" => "North Carolina", "ND" => "North Dakota", "OH" => "Ohio", "OK" => "Oklahoma", "OR" => "Oregon", "PA" => "Pennsylvania", "RI" => "Rhode Island", "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont", "VA" => "Virginia", "WA" => "Washington", "DC" => "Washington, DC", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming");
 	$ret = '';
 
-	return encode_options($str, $states_assoc, PULLDOWN_HASH);
+	return encode_options($str, $GLOBALS['wfpl_states_assoc'], PULLDOWN_HASH);
 }
+
+$GLOBALS['wfpl_provinces_assoc'] = array("AB" => "Alberta", "BC" => "British Columbia", "MB" => "Manitoba", "NF" => "Newfoundland", "NB" => "New Brunswick", "NS" => "Nova Scotia", "NT" => "Northwest Territories", "NU" => "Nunavut", "ON" => "Ontario", "PE" => "Prince Edward Island", "QC" => "Quebec", "SK" => "Saskatchewan", "YT" => "Yukon Territory");
 
 # display <option>s
 function enc_provinces($str) {
-	$provinces_assoc = array("AB" => "Alberta", "BC" => "British Columbia", "MB" => "Manitoba", "NF" => "Newfoundland", "NB" => "New Brunswick", "NS" => "Nova Scotia", "NT" => "Northwest Territories", "NU" => "Nunavut", "ON" => "Ontario", "PE" => "Prince Edward Island", "QC" => "Quebec", "SK" => "Saskatchewan", "YT" => "Yukon Territory");
 	$ret = '';
 
-	return encode_options($str, $provinces_assoc, PULLDOWN_HASH);
+	return encode_options($str, $GLOBALS['wfpl_provinces_assoc'], PULLDOWN_HASH);
+}
+
+# returns "odd", then "even", then "odd" etc.
+function enc_evenodd($values, $name) {
+	if(!isset($GLOBALS['wfpl_even_odds'])) {
+		$GLOBALS['wfpl_even_odds'] = array();
+	}
+
+	if($GLOBALS['wfpl_even_odds'][$name]) {
+		$GLOBALS['wfpl_even_odds'][$name] = false;
+		return 'even';
+	} else {
+		$GLOBALS['wfpl_even_odds'][$name] = true;
+		return 'odd';
+	}
 }
 
 ?>

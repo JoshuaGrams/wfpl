@@ -96,6 +96,13 @@ class tem {
 		}
 	}
 
+	function show_separated($sub_template_name) {
+		if($this->get($sub_template_name)) {
+			$this->show($sub_template_name . '_sep');
+		}
+		$this->show($sub_template_name);
+	}
+
 	# this is used by tem::load() and should be otherwise useless
 	function _load(&$in, &$out, &$parents, &$parent) {
 		while($in) {
@@ -262,6 +269,12 @@ function tem_show($sub_template_name) {
 	tem_init();
 	$GLOBALS['wfpl_template']->show($sub_template_name);
 }
+
+function tem_show_separated($sub_template_name) {
+	tem_init();
+	$GLOBALS['wfpl_template']->show_separated($sub_template_name);
+}
+
 
 function tem_load($filename) {
 	tem_init();
