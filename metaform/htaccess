@@ -1,3 +1,4 @@
+php_flag magic_quotes_gpc off
 RewriteEngine  on
 RewriteRule    ^$  /run.php
 RewriteRule    ^[^/]*\.html$  /~form~/run.php
