@@ -59,13 +59,16 @@ function this_url() {
 # $url can be:
 #   1) a full URL
 #   2) an absolute path
-#   3) a filename (you can pass a directory/file.html and such, but "../" prefix is not supported)
+#   3) a filename (you can pass a directory/file.html and such, but "../" prefix is not supported yet)
 function redirect($url, $status = '302 Moved Temporarily', $message = '') {
 	if(!strpos($url, ':')) {
+		while(substr($url, 0, 2) == './') {
+			$url = substr($url, 2);
+		}
 		if(substr($url, 0, 1) == '/') {
 			$url = this_url_sans_path() . $url;
 		} else {
-			$url = ereg_replace('/[^/]*([?].*)?$', "/$url", this_url());
+			$url = ereg_replace('/[^/]*$', "/$url", this_url());
 		}
 	}
 			

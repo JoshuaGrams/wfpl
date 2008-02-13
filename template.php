@@ -290,7 +290,8 @@ function tem_output($filename = false) {
 
 # this is used in template_run() and should be of no other use
 function template_filler($matches) {
-	list($tag, $enc) = explode('.', $matches[1], 2);
+	$match = array_pop($matches);
+	list($tag, $enc) = explode('.', $match, 2);
 	$value = $GLOBALS['wfpl_template_keyval'][$tag];
 	if($enc) {
 		$encs = explode('.', $enc);
@@ -312,7 +313,7 @@ function template_filler($matches) {
 # returns the result.
 function template_run($template, &$keyval) {
 	$GLOBALS['wfpl_template_keyval'] =& $keyval;
-	return preg_replace_callback(array('|<!--~([^~]*)~-->|', '|~([^~]*)~|', '|<span class="template">([^<]*)</span>|', '|<p class="template">([^<]*)</p>|'), 'template_filler', $template);
+	return preg_replace_callback('`<!--~([^~]*)~-->|~([^~]*)~|<span class="template">([^<]*)</span>|<p class="template">([^<]*)</p>`', 'template_filler', $template);
 }
 
 function tem_top_sub_names() {
