@@ -87,6 +87,20 @@ function format_filename($str) {
 	return ereg_replace('^[.-]', '_', $str);
 }
 
+function format_h_w_image($str) {
+	$fields = explode(' ', $str);
+	if(count($fields) != 3) {
+		return '';
+	}
+
+	list($width, $height, $filename) = $fields;
+	$width = format_int_0($width);
+	$height = format_int_0($height);
+	$filename = format_filename($filename);
+
+	return "$width $height $filename";
+}
+
 function format_varname($str) {
 	$str = strtolower($str);
 	$str = ereg_replace('[^a-z0-9_]', '_', $str);
