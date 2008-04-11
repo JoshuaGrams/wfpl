@@ -212,7 +212,9 @@ function db_get_value($table, $columns, $where = '') {
 }
 
 function db_count($table, $where = '') {
-	return db_get_value($table, 'count(*)', $where);
+	$args = func_get_args();
+	array_splice($args, 1, 0, array('count(*)'));
+	return call_user_func_array('db_get_value', $args);
 }
 
 # call either of these ways:

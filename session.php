@@ -71,6 +71,7 @@ function session_new($length = 86400) {
 	$GLOBALS['session_key'] = $session_key;
 	$_REQUEST['session_key'] = $session_key; #just in case someone calls session_exists() after session_new()
 	session_touch($length);
+	return $GLOBALS['session_key'];
 }
 
 # call to renew the timeout for the session.
