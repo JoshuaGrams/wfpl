@@ -177,7 +177,7 @@ function make_sql() {
 			} else {
 				$tem->set('default', '""');
 			}
-			$tem->sub('column');
+			$tem->show('column');
 		}
 	}
 	view_headers();
@@ -216,32 +216,32 @@ function make_html($whole_file = true) {
 		list($name, $type, $input, $format, $sql) = $field;
 		$tem->set('name', $name);
 		$tem->set('caption', format_caption($name));
-		$tem->sub($input);
+		$tem->show($input);
 		if($input != 'hidden') {
-			$tem->sub('row');
+			$tem->show('row');
 		}
 		if($input == 'image' && !$uploads_output_already) {
-			$tem->sub('uploads');
+			$tem->show('uploads');
 			$tem->set('enctype_attr', '" enctype="multipart/form-data');
 			$uploads_output_already = true;
 		} elseif($input == 'html') {
 			$has_html_editors = true;
 			$tem->set('html_field_name', $name);
-			$tem->sub('replace_textarea');
+			$tem->show('replace_textarea');
 		}
 	}
 
 	if($GLOBALS['opt_db'] == 'Yes') {
-		$tem->sub('opt_db_1');
-		$tem->sub('opt_db_2');
+		$tem->show('opt_db_1');
+		$tem->show('opt_db_2');
 	} else {
-		$tem->sub('opt_db_1_else');
+		$tem->show('opt_db_1_else');
 	}
 
 	if($GLOBALS['opt_listing'] == 'Yes') {
-		$tem->sub('opt_listing_1');
+		$tem->show('opt_listing_1');
 	} else {
-		$tem->sub('opt_listing_1_else');
+		$tem->show('opt_listing_1_else');
 	}
 
 	if($GLOBALS['opt_email'] == 'Yes' && $GLOBALS['opt_db'] != 'Yes') {
@@ -251,13 +251,13 @@ function make_html($whole_file = true) {
 		$tem->set('name', 'save');
 		$tem->set('caption', 'Save');
 	}
-	$tem->sub('submit');
-	$tem->sub('row');
+	$tem->show('submit');
+	$tem->show('row');
 
-	$tem->sub('form');
+	$tem->show('form');
 
 	if($has_html_editors) {
-		$tem->sub('html_editor_headers');
+		$tem->show('html_editor_headers');
 	}
 
 	if($whole_file) {
@@ -295,22 +295,22 @@ function make_php() {
 				$php_fields .= '$' . $name;
 			}
 			if($input == 'image') {
-				$tem->sub('image_upload');
-				$tem->sub('image_db');
+				$tem->show('image_upload');
+				$tem->show('image_db');
 				if(!$image_included_yet) {
-					$tem->sub('image_include');
-					$tem->sub('upload_max');
-					$tem->sub('upload_settings');
+					$tem->show('image_include');
+					$tem->show('upload_max');
+					$tem->show('upload_settings');
 					$image_included_yet = true;
 				}
 			} else {
 				if($input == 'pulldown') {
-					$tem->sub('pulldowns');
-					$tem->sub('pulldown_format_extra');
+					$tem->show('pulldowns');
+					$tem->show('pulldown_format_extra');
 				}
-				$tem->sub('formats');
+				$tem->show('formats');
 			}
-			$tem->sub('tem_sets');
+			$tem->show('tem_sets');
 		}
 	}
 
@@ -319,28 +319,28 @@ function make_php() {
 	$tem->set('php_fields', $php_fields);
 	$tem->set('metaform_url', edit_url());
 	if($GLOBALS['opt_listing'] == 'Yes') {
-		$tem->sub('opt_listing_1');
-		$tem->sub('opt_listing_2');
-		$tem->sub('opt_listing_3');
-		$tem->sub('opt_listing_4');
+		$tem->show('opt_listing_1');
+		$tem->show('opt_listing_2');
+		$tem->show('opt_listing_3');
+		$tem->show('opt_listing_4');
 	} else {
-		$tem->sub('opt_listing_3_else');
-		$tem->sub('opt_listing_4_else');
+		$tem->show('opt_listing_3_else');
+		$tem->show('opt_listing_4_else');
 	}
 	if($GLOBALS['opt_db'] == 'Yes') {
-		$tem->sub('opt_db_1');
-		$tem->sub('opt_db_2');
-		$tem->sub('opt_db_3');
-		$tem->sub('opt_db_4');
-		$tem->sub('opt_db_5');
+		$tem->show('opt_db_1');
+		$tem->show('opt_db_2');
+		$tem->show('opt_db_3');
+		$tem->show('opt_db_4');
+		$tem->show('opt_db_5');
 	}
 	if($GLOBALS['opt_email'] == 'Yes') {
-		$tem->sub('opt_email_1');
-		$tem->sub('opt_email_2');
+		$tem->show('opt_email_1');
+		$tem->show('opt_email_2');
 	}
 	if($GLOBALS['opt_http_pass'] == 'Yes') {
-		$tem->sub('opt_http_pass_1');
-		$tem->sub('opt_http_pass_2');
+		$tem->show('opt_http_pass_1');
+		$tem->show('opt_http_pass_2');
 	}
 	return $tem->run();
 }
@@ -371,10 +371,11 @@ function make_email() {
 		$tem->set('name', $name);
 		$tem->set('caption', $name); # fixme
 		if($type == 'textarea') {
-			$tem->sub('multi_line');
+			$tem->show('multi_line');
 		} else {
-			$tem->sub('fields');
+			$tem->show('normal');
 		}
+		$tem->show('fields');
 	}
 	return $tem->run();
 }
@@ -398,7 +399,7 @@ function preview() {
 	$preview_tem = new tem();
 	$preview_tem->load_str(make_html(false));
 	if($GLOBALS['opt_db'] == 'Yes') {
-		$preview_tem->sub('new_msg');
+		$preview_tem->show('new_msg');
 	}
 	$fields = get_fields();
 	foreach($fields as $field) {
