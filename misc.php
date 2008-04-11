@@ -33,6 +33,10 @@ function this_month() {
 	return ereg_replace('^0', '', strftime('%m'));
 }
 
+# return today's date in yyyy-mm-dd format
+function today_ymd() {
+	return strftime('%Y-%m-%d');
+}
 
 # php4 is broken, in that you cannot set a default value for a parameter that
 # is passed by reference. So, this is set up to use the following screwy
