@@ -74,7 +74,7 @@ function session_new($length = 86400) {
 }
 
 # call to renew the timeout for the session.
-# assumes there's a session. call session_init() if you'd like one auto-create one if not found.
+# assumes there's a session. call init_session() if you'd like one auto-create one if not found.
 function session_touch($length = false) {
 	if(!$length) {
 		$length = db_get_value('wfpl_sessions', 'length', 'where id=%i', $GLOBALS['session_id']);

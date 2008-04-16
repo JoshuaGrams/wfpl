@@ -44,4 +44,25 @@ function pop_int(&$string) {
 	return $int;
 }
 
+# convert an array (not hash) to a string of bytes
+function array_to_raw($data) {
+	$ret = to_raw_int(count($data));
+	foreach($data as $dat) {
+		$ret .= to_raw_int(strlen($dat));
+		$ret .= $dat;
+	}
+	return $ret;
+}
+
+function raw_to_array($data) {
+	$header_count = pop_int($data);
+	$ret = array();
+	while($header_count--) {
+		$size = pop_int($data);
+		$ret[] = substr($data, 0, $size);
+		$data = substr($data, $size);
+	}
+	return $ret;
+}
+
 ?>

@@ -40,7 +40,9 @@ function file_run($filename) {
 	require_once($filename);
 	$func = basename($filename, '.php') . '_main';
 
-	return $func();
+	if(function_exists($func)) {
+		return $func();
+	}
 }
 
 ?>

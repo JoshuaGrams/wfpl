@@ -47,28 +47,6 @@ function fdb_get_dir() {
 	return $GLOBALS['fdb_dir'];
 }
 
-# return a 4 bytes that represent the passed integer as a big-endian binary number
-function to_raw_int($int) {
-	return chr($int >> 24) . chr(($int >> 16) & 0xff) . chr(($int >> 8) & 0xff) . chr($int & 0xff);
-}
-
-# return a php number from the string you pass in. The first 4 bytes of the
-# string are read in as a binary value in big-endian format.
-function from_raw_int($quad) {
-	return (ord(substr($quad, 0, 1)) << 24) + (ord(substr($quad, 1, 1)) << 16) + (ord(substr($quad, 2, 1)) << 8) + ord(substr($quad, 3, 1));
-}
-
-function int_at($string, $index) {
-	return from_raw_int(substr($string, $index * 4, 4));
-}
-
-# remove the first 4 bytes of the string, and return them as an int
-function pop_int(&$string) {
-	$int = from_raw_int(substr($string, 0, 4));
-	$string = substr($string, 4);
-	return $int;
-}
-
 
 function fdb_fix_key($key) {
 	$key = ereg_replace('[^a-z0-9.-]', '_', strtolower($key));
@@ -94,14 +72,7 @@ function fdb_geta($key) {
 	if($data === false) {
 		return false;
 	}
-	$header_count = pop_int($data);
-	$out = array();
-	while($header_count--) {
-		$size = pop_int($data);
-		$out[] = substr($data, 0, $size);
-		$data = substr($data, $size);
-	}
-	return $out;
+	return raw_to_array($data);
 }
 
 # returns:
@@ -130,12 +101,7 @@ function fdb_set($key, $data) {
 	if(!is_array($data)) {
 		$data = array($data);
 	}
-	$out = to_raw_int(count($data));
-	foreach($data as $dat) {
-		$out .= to_raw_int(strlen($dat));
-		$out .= $dat;
-	}
-	fdb_set_raw($key, $out);
+	fdb_set_raw($key, array_to_raw($data));
 }
 
 function fdb_delete($key) {
