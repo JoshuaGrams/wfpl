@@ -169,6 +169,7 @@ function format_dollars($str) {
 
 # date is edited as mm/dd/yyyy but stored as yyyy-mm-dd
 function format_mdy_to_ymd($str) {
+	require_once('code/wfpl/time.php');
 	return mdy_to_ymd(format_oneline($str));
 }
 
