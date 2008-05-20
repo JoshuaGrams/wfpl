@@ -89,6 +89,7 @@ function display_messages($template = 0) {
 			$template->sub('message_box');
 		}
 		$template->sub('message_container');
+		unset($GLOBALS['wfpl_messages']);
 	}
 }
 
