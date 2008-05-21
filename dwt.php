@@ -97,6 +97,19 @@ function dwt_prepend($name, $value) {
 	dwt_prepend_raw("<!-- TemplateBeginEditable name=\"$name\" -->", $value);
 }
 
+function dwt_get_raw($name) {
+	$index = dwt_find_raw($name);
+	if($index !== null) {
+		return $GLOBALS['_dwt_values'][$index];
+	} else {
+		return false;
+	}
+}
+
+function dwt_get($name) {
+	return dwt_get_raw("<!-- TemplateBeginEditable name=\"$name\" -->");
+}
+
 function dwt_output($filename = null) {
 	if($filename !== null) {
 		dwt_load($filename);

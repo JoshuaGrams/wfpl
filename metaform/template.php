@@ -1,10 +1,9 @@
 <?php
 
-# This form requires wfpl. If you didn't recieve wfpl along with this file,
-# see: http://jasonwoof.org/wfpl
+# This form requires wfpl. See: http://jasonwoof.org/wfpl
 
-# This form was auto-generated. If you would like to alter the parameters and
-# generate a new one try this URL:
+# This form was initially auto-generated. If you would like to alter the
+# parameters and generate a new one try this URL:
 #
 # ~metaform_url~
 
@@ -33,7 +32,6 @@ define('AUTH_USER', 'fixme');
 define('AUTH_PASS', 'fixme');
 <!--~end~-->
 
-if(!file_exists('code/wfpl/template.php')) { die('This form requires <a href="http://jasonwoof.org/wfpl">wfpl</a>.'); }
 require_once('code/wfpl/template.php');
 require_once('code/wfpl/format.php');
 require_once('code/wfpl/messages.php');

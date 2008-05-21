@@ -125,7 +125,16 @@ function enc_upper($str) {
 	return strtoupper($str);
 }
 
-function enc_ddmmyyyyhhmm($seconds) {
+# pass date in the form 2008-05-23
+# ercodes date as 05/23/2008
+function enc_mmddyyyy($yyyy_mm_dd) {
+	if(strlen($yyyy_mm_dd) != 10) {
+		return date('m/d/Y');
+	}
+	return substr($yyyy_mm_dd, 5, 2) . '/' . substr($yyyy_mm_dd, 8, 2) . '/' . substr($yyyy_mm_dd, 0, 4);
+}
+
+function enc_mmddyyyyhhmm($seconds) {
 	return date('m/d/Y g:ia', (int)$seconds);
 }
 

@@ -48,7 +48,7 @@ if(!isset($GLOBALS['wfpl_db_handle'])) {
 
 # generate a new random 16-character string
 function session_generate_key() {
-	$character_set = "abcdefghijklmnopqrstuvwqyzABCDEFGHIJKLMNOPQRSTUVWQYZ0123456789";
+	$character_set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     $id = "                ";
 
 	# PHP 4.2.0 and up seed the random number generator for you.
