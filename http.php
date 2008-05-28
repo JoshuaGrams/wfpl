@@ -45,6 +45,22 @@ function this_url_sans_path() {
 	return $url;
 }
 
+# just the hostname, no port number
+function this_host() {
+	if($_SERVER['HTTP_HOST']) {
+		$host = $_SERVER['HTTP_HOST'];
+		$p = strpos($host, ':');
+		if($p) {
+			$host = substr($host, 0, $p);
+		}
+		return $host;
+	} else {
+		return $_SERVER['SERVER_NAME'];
+	}
+}
+
+
+
 # return our best guess at the url used to access this page
 function this_url() {
 	$url = this_url_sans_path();

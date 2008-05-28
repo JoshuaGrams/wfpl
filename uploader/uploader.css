@@ -1,0 +1,4 @@
+#wfpl_progress_post_response { display: none; }
+#wfpl_progress_section { position: absolute; left: -2000px; top: 0px; }
+#wfpl_progress_bar_border { width: 200px; height: 16px; border: 1px solid #ddd; font: 11px Verdana; }
+#wfpl_progress_bar { text-align: center; width: 200px; height: 16px; margin: 0 auto 0 0; background: transparent url(images/wfpl_uploader_bar.png) no-repeat -200px 0px; }

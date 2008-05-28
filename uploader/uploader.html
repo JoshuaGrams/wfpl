@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+</head>
+
+<body>
+<!--~main start~-->
+  <div id="wfpl_progress_form">
+    <form action="http://~host~:~port~/~filename~" enctype="multipart/form-data" target="wfpl_progress_post_response" method="post">
+      <p>Upload a file: <input type="file" name="wfpl_uploader_file" id="wfpl_uploader_file" /></p>
+
+      <p><input type="submit" onclick="submitting()" value="Submit" /></p>
+    </form>
+  </div>
+
+  <p><iframe id="wfpl_progress_post_response" name="wfpl_progress_post_response"></iframe></p>
+
+  <div id="wfpl_progress_section">
+    <h2 id="wfpl_progress_header">Uploading...</h2>
+
+    <div id="wfpl_progress_bar_border">
+      <div id="wfpl_progress_bar"></div>
+    </div>
+  </div>
+<!--~end~-->
+</body>
+</html>

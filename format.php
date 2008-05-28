@@ -81,11 +81,19 @@ function format_zip($str) {
 	return $str;
 }
 
-function format_filename($str) {
-	$str = strtolower($str);
-	$str = ereg_replace('[^a-z0-9_.-]', '_', $str);
+function format_filename($str, $allow_uppercase = false) {
+	if(!$allow_uppercase) {
+		$str = strtolower($str);
+	}
+	$str = ereg_replace('[^a-zA-Z0-9_.-]', '_', $str);
 	return ereg_replace('^[.-]', '_', $str);
 }
+
+function client_path_to_filename($path) {
+	$filename = ereg_replace(".*[:/\\]", '', $path);
+	return format_filename($filename, true);
+}
+
 
 function format_h_w_image($str) {
 	$fields = explode(' ', $str);

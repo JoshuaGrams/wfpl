@@ -18,18 +18,8 @@
 #  along with wfpl; if not, write to the Free Software Foundation, Inc., 51
 #  Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# you'll need this file that calls db_connect()
-if(!isset($GLOBALS['wfpl_db_handle'])) {
-	if(file_exists('db_connect.php')) {
-		require_once('db_connect.php');
-	} elseif(file_exists('code/db_connect.php')) {
-		require_once('code/db_connect.php');
-	} else {
-		die("session.php requires a file db_connect.php or that you call db_connect() first. See code/wfpl/db.php for more information.");
-	}
-}
 
-# and these database tables:
+# you'll need these database tables:
 # create table wfpl_sessions (id int unique auto_increment, session_key varchar(16), length int, expires int);
 # create table wfpl_session_data (id int unique auto_increment, session_id int, name varchar(100), value text);
 # run this command to install/clear the tables:
