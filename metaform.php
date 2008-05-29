@@ -321,10 +321,8 @@ function make_php() {
 	if($GLOBALS['opt_listing'] == 'Yes') {
 		$tem->show('opt_listing_1');
 		$tem->show('opt_listing_2');
-		$tem->show('opt_listing_3');
 		$tem->show('opt_listing_4');
 	} else {
-		$tem->show('opt_listing_3_else');
 		$tem->show('opt_listing_4_else');
 	}
 	if($GLOBALS['opt_db'] == 'Yes') {

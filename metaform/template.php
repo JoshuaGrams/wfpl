@@ -45,7 +45,7 @@ function ~form_name~_get_fields() {<!--~formats start~-->
 		$~name~ = substr(save_uploaded_image('~name~', $GLOBALS['upload_directory']), strlen($GLOBALS['upload_directory']));
 	} else {
 		if($_REQUEST['delete_~name~'] == 'Yes') {
-			$name = '';
+			$~name~ = '';
 		} else {
 			$~name~ = format_filename($_REQUEST['old_~name~']);
 		}
@@ -64,6 +64,8 @@ function ~form_name~_tem_sets(~php_fields~) {<!--~tem_sets start~-->
 function ~form_name~_display_listing($where = 'order by ~always_field~ limit 100') {
 	$rows = db_get_rows('~form_name~', 'id,~always_field~', $where);
 	if($rows == false || count($rows) == 0) {
+		tem_show('empty_listing');
+		tem_show('listings');
 		return false;
 	}
 
@@ -76,6 +78,7 @@ function ~form_name~_display_listing($where = 'order by ~always_field~ limit 100
 		tem_set('~always_field~', $~always_field~);
 		tem_show('listing_row');
 	}
+	tem_show('populated_listing');
 	tem_show('listings');
 	return true;
 }
@@ -85,7 +88,7 @@ function ~form_name~_main() {
 	if($ret) {
 		return $ret;
 	}
-	display_messages();
+	tem_show('main_body');
 }
 
 function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
@@ -111,22 +114,15 @@ function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
 	unset($_REQUEST['~form_name~_delete_id']);
 	if($delete_id) {
 		db_delete('~form_name~', 'where id=%i', $delete_id);
-		message('Entry deleted.');<!--~opt_listing_3 start~-->
+		message('Entry deleted.');
 
-		if(~form_name~_display_listing()) {
-			return;
-		}
-		unset($delete_id);<!--~end~--><!--~opt_listing_3_else start~-->
-
-		# FIXME: what to do after delete?
-		return;<!--~end~-->
+		return './~form_name~.html';
 	}
 
 	if(!$edit_id) {<!--~opt_listing_1 start~-->
 		if(!isset($_REQUEST['~form_name~_new']) && !isset($_REQUEST['~always_field~'])) {
-			if(~form_name~_display_listing()) {
-				return;
-			}
+			~form_name~_display_listing();
+			return;
 		}
 		<!--~end~-->
 		tem_show('new_msg');

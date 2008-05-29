@@ -32,6 +32,8 @@
 </head>
 
 <body>
+  <!--~~main_body start~~-->
+
   <!--~~message_container start~~-->
        <div style="border: 2px solid red; background: #fbb; padding: 5px; margin: 20px 0px">
        <!--~~message_box start~~-->
@@ -56,15 +58,24 @@
 <!--~opt_listing_1 start~--><!--~~listings start~~-->
   <h2>~form_name~ Listing</h2>
 
+  <!--~~populated_listing start~~-->
+  <p><a href="~form_name~.html?~form_name~_new=1">[Add a new record]</a></p>
+
   <table cellspacing="0" cellpadding="4" border="1" summary=""><!--~~listing_row start~~-->
   <tr><td class="listing"><a href="~form_name~.html?~form_name~_edit_id=~~id~~">~~~always_field~.html~~</a></td><td><a href="~form_name~.html?~form_name~_delete_id=~~id~~" onclick="return confirm('Permanently delete?')">[delete this record]</a></td></tr><!--~~end~~-->
 
   </table>
+  <!--~~end~~-->
+  <!--~~empty_listing start~~-->
+    <p>No ~~field_plural.html~~ in database.</p>
+  <!--~~end~~-->
 
   <p><a href="~form_name~.html?~form_name~_new=1">[Add a new record]</a></p>
 <!--~~end~~--><!--~end~--><!--~opt_listing_1_else start~-->
 <!--~~thankyou start~~-->
   <p>Thank you for taking the time to fill out this form.</p>
 <!--~~end~~--><!--~end~-->
+
+<!--~~end~~-->
 </body>
 </html>

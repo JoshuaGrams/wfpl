@@ -73,7 +73,7 @@ function clean_ymd($year, $month, $day) {
 	return array($year, $month, $day);
 }
 
-# convert date string from mm/dd/yyyy to yyy-mm-dd
+# convert date string from mm/dd/yyyy to yyyy-mm-dd
 function mdy_to_ymd($date) {
 	$date = ereg_replace('[^0-9/-]', '', $date);
 	$date = ereg_replace('-', '/', $date);
