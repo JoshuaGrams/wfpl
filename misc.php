@@ -40,12 +40,11 @@ function readable_sockets($pipes, $timeout = 0){
 # Returns: (as array)
 #     exit code
 #     stdout
-#     stderr
 function exec_pipe($command, $stdin) {
 	$descriptorspec = array(
    	   0 => array('pipe', 'r'),  // stdin is a pipe that the child will read from
    	   1 => array('pipe', 'w'),  // stdout is a pipe that the child will write to
-   	   2 => array('pipe', 'w')   // stderr is a pipe that the child will write to
+   	   2 => array('file', '/dev/null', 'w')   // stderr is a pipe that the child will write to
 	);
 
 	$process = proc_open($command, $descriptorspec, $pipes);
@@ -54,49 +53,19 @@ function exec_pipe($command, $stdin) {
 		fwrite($pipes[0], $stdin);
 		fclose($pipes[0]);
 
-		$stdout_open = true;
-		$stderr_open = true;
-		while($stdout_open || $stderr_open) {
-			$pipes_to_check = array();
-			if($stdout_open) {
-				$pipes_to_check[] = $pipes[1];
-			}
-			if($stderr_open) {
-				$pipes_to_check[] = $pipes[2];
-			}
-			$readables = readable_sockets($pipes_to_check);
-			if($readables === false) {
-				die('select failed');
-			}
-			foreach($readables as $pipe) {
-				$ret = fread($pipe, 4096);
-				if($ret === false) {
-					die('fread (in exec_pipe) failed');
-				}
-				if($pipe = $pipes[1]) {
-					if($ret == '') {
-						fclose($pipes[1]);
-						$stdout_open = false;
-					} else {
-						$stdout .= $ret;
-					}
-				}
-				if($pipe = $pipes[2]) {
-					if($ret == '') {
-						fclose($pipes[2]);
-						$stderr_open = false;
-					} else {
-						$stderr .= $ret;
-					}
-				}
-			}
+		while (!feof($pipes[1])) {
+			$chunk = fread($pipes[1], 1024);
+			$stdout .= $chunk;
+			sleep(0.5);
 		}
+
+		fclose($pipes[1]);
 
 		// It is important that you close any pipes before calling
 		// proc_close in order to avoid a deadlock
 		$return_value = proc_close($process);
 
-		return array($return_value, $stdout, $stderr);
+		return array($return_value, $stdout);
 	}
 }
 
