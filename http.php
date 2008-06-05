@@ -21,15 +21,12 @@
 
 # return our best guess at the url used to access this page, without the path or query string
 function this_url_sans_path() {
-	list($protocol, $version) = explode('/', $_SERVER['SERVER_PROTOCOL']);
-	$url = strtolower($protocol);
-
-	if($url == 'http') {
-		$expected_port = 80;
-	} elseif ($url == 'https') {
+	if(strtolower($_SERVER['HTTPS']) == 'on' || strtolower($_SERVER['HTTPS']) == 'yes') {
+		$url = 'https';
 		$expected_port = 443;
 	} else {
-		$expected_port = -1;
+		$url = 'http';
+		$expected_port = 80;
 	}
 
 	$url .= '://';
