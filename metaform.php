@@ -408,6 +408,7 @@ function preview() {
 	}
 	$preview = $preview_tem->run();
 	unset($preview_tem);
+	$preview = ereg_replace('type="submit"', 'type="submit" disabled="disabled"', $preview);
 	tem_set('preview', $preview);
 	set_form_action();
 	tem_output();

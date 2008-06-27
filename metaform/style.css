@@ -16,3 +16,8 @@ div.error {
 	margin: 20px;
 	background: #fdd;
 }
+
+.first {
+	padding-top: 0px;
+	margin-top: 0px;
+}
