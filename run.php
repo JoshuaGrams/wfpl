@@ -131,6 +131,7 @@ function run_php($basename = false) {
 		if(file_exists('template.html')) {
 			$tem = new tem();
 			$tem->load("template.html");
+			$tem->set('basename', $basename);
 			if($cms_content) foreach($cms_content as $name => $val) {
 				$tem->append($name, $val);
 			}
