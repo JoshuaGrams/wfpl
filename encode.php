@@ -99,7 +99,7 @@ function enc_url_path($str) {
 #
 # Example: <input type="checkbox" name="foo~foo.checked~">
 function enc_checked($str) {
-	if($str == 'Yes') {
+	if($str && $str !== 'No' && $str !== 'False' && $str !== 'false') {
 		return '" checked="checked';
 	} else {
 		return '';
