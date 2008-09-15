@@ -1,5 +1,6 @@
 ~form_name~ form submitted with the following:
 <!--~fields start~--><!--~normal start~-->
-~caption~: ~~~name~~~<!--~end~--><!--~multi_line start~-->
+~caption~: ~~~name~~~<!--~end~--><!--~checkbox start~-->
+~caption~: ~~~name~.yesno~~<!--~end~--><!--~multi_line start~-->
 ~caption~:
 ~~~name~.tab~~<!--~end~--><!--~end~-->

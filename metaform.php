@@ -50,7 +50,7 @@ $GLOBALS['types'] = array(
 	'pulldown' =>   array('pulldown',    'options',    'varchar(100)'),
 	'radio' =>      array('radio',       'oneline',    'varchar(200)'),
 	'leftcheck' =>  array('leftcheck',   'yesno',      'varchar(3)'),
-	'checkbox' =>   array('checkbox',    'yesno',      'varchar(3)'),
+	'checkbox' =>   array('checkbox',    'bool',       'int(1)'),
 	'yesno' =>      array('checkbox',    'yesno',      'varchar(3)'),
 	'delete' =>     array('checkbox',    'yesno',      'n/a'),
 	'image' =>      array('image',       'oneline',    'varchar(200)'),
@@ -370,6 +370,8 @@ function make_email() {
 		$tem->set('caption', $name); # fixme
 		if($type == 'textarea') {
 			$tem->show('multi_line');
+		} elseif($type == 'checkbox') {
+			$tem->show('checkbox');
 		} else {
 			$tem->show('normal');
 		}
