@@ -124,8 +124,16 @@ function format_unix($str) {
 	return unix_newlines($str);
 }
 
+function format_bool($str) {
+	if($str && $str !== 'No' && $str !== 'False' && $str !== 'false') {
+		return 'Yes';
+	} else {
+		return 'No';
+	}
+}
+
 function format_yesno($str) {
-	if($str && $str != 'No') {
+	if($str && $str !== 'No' && $str !== 'False' && $str !== 'false') {
 		return 'Yes';
 	} else {
 		return 'No';

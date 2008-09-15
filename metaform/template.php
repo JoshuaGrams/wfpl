@@ -141,19 +141,19 @@ function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
 			}<!--~end~--><!--~opt_email_2 start~-->
 			if($GLOBALS['~form_name~_form_recipient'] != "fixme@example.com") {
 				$to = $GLOBALS['~form_name~_form_recipient'];
+				$from = $to;
+				$reply_to = '';
 				if(isset($_REQUEST['email']) and valid_email($_REQUEST['email'])) {
-					$from = $_REQUEST['email'];
+					$reply_to = $_REQUEST['email'];
 					if($_REQUEST['name'] and ereg('^[a-zA-Z0-9_\' -]*$', $_REQUEST['name']) !== false) {
-						$from = "$_REQUEST[name] <$from>";
+						$reply_to = "$_REQUEST[name] <$reply_to>";
 					}
-				} else {
-					$from = $to;
 				}
 				$subject = '~form_name~ form submitted';
 				$message = tem_run('~form_name~.email.txt');
 				$cc = '';
 				$bcc = '';
-				if(email($from, $to, $subject, $message, $cc, $bcc)) {
+				if(email($from, $to, $subject, $message, $reply_to, $cc, $bcc)) {
 					message('Due to an internal error, your message could not be sent. Please try again later.');
 					$error = true;
 				}

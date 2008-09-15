@@ -106,6 +106,18 @@ function enc_checked($str) {
 	}
 }
 
+# checkboxe values are stored in the db and handled in php as 0 or 1. When you
+# want it displayed as "Yes" or "No" use this:
+# Example: (displaying values from a form submission)  Over 60?: ~over_60.yesno~
+function enc_yesno($str) {
+	if($str && $str !== 'No' && $str !== 'False' && $str !== 'false') {
+		return 'Yes';
+	} else {
+		return 'No';
+	}
+}
+
+
 # add a tab at the begining of each non-empty line
 function enc_tab($str) {
 	$lines = explode("\n", $str);
