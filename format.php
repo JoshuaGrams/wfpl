@@ -126,9 +126,9 @@ function format_unix($str) {
 
 function format_bool($str) {
 	if($str && $str !== 'No' && $str !== 'False' && $str !== 'false') {
-		return 'Yes';
+		return 1;
 	} else {
-		return 'No';
+		return 0;
 	}
 }
 
