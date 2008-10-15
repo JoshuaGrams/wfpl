@@ -94,6 +94,20 @@ function today_ymd() {
 	return strftime('%Y-%m-%d');
 }
 
+
+function get_text_between($text, $start_text, $end_text) {
+	$start = strpos($text, $start_text);
+	if($start === false) {
+		return false;
+	}
+	$text = substr($text, $start + strlen($start_text));
+	$end = strpos($text, $end_text);
+	if($end === false) {
+		return false;
+	}
+	return substr($text, 0, $end);
+}
+
 # php4 is broken, in that you cannot set a default value for a parameter that
 # is passed by reference. So, this is set up to use the following screwy
 # syntax:

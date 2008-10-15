@@ -63,8 +63,27 @@ if(file_exists('code/config.php')) {
 	file_run('code/config.php');
 }
 
-function run_php($basename = false) {
-	if(!$basename) {
+# pass the basename of the page you want for normal execution
+# pass ./page.html to redirect to page.html in this directory
+# pass http://foo.com/bar.html to redirect to a full directory
+function run_php($dest = false) {
+	if($dest) {
+		# if it's got a : it must be a full URL, redirect
+		if(strpos($dest, ':')) {
+			redirect($dest);
+			exit();
+		}
+
+		# if it starts with './' then it's a relative URL, redirect
+		if(substr($dest, 0, 2) == './') {
+			redirect(ereg_replace('/[^/]*$', substr($dest, 1), this_url()));
+			exit();
+		}
+
+		# otherwise, it's a normal basename, display that content
+		$basename = $dest;
+
+	} else { # no dest arg
 		$basename = $_SERVER['REDIRECT_URL'];
 		$basename = ereg_replace('.*/', '', $basename);
 		$basename = ereg_replace('\.html$', '', $basename);
@@ -79,8 +98,16 @@ function run_php($basename = false) {
 	$html_exists = file_exists($html_file);
 	$php_exists = file_exists($php_file);
 
+	# cms_get can return one of:
+	# 1) false to indicate that there's no cms content for this basename
+	# 2) a string to indicate a soft/full redirect just as foo_main()
+	# 3) a hash of key/value pairs to be tem_set(key,value) on the template
 	if(function_exists('cms_get')) {
 		$cms_content = cms_get($basename);
+		if(is_string($cms_content)) {
+			run_php($cms_content);
+			return;
+		}
 	} else {
 		$cms_content = false;
 	}
@@ -89,6 +116,7 @@ function run_php($basename = false) {
 		header('HTTP/1.0 404 File Not Found');
 		if(file_exists('404.php') || file_exists('404.html')) {
 			run_php('404');
+			return;
 		} else {
 			echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html><head><title>404</title></head><body><h1>404 File Not Found</h1></body></html>';
 		}
@@ -108,14 +136,6 @@ function run_php($basename = false) {
 		# files can return a basename or URL of a page to be run/displayed
 		$other = file_run($php_file);
 		if($other) {
-			if(strpos($other, ':')) {
-				redirect($other);
-				exit();
-			}
-			if(substr($other, 0, 2) == './') {
-				redirect(ereg_replace('/[^/]*$', substr($other, 1), this_url()));
-				exit();
-			}
 			run_php($other);
 			return;
 		}
