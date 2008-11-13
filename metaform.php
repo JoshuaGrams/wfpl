@@ -170,7 +170,7 @@ function make_sql() {
 		if($sql != 'n/a') {
 			$tem->set('name', $name);
 			$tem->set('type', $sql);
-			if($sql == 'int') {
+			if(substr($sql, 0, 3) == 'int' || substr($sql, 0, 7) == 'decimal') {
 				$tem->set('default', '0');
 			} elseif($format == 'yesno') {
 				$tem->set('default', '"No"');

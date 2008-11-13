@@ -88,6 +88,8 @@ function ~form_name~_main() {
 	if($ret) {
 		return $ret;
 	}
+
+	# sections displayed with tem_show() will be coppied to the main template if you have one.
 	tem_show('main_body');
 }
 
