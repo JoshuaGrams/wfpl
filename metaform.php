@@ -428,7 +428,7 @@ function download_tar() {
 	if($GLOBALS['opt_email'] == 'Yes') {
 		$data["$name.email.txt"] = make_email();
 	}
-	make_wfpl_tar($name, $data);
+	make_tar($name, $data);
 }
 
 
