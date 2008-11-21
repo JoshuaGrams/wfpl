@@ -156,8 +156,14 @@ function format_email($str) {
 }
 
 function format_url($str) {
-	# FIXME
-	return format_oneline($str);
+	# FIXME check for TLD? encode special chars?
+	$str = trim(format_oneline($str));
+	if($str !== '') {
+		if(strpos($str, ':') === false) {
+			$str = 'http://' . $str;
+		}
+	}
+	return $str;
 }
 
 function format_money($str, $display_cents = true) {
