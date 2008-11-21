@@ -1,3 +1,5 @@
+INSTALLING WFPL
+
 This directory must be accessible to your PHP files via the relative path: code/wfpl/
 
 The recommended way to do this is to create a directory named "code" in the
@@ -9,7 +11,10 @@ directory named "wfpl" in the "code" directory described above.
 
 
 
-INSTALLING METAFORM on apache
+INSTALLING METAFORM on apache (OPTIONAL)
+
+Note: metaform is a code generator. It is NOT required to use wfpl. It is a
+tool for auto-generating code for your site which makes use of wfpl.
 
 metaform.php unfortunately has a couple extra steps.
 
@@ -29,7 +34,7 @@ RewriteBase    /metaform/
 RewriteRule    .*\.tgz$  /metaform/index.php
 
 Note: the above .htaccess file assumes that the "metaform" directory you
-created in step one is in the root www directory. If it's in a sub directory
+created in step one is IN the root www directory. If it's in a sub directory
 (for example you access it via: http://example.com/my/sub/dir/metaform/) then
 replace the two occurrences of "metaform" in the .htaccess file with the path
 to that directory (for example "my/sub/dir/metaform").
