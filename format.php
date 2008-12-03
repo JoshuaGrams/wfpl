@@ -45,7 +45,7 @@ function format_int($str) {
 	return ereg_replace('^0*([0-9])', '\1', $str);
 }
 
-function format_decimal($str) {
+function format_positive_decimal($str) {
 	$str = ereg_replace('[^0-9.]', '', $str);
 	$pos = strpos($str, '.');
 	if($pos !== false) {
@@ -59,6 +59,19 @@ function format_decimal($str) {
 		}
 	}
 	return $str;
+}
+
+function format_decimal($str) {
+	$str = ereg_replace('[^0-9.-]', '', $str);
+	if(substr($str, 0, 1) == '-') {
+		$str = format_positive_decimal(substr($str, 1));
+		if($str !== '' && $str !== '0' && $str != '0.0') {
+			$str = '-' . $str;
+		}
+		return $str;
+	} else {
+		return format_positive_decimal($str);
+	}
 }
 
 # return 0 of there's no digits

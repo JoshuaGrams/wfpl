@@ -1,0 +1,22 @@
+WFPL (Well Factored PHP Library)
+
+wfpl is a collection of php functions that make it easy to create websites,
+including things that are tricky to do from scratch like editing databases.
+
+It includes:
+
+* A templating system (so all your data/markup can be in the .html file)
+
+* An easy and secure database API
+
+* Functions to help with input validation and pretty printing of many types of
+  data.
+
+* metaform (early development) a page to auto-generate code for forms (html
+  template, php code, SQL code and even an e-mail template.)
+
+* Easy soft redirects (meaning that in your php code, you can easily specify
+  that you'd like a different php file to handle this request.)
+
+
+wfpl is released under the Gnu GPL v3 or greater.

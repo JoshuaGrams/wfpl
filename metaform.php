@@ -46,9 +46,10 @@ $GLOBALS['types'] = array(
 	'html' =>       array('html',        'unix',       'text'),
 	'pulldown' =>   array('pulldown',    'options',    'varchar(100)'),
 	'radio' =>      array('radio',       'oneline',    'varchar(200)'),
-	'leftcheck' =>  array('leftcheck',   'yesno',      'varchar(3)'),
-	'checkbox' =>   array('checkbox',    'bool',       'int(1)'),
-	'yesno' =>      array('checkbox',    'yesno',      'varchar(3)'),
+	'checkbox' =>   array('leftcheck',   'bool',       'int(1)'),
+	'rightcheck' => array('checkbox',    'bool',       'int(1)'),
+	'rightyesno' => array('checkbox',    'yesno',      'varchar(3)'),
+	'yesno' =>      array('leftcheck',   'yesno',      'varchar(3)'),
 	'delete' =>     array('checkbox',    'yesno',      'n/a'),
 	'image' =>      array('image',       'oneline',    'varchar(200)'),
 	'submit' =>     array('submit',      'oneline',    'n/a')
@@ -427,7 +428,7 @@ function download_tar() {
 	if($GLOBALS['opt_email'] == 'Yes') {
 		$data["$name.email.txt"] = make_email();
 	}
-	make_wfpl_tar($name, $data);
+	make_tar($name, $data);
 }
 
 
