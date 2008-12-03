@@ -62,16 +62,19 @@ function clean_ymd($year, $month, $day) {
 	}
 	if($day < 1) {
 		$day = 1;
-	} elseif($day > 31) {
-		# FIXME this should check the month
-		$day = 31;
+	} else {
+		$max = date('t', mktime(12, 0, 0, $month, 1, $year));
+		if($day > $max) {
+			$day = $max;
+		}
 	}
 
 	return array($year, $month, $day);
 }
 
-# convert date string from mm/dd/yyyy to yyyy-mm-dd
-function mdy_to_ymd($date) {
+# pass date like 3/21/99
+# returns array(year, month, day)
+function mdy_clean($date) {
 	$date = ereg_replace('[^0-9/-]', '', $date);
 	$date = ereg_replace('-', '/', $date);
 	$parts = explode('/', $date);
@@ -92,13 +95,18 @@ function mdy_to_ymd($date) {
 			list($month, $day, $year) = $parts;
 	}
 
-	list($year, $month, $day) = clean_ymd($year, $month, $day);
+	return clean_ymd($year, $month, $day);
+}
 
+# convert date string from mm/dd/yyyy to yyyy-mm-dd
+function mdy_to_ymd($date) {
+	list($year, $month, $day) = mdy_clean($date);
 	return sprintf('%04u-%02u-%02u', $year, $month, $day);
 }
 
-# convert date string from yyy-mm-dd to mm/dd/yyyy
-function ymd_to_mdy($date) {
+# pass date like 2008-11-21
+# returns array(year, month, day)
+function ymd_clean($date) {
 	$date = ereg_replace('[^0-9/-]', '', $date);
 	$date = ereg_replace('/', '-', $date);
 	$parts = explode('-', $date);
@@ -119,13 +127,20 @@ function ymd_to_mdy($date) {
 			list($year, $month, $day) = $parts;
 	}
 
-	list($year, $month, $day) = clean_ymd($year, $month, $day);
+	return clean_ymd($year, $month, $day);
+}
 
+# convert date string from yyyy-mm-dd to mm/dd/yyyy
+function ymd_to_mdy($str) {
+	list($year, $month, $day) = ymd_clean($str);
 	return sprintf('%02u/%02u/%04u', $month, $day, $year);
 }
 
-function enc_mdy($date) {
-	return ymd_to_mdy($date);
+function enc_mdy($str) {
+	return ymd_to_mdy($str);
 }
 
-?>
+function format_ymd($str) {
+	list($year, $month, $day) = ymd_clean($str);
+	return sprintf('%04u-%02u-%02u', $year, $month, $day);
+}
