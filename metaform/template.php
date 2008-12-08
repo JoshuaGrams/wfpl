@@ -152,7 +152,7 @@ function _~form_name~_main() {<!--~end~--><!--~opt_http_pass_2 start~-->
 		db_delete('~form_name~', 'where id=%i', $delete_id);
 		message('Entry deleted.');
 
-		return './~form_name~.html';
+		return './~form_name~';
 	}
 
 	if(!$edit_id) {<!--~opt_listing_1 start~-->

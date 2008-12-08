@@ -56,7 +56,7 @@
     <div><span class="caption">~caption.html~:</span> <div style="padding-left: 20px">~~~name~.htmlbr~~</div></div>
   <!--~end~--><!--~end~-->
 
-    <p><a href="~form_name~.html?~form_name~_edit_id=~~id.attr~~">Edit</a></p>
+    <p><a href="~form_name~?~form_name~_edit_id=~~id.attr~~">Edit</a></p>
 <!--~~end~~-->
 
 <!--~~edit_body start~~-->
@@ -64,7 +64,7 @@
 <!--~~form start~~--><!--~form start~-->
   <h2><!--~opt_db_1 start~--><!--~~new_msg start~~-->Add a new entry<!--~~end~~--><!--~~edit_msg start~~-->Edit entry "~~~always_field~.html~~"<!--~~end~~--><!--~end~--><!--~opt_db_1_else start~-->~form_name~ entry form<!--~end~--></h2>
 
-  <form action="~form_name~.html~enctype_attr~" method="post"><!--~opt_db_2 start~--><!--~~editing start~~--><input type="hidden" name="~form_name~_edit_id" value="~~~form_name~_edit_id.attr~~" /><!--~~end~~--><!--~end~--><!--~uploads start~--><input type="hidden" name="MAX_FILE_SIZE" value="~~upload_max_filesize~~" /><!--~end~-->
+  <form action="~form_name~" method="post~enctype_attr~"><!--~opt_db_2 start~--><!--~~editing start~~--><input type="hidden" name="~form_name~_edit_id" value="~~~form_name~_edit_id.attr~~" /><!--~~end~~--><!--~end~--><!--~uploads start~--><input type="hidden" name="MAX_FILE_SIZE" value="~~upload_max_filesize~~" /><!--~end~-->
     <table cellspacing="0" cellpadding="4" border="0" summary=""><!--~row start~-->
 
       <tr><!--~image start~--><td class="caption">~caption.html~: </td><td class="field"><input type="file" name="~name~" /><input type="hidden" name="old_~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~textbox start~--><td class="caption">~caption.html~: </td><td class="field"><input type="text" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~date start~--><td class="caption">~caption.html~: </td><td class="field"><input type="text" name="~name~" value="~~~name~.mmddyyyy.attr~~" /> dd/mm/yy</td><!--~end~--><!--~password start~--><td class="caption">~caption.html~: </td><td class="field"><input type="password" name="~name~" value="~~~name~.attr~~" /></td><!--~end~--><!--~textarea start~--><td class="caption">~caption.html~: </td><td class="field"><textarea rows="9" cols="22" name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~html start~--><td class="caption">~caption.html~: </td><td></td></tr><tr><td colspan="2"><textarea class="html_editor" rows="20" cols="50" name="~name~">~~~name~.html~~</textarea></td><!--~end~--><!--~pulldown start~--><td class="caption">~caption.html~: </td><td class="field"><select name="~name~"><option value="">Choose One:</option><!--~~~name~.options~~--></select></td><!--~end~--><!--~states start~--><td class="caption">~caption.html~: </td><td class="field"><select name="~name~"><option value="">Choose One:</option><!--~~~name~.states~~--></select></td><!--~end~--><!--~radio start~--><td class="caption">~caption.html~: </td><td class="field"><input type="radio" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~checkbox start~--><td class="caption">~caption.html~? </td><td class="field"><input type="checkbox" name="~name~~~~name~.checked~~" /></td><!--~end~--><!--~leftcheck start~--><td class="caption"><input type="checkbox" name="~name~~~~name~.checked~~" /></td><td class="right_caption">~caption.html~?</td><!--~end~--><!--~submit start~--><td class="submit_row" colspan="2"><input type="submit" name="~name~" value="~caption.attr~" /></td><!--~end~--></tr><!--~end~-->
@@ -75,10 +75,10 @@
   <h2>~form_name~ Listing</h2>
 
   <!--~~populated_listing start~~-->
-  <p><a href="~form_name~.html?~form_name~_new=1">[Add a new record]</a></p>
+  <p><a href="~form_name~?~form_name~_new=1">[Add a new record]</a></p>
 
   <table cellspacing="0" cellpadding="4" border="1" summary=""><!--~~listing_row start~~-->
-  <tr><td class="listing"><a href="~form_name~.html?~form_name~_<!--~opt_display_a_else start~-->edit_<!--~end~-->id=~~id~~">~~~always_field~.html~~</a></td><td><a href="~form_name~.html?~form_name~_delete_id=~~id~~" onclick="return confirm('Permanently delete?')">[delete this record]</a></td></tr><!--~~end~~-->
+  <tr><td class="listing"><a href="~form_name~?~form_name~_<!--~opt_display_a_else start~-->edit_<!--~end~-->id=~~id~~">~~~always_field~.html~~</a></td><td><a href="~form_name~?~form_name~_delete_id=~~id~~" onclick="return confirm('Permanently delete?')">[delete this record]</a></td></tr><!--~~end~~-->
 
   </table>
   <!--~~end~~-->
@@ -86,7 +86,7 @@
     <p>No ~~field_plural.html~~ in database.</p>
   <!--~~end~~-->
 
-  <p><a href="~form_name~.html?~form_name~_new=1">[Add a new record]</a></p>
+  <p><a href="~form_name~?~form_name~_new=1">[Add a new record]</a></p>
 <!--~~end~~--><!--~end~-->
 <!--~opt_display_2 start~-->
 
