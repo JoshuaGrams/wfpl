@@ -6,10 +6,10 @@ td.caption, td.errorcaption {
 	text-align: right;
 	vertical-align: top;
 }
-td.caption, td.errorcaption, td.right_caption {
+.caption, td.errorcaption, td.right_caption {
 	font-weight: bold;
 }
-td.errorcaption { color: red; }
+.errorcaption { color: red; }
 div.error {
 	border: 2px solid red;
 	padding: 13px;
@@ -20,4 +20,8 @@ div.error {
 .first {
 	padding-top: 0px;
 	margin-top: 0px;
+}
+.last {
+	padding-bottom: 0px;
+	margin-bottom: 0px;
 }

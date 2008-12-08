@@ -83,17 +83,51 @@ function ~form_name~_display_listing($where = 'order by ~always_field~ limit 100
 	return true;
 }
 <!--~end~-->
-function ~form_name~_main() {
+function ~form_name~_main() {<!--~opt_display_1 start~-->
+	if(isset($_REQUEST['~form_name~_id'])) {
+		$ret = ~form_name~_display_main();
+		if($ret) {
+			return $ret;
+		}
+		tem_show('display_body');
+	} else {
+		$ret = ~form_name~_edit_main();
+		if($ret) {
+			return $ret;
+		}
+		tem_show('edit_body');
+	}
+<!--~end~--><!--~opt_display_1_else start~-->
 	$ret = _~form_name~_main();
 	if($ret) {
 		return $ret;
 	}
-
+<!--~end~-->
 	# sections displayed with tem_show() will be coppied to the main template if you have one.
 	tem_show('main_body');
+}<!--~opt_display_2 start~-->
+
+function ~form_name~_display_main() {
+	$id = format_int($_REQUEST['~form_name~_id']);
+	unset($_REQUEST['~form_name~_id']);
+	if(!$id) {
+		message('Error: Broken link');
+		return './~form_name~';
+	}
+	$row = db_get_row('~form_name~', ~form_name.upper~_DB_FIELDS, 'where id=%i', $id);
+	if(!$row) {
+		message('Error: Not found');
+		return './~form_name~';
+	}
+	list(~php_fields~) = $row;
+	~form_name~_tem_sets(~php_fields~);
+	tem_set('id', $id);
 }
 
-function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
+function ~form_name~_edit_main() {<!--~end~--><!--~opt_display_2_else start~-->
+
+
+function _~form_name~_main() {<!--~end~--><!--~opt_http_pass_2 start~-->
 	# To remove password protection, just delete this block:
 	if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != AUTH_USER || $_SERVER['PHP_AUTH_PW'] != AUTH_PASS) {
 		header('WWW-Authenticate: Basic realm="' . AUTH_REALM . '"');
@@ -136,10 +170,10 @@ function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
 		if("you're happy with the POSTed values") {<!--~opt_db_4 start~-->
 			if($edit_id) {
 				db_update('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~, 'where id=%i', $edit_id);
-				message('Entry updated.');
+				message('Updated.');
 			} else {
 				db_insert('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~);
-				message('Entry saved.');
+				message('Saved.');
 			}<!--~end~--><!--~opt_email_2 start~-->
 			if($GLOBALS['~form_name~_form_recipient'] != "fixme@example.com") {
 				$to = $GLOBALS['~form_name~_form_recipient'];
@@ -158,12 +192,12 @@ function _~form_name~_main() {<!--~opt_http_pass_2 start~-->
 				if(email($from, $to, $subject, $message, $reply_to, $cc, $bcc)) {
 					message('Due to an internal error, your message could not be sent. Please try again later.');
 					$error = true;
+				} else {
+					message('Message sent');
 				}
 			}<!--~end~-->
-			if($error !== true) {<!--~opt_listing_4 start~-->
-				~form_name~_display_listing();<!--~end~--><!--~opt_listing_4_else start~-->
-				tem_show('thankyou');<!--~end~-->
-				return;
+			if($error !== true) {
+				return './~form_name~'; # FIXME is this the page you want to go to after successful form submission?
 			}
 		}
 		# otherwise, we display the form again. ~form_name~_get_fields() has

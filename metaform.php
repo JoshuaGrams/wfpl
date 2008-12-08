@@ -76,6 +76,8 @@ function metaform() {
 		tem_set('opt_db', $GLOBALS['opt_db']);
 		$GLOBALS['opt_listing'] = format_yesno($_REQUEST['opt_listing']);
 		tem_set('opt_listing', $GLOBALS['opt_listing']);
+		$GLOBALS['opt_display'] = format_yesno($_REQUEST['opt_display']);
+		tem_set('opt_display', $GLOBALS['opt_display']);
 		$GLOBALS['opt_http_pass'] = format_yesno($_REQUEST['opt_http_pass']);
 		tem_set('opt_http_pass', $GLOBALS['opt_http_pass']);
 	} else {
@@ -227,6 +229,19 @@ function make_html($whole_file = true) {
 			$tem->set('html_field_name', $name);
 			$tem->show('replace_textarea');
 		}
+		if($GLOBALS['opt_display']) {
+			switch($input) {
+				case 'textarea':
+					$tem->show('display_multiline');
+				break;
+				case 'html':
+					$tem->show('display_html');
+				break;
+				default:
+					$tem->show('display_short');
+			}
+			$tem->show('display_row');
+		}
 	}
 
 	if($GLOBALS['opt_db'] == 'Yes') {
@@ -237,9 +252,15 @@ function make_html($whole_file = true) {
 	}
 
 	if($GLOBALS['opt_listing'] == 'Yes') {
+		if($GLOBALS['opt_display'] != 'Yes') {
+			$tem->show('opt_display_a_else');
+		}
 		$tem->show('opt_listing_1');
-	} else {
-		$tem->show('opt_listing_1_else');
+	}
+
+	if($GLOBALS['opt_display'] == 'Yes') {
+		$tem->show('opt_display_1');
+		$tem->show('opt_display_2');
 	}
 
 	if($GLOBALS['opt_email'] == 'Yes' && $GLOBALS['opt_db'] != 'Yes') {
@@ -319,9 +340,13 @@ function make_php() {
 	if($GLOBALS['opt_listing'] == 'Yes') {
 		$tem->show('opt_listing_1');
 		$tem->show('opt_listing_2');
-		$tem->show('opt_listing_4');
+	}
+	if($GLOBALS['opt_display'] == 'Yes') {
+		$tem->show('opt_display_1');
+		$tem->show('opt_display_2');
 	} else {
-		$tem->show('opt_listing_4_else');
+		$tem->show('opt_display_1_else');
+		$tem->show('opt_display_2_else');
 	}
 	if($GLOBALS['opt_db'] == 'Yes') {
 		$tem->show('opt_db_1');

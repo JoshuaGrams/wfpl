@@ -45,7 +45,22 @@
        <!--~~end~~-->
        </div>
   <!--~~end~~-->
+<!--~opt_display_1 start~-->
+<!--~~display_body start~~-->
+  <h2>Details</h2>
+  <!--~display_row start~--><!--~display_short start~-->
+    <div><span class="caption">~caption.html~:</span> ~~~name~.htmlbr~~</div>
+  <!--~end~--><!--~display_html start~-->
+    <div><span class="caption">~caption.html~:</span> <div style="padding-left: 20px; border: 1px solid black">~~~name~~~</div></div>
+  <!--~end~--><!--~display_multiline start~-->
+    <div><span class="caption">~caption.html~:</span> <div style="padding-left: 20px">~~~name~.htmlbr~~</div></div>
+  <!--~end~--><!--~end~-->
 
+    <p><a href="~form_name~.html?~form_name~_edit_id=~~id.attr~~">Edit</a></p>
+<!--~~end~~-->
+
+<!--~~edit_body start~~-->
+<!--~end~-->
 <!--~~form start~~--><!--~form start~-->
   <h2><!--~opt_db_1 start~--><!--~~new_msg start~~-->Add a new entry<!--~~end~~--><!--~~edit_msg start~~-->Edit entry "~~~always_field~.html~~"<!--~~end~~--><!--~end~--><!--~opt_db_1_else start~-->~form_name~ entry form<!--~end~--></h2>
 
@@ -63,7 +78,7 @@
   <p><a href="~form_name~.html?~form_name~_new=1">[Add a new record]</a></p>
 
   <table cellspacing="0" cellpadding="4" border="1" summary=""><!--~~listing_row start~~-->
-  <tr><td class="listing"><a href="~form_name~.html?~form_name~_edit_id=~~id~~">~~~always_field~.html~~</a></td><td><a href="~form_name~.html?~form_name~_delete_id=~~id~~" onclick="return confirm('Permanently delete?')">[delete this record]</a></td></tr><!--~~end~~-->
+  <tr><td class="listing"><a href="~form_name~.html?~form_name~_<!--~opt_display_a_else start~-->edit_<!--~end~-->id=~~id~~">~~~always_field~.html~~</a></td><td><a href="~form_name~.html?~form_name~_delete_id=~~id~~" onclick="return confirm('Permanently delete?')">[delete this record]</a></td></tr><!--~~end~~-->
 
   </table>
   <!--~~end~~-->
@@ -72,11 +87,11 @@
   <!--~~end~~-->
 
   <p><a href="~form_name~.html?~form_name~_new=1">[Add a new record]</a></p>
-<!--~~end~~--><!--~end~--><!--~opt_listing_1_else start~-->
-<!--~~thankyou start~~-->
-  <p>Thank you for taking the time to fill out this form.</p>
 <!--~~end~~--><!--~end~-->
+<!--~opt_display_2 start~-->
 
+<!--~~end~~-->
+<!--~end~-->
 <!--~~end~~-->
 </body>
 </html>
