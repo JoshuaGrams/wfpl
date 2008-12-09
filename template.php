@@ -59,7 +59,7 @@ class tem {
 		return $this->keyval[$key];
 	}
 
-	# depricated (renamed show())
+	# deprecated (renamed show())
 	function sub($sub_template_name) {
 		$this->show($sub_template_name);
 	}
@@ -242,7 +242,7 @@ function tem_run($templ = false) {
 	return $GLOBALS['wfpl_template']->run($templ);
 }
 
-# depricated (renamed tem_show())
+# deprecated (renamed tem_show())
 function tem_sub($sub_template_name) {
 	tem_show($sub_template_name);
 }
