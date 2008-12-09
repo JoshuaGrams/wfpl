@@ -23,6 +23,10 @@
 # will encode foo (using enc_html()) before displaying it, so that characters
 # such as < will display properly.
 
+function enc_cap($str) {
+	$str = ucfirst($str);
+	return $str;
+}
 
 function enc_jsdq($str) {
 	$str = enc_sql($str);
@@ -49,10 +53,21 @@ function enc_html($str) {
 
 # Encode for output in html. Convert newlines to <br />
 #
-# Example: <p>~foo.html~</p>
+# Example: <p>~foo.htmlbr~</p>
 function enc_htmlbr($str) {
 	$str = enc_html($str);
 	$str = str_replace("\n", "<br />\n", $str);
+	return $str;
+}
+
+# Encode for output in html. Preserves newlines and indentation by converting
+# newlines to <br /> and spaces at the begining of lines to &nbsp;&nbsp;
+#
+# Example: <p>~foo.htmlbrtab~</p>
+function enc_htmlbrtab($str) {
+	$str = enc_htmlbr($str);
+	$space_to_nbsp = create_function('$matches', 'return str_repeat(\'&nbsp;\', strlen($matches[0]) * 2);');
+	$str = preg_replace_callback("|^ *|m", $space_to_nbsp, $str);
 	return $str;
 }
 
