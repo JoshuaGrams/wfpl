@@ -116,7 +116,7 @@ function ~form_name~_display_main() {
 	}
 	$row = db_get_row('~form_name~', ~form_name.upper~_DB_FIELDS, 'where id=%i', $id);
 	if(!$row) {
-		message('Error: Not found');
+		message('Error: ~singular.cap~ not found');
 		return './~form_name~';
 	}
 	list(~php_fields~) = $row;
@@ -150,7 +150,7 @@ function _~form_name~_main() {<!--~end~--><!--~opt_http_pass_2 start~-->
 	unset($_REQUEST['~form_name~_delete_id']);
 	if($delete_id) {
 		db_delete('~form_name~', 'where id=%i', $delete_id);
-		message('Entry deleted.');
+		message('~singular.cap~ deleted.');
 
 		return './~form_name~';
 	}
@@ -170,10 +170,10 @@ function _~form_name~_main() {<!--~end~--><!--~opt_http_pass_2 start~-->
 		if("you're happy with the POSTed values") {<!--~opt_db_4 start~-->
 			if($edit_id) {
 				db_update('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~, 'where id=%i', $edit_id);
-				message('Updated.');
+				message('~singular.cap~ updated.');
 			} else {
 				db_insert('~form_name~', ~form_name.upper~_DB_FIELDS, ~php_fields~);
-				message('Saved.');
+				message('~singular.cap~ saved.');
 			}<!--~end~--><!--~opt_email_2 start~-->
 			if($GLOBALS['~form_name~_form_recipient'] != "fixme@example.com") {
 				$to = $GLOBALS['~form_name~_form_recipient'];

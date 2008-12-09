@@ -11,10 +11,10 @@
   <h1 class="first">PREVIEW</h1>
 ~preview~
   </div>
-    <p><form action="~form_name~.tgz" method="get"><input type="hidden" name="form_name" value="~form_name.attr~" /><input type="hidden" name="opt_email" value="~opt_email.attr~" /><input type="hidden" name="opt_db" value="~opt_db.attr~" /><input type="hidden" name="opt_listing" value="~opt_listing.attr~" /><input type="hidden" name="opt_listing" value="~opt_display.attr~" /><input type="hidden" name="opt_http_pass" value="~opt_http_pass.attr~" /><input type="hidden" name="fields" value="~fields.attr~" /><input type="submit" name="download_tar" value="Download tarball" /></form></p>
+    <p><form action="~form_name~.tgz" method="get">~hiddens~<input type="submit" name="download_tar" value="Download tarball" /></form></p>
 
   <form action="~metaform_name~" method="get">
-  	<p><input type="hidden" name="form_name" value="~form_name.attr~" /><input type="hidden" name="opt_email" value="~opt_email.attr~" /><input type="hidden" name="opt_db" value="~opt_db.attr~" /><input type="hidden" name="opt_listing" value="~opt_listing.attr~" /><input type="hidden" name="opt_display" value="~opt_display.attr~" /><input type="hidden" name="opt_http_pass" value="~opt_http_pass.attr~" /><input type="hidden" name="fields" value="~fields.attr~" /><input type="submit" name="edit" value="Back to editing" /></p>
+  	<p><!--~hiddens start~--><input type="hidden" name="form_name" value="~form_name.attr~" /><input type="hidden" name="singular" value="~singular.attr~" /><input type="hidden" name="opt_email" value="~opt_email.attr~" /><input type="hidden" name="opt_db" value="~opt_db.attr~" /><input type="hidden" name="opt_listing" value="~opt_listing.attr~" /><input type="hidden" name="opt_display" value="~opt_display.attr~" /><input type="hidden" name="opt_http_pass" value="~opt_http_pass.attr~" /><input type="hidden" name="fields" value="~fields.attr~" /><!--~end~--><input type="submit" name="edit" value="Back to editing" /></p>
 
     <p><input type="submit" name="view_sql" value="View SQL" /></p>
 

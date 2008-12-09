@@ -69,7 +69,9 @@ function list_available_types() {
 
 function metaform() {
 	if(isset($_REQUEST['form_name'])) {
-		$GLOBALS['form_name'] = ereg_replace('[^a-z0-9_-]', '', $_REQUEST['form_name']);
+		$GLOBALS['form_name'] = format_varname($_REQUEST['form_name']);
+		$GLOBALS['singular'] = format_varname($_REQUEST['singular']);
+		tem_set('singular', $GLOBALS['singular']);
 		$GLOBALS['opt_email'] = format_yesno($_REQUEST['opt_email']);
 		tem_set('opt_email', $GLOBALS['opt_email']);
 		$GLOBALS['opt_db'] = format_yesno($_REQUEST['opt_db']);
@@ -210,6 +212,7 @@ function make_html($whole_file = true) {
 	$tem = new tem();
 	$tem->load('code/wfpl/metaform/template.html');
 	$tem->set('form_name', $GLOBALS['form_name']);
+	$tem->set('singular', $GLOBALS['singular']);
 	$fields = get_fields();
 	$tem->set('always_field', find_always_field($fields));
 	foreach($fields as $field) {
@@ -296,6 +299,7 @@ function make_php() {
 	$tem = new tem();
 	$tem->load('code/wfpl/metaform/template.php');
 	$tem->set('form_name', $GLOBALS['form_name']);
+	$tem->set('singular', $GLOBALS['singular']);
 	$fields = get_fields();
 	$db_fields = '';
 	$php_fields = '';
@@ -435,6 +439,7 @@ function preview() {
 	unset($preview_tem);
 	$preview = ereg_replace('type="submit"', 'type="submit" disabled="disabled"', $preview);
 	tem_set('preview', $preview);
+	tem_show('hiddens');
 	set_form_action();
 	tem_output();
 }
