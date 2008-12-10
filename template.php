@@ -272,11 +272,12 @@ function tem_output($filename = false) {
 
 # this is used in template_run() and should be of no other use
 function template_filler($matches) {
+	$sep = defined('WFPL_TEM_SEP') ? WFPL_TEM_SEP : '.';
 	$match = array_pop($matches);
-	list($tag, $enc) = explode(defined('WFPL_TEM_SEP')?WFPL_TEM_SEP:'.', $match, 2);
+	list($tag, $enc) = explode($sep, $match, 2);
 	$value = $GLOBALS['wfpl_template_keyval'][$tag];
 	if($enc) {
-		$encs = explode('.', $enc);
+		$encs = explode($sep, $enc);
 		foreach($encs as $enc) {
 			$enc = "enc_$enc";
 			if(function_exists($enc)) {
