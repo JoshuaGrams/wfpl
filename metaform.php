@@ -56,14 +56,12 @@ $GLOBALS['types'] = array(
 );
 
 function list_available_types() {
-	$types = '';
+	ksort($GLOBALS['types']);
 	foreach($GLOBALS['types'] as $key => $value) {
-		if($types) {
-			$types .= ', ';
-		}
-		$types .= $key;
+		tem_set('type', $key);
+		tem_show('types');
+		tem_show('types_sep');
 	}
-	tem_set('available_types', $types);
 }
 
 
@@ -116,8 +114,9 @@ function metaform() {
 
 
 	set_form_action();
+	tem_load('code/wfpl/metaform/main.html');
 	list_available_types();
-	tem_output('code/wfpl/metaform/main.html');
+	tem_output();
 }
 
 
