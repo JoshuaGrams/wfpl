@@ -128,7 +128,7 @@ function run_php($dest = false) {
 	} else {
 		$sub_names = tem_top_sub_names();
 		foreach($sub_names as $sub_name) {
-			tem_sub($sub_name);
+			tem_show($sub_name);
 		}
 	}
 
@@ -148,7 +148,7 @@ function run_php($dest = false) {
 
 			if(file_exists("$basename.css")) {
 				$tem->set('css_link', "$basename.css");
-				$tem->sub('css_links');
+				$tem->show('css_links');
 			}
 
 			$GLOBALS['wfpl_template'] = $tem;

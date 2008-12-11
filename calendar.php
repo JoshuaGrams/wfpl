@@ -38,12 +38,12 @@
 require_once('code/wfpl/template.php');
 
 function calendar_week(&$template) {
-	$template->sub('week');
+	$template->show('week');
 }
 
 function calendar_day($kind, &$template) {
-	$template->sub($kind);
-	$template->sub('day');
+	$template->show($kind);
+	$template->show('day');
 }
 
 # php4 is broken, in that you cannot set a default value for a parameter that

@@ -80,12 +80,12 @@ function display_messages($template = 0) {
 			if($first) {
 				$first = false;
 			} else {
-				$template->sub('message_divider');
+				$template->show('message_divider');
 			}
 			$template->set('message_text', $msg);
-			$template->sub('message_box');
+			$template->show('message_box');
 		}
-		$template->sub('message_container');
+		$template->show('message_container');
 		unset($GLOBALS['wfpl_messages']);
 	}
 }
