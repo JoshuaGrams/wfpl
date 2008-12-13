@@ -3,6 +3,10 @@ WFPL (Well Factored PHP Library)
 wfpl is a collection of php functions that make it easy to create websites,
 including things that are tricky to do from scratch like editing databases.
 
+This branch is an experiment with a different templating system.
+
+
+
 It includes:
 
 * A templating system (so all your data/markup can be in the .html file)
