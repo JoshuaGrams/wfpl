@@ -127,7 +127,16 @@ function run_php($dest = false) {
 			$data['css_link'] = "$basename.css";
 		}
 
-		if($html_exists) print template_file($data, $html_file);
+		if(file_exists("template.html")) {
+			$template = parse_template(file_get_contents("template.html"));
+			if($html_exists) {
+				$subs = parse_template(file_get_contents($html_file));
+				$template = merge_templates($template, $subs);
+			}
+		} elseif($html_exists) {
+			$template = parse_template(file_get_contents("$html_file"));
+		}
+		if($template) print fill_template($data, $template);
 	}
 }
 

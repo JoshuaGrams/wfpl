@@ -53,7 +53,7 @@ function parse_template($string) {
 			} else {
 				$tem[] = array($tag);
 			}
-		} elseif($piece != '<!--') $tem[] = $piece;
+		} elseif($piece and $piece != '<!--') $tem[] = $piece;
 	}
 	return $tem;
 }
@@ -67,7 +67,7 @@ function fill_template($data, $template, $context = NULL) {
 		if(is_string($tem)) $output .= $tem;
 		else {
 			$tag = array_shift($tem);
-			if(count($tem)) {  # sub-template
+			if($tem) {  # sub-template
 				$value = tem_get($tag, $context);
 				foreach(template_rows($value) as $row) {
 					$output .= fill_template($row, $tem, $context);
@@ -81,6 +81,14 @@ function fill_template($data, $template, $context = NULL) {
 
 # Replace values in main with sub-templates from tem.
 function merge_templates($main, $tem) {
+	$subs = get_sub_templates($tem);
+	foreach($main as $piece) {
+		if(is_array($piece) and count($piece) == 1 and $subs[$piece[0]]) {
+			$piece = $subs[$piece[0]];
+		}
+		$output[] = $piece;
+	}
+	return $output;
 }
 
 
@@ -132,6 +140,16 @@ function tem_get_enc($tag, $context)
 		}
 		return $value;
 	}
+}
+
+function get_sub_templates($tem) {
+	$subs = array();
+	foreach($tem as $piece) {
+		if(is_array($piece) and count($piece) > 1) {
+		   	$subs[$piece[0]] = $piece;
+		}
+	}
+	return $subs;
 }
 
 ?>
