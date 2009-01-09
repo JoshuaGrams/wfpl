@@ -12,6 +12,7 @@
 
 require_once('code/wfpl/encode.php');
 require_once('code/wfpl/file.php');
+require_once('code/wfpl/misc.php');
 
 
 # Public functions
@@ -26,22 +27,31 @@ function template_file($data, $filename) {
 }
 
 # First we take the template string and break it up into an array 
-# of strings and sub-arrays.  The first element of each array is 
-# the name of that sub-template.
+# of strings and sub-arrays.  The first item in a sub-array is the tag.
 
 function parse_template($string) {
-	$a[] = array(); $tem = &$a[count($a)-1];
+	# Don't change any of the reference code!  Since PHP
+	# references point to the variable, not the data, it
+	# really does have to be written exactly like this.
+	$stack[] = array(); $tem = &last($stack);
 	# note: for some reason this captures '<!--' but not '-->'.
-	$pieces = preg_split("/(<!--)?(~[^~]*[?.]~)(?(1)-->)/", $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+	$pieces = preg_split("/(<!--)?(~[^~]*~)(?(1)-->)/", $string, -1, PREG_SPLIT_DELIM_CAPTURE);
 	foreach($pieces as $piece) {
 		if($piece[0] == '~') {
-			$tag = substr($piece, 1, -2);
-			if(substr($piece, -2, 1) == '?') {
-				$a[] = array($tag);
-				$tem[] = &$a[count($a)-1];
-				$tem = &$a[count($a)-1];
+			$tag = preg_replace('/~([^?.]*)[?.]?~/', "$1", $piece);
+			$last = substr($piece, -2, 1);
+			if($last == '?') {
+				$stack[] = array($tag);
+				$tem[] = &last($stack);
+				$tem = &last($stack);
+			} elseif($last == '.') {
+				$cur = $stack[count($stack)-1][0];
+				if($tag && $tag != $cur) {
+				   	die("Invalid template: tried to close $tag, but $cur is current.");
+				}
+				array_pop($stack); $tem = &last($stack);
 			} else {
-				array_pop($a); $tem = &$a[count($a)-1];
+				$tem[] = array($tag);
 			}
 		} elseif($piece != '<!--') $tem[] = $piece;
 	}
@@ -52,19 +62,25 @@ function parse_template($string) {
 # replacing all tags with the data values.
 
 function fill_template($data, $template, $context = NULL) {
-	$context = new Context($context, $data);
+	$context[] = $data;
 	foreach($template as $tem) {
-		if(is_string($tem)) {
-			$output .= preg_replace_callback('/~([^~]*)~/', array($context, 'get_enc'), $tem);
-		} else {
-			$key = array_shift($tem);
-			$value = $context->get($key);
-			foreach(template_rows($value) as $row) {
-				$output .= fill_template($row, $tem, $context);
-			}
+		if(is_string($tem)) $output .= $tem;
+		else {
+			$tag = array_shift($tem);
+			if(count($tem)) {  # sub-template
+				$value = tem_get($tag, $context);
+				foreach(template_rows($value) as $row) {
+					$output .= fill_template($row, $tem, $context);
+				}
+			} else $output .= tem_get_enc($tag, $context);
 		}
 	}
 	return $output;
+}
+
+
+# Replace values in main with sub-templates from tem.
+function merge_templates($main, $tem) {
 }
 
 
@@ -94,42 +110,27 @@ function template_rows($value) {
 	}
 }
 
-# Since PHP doesn't have closures, we wrap the context array in a class.
-class Context {
-	# a context is a stack of namespaces (arrays of key/value pairs).
-	var $ctx;
-
-	# new (inner) namespaces are added to the beginning.
-	function Context($context, $data) {
-		if($context) $this->ctx = $context->ctx; else $this->ctx = array();
-		array_unshift($this->ctx, $data);
-  	}
-
-	# we search from innermost to outermost namespace.
-	function get($key)
-	{
-		foreach($this->ctx as $data) {
-			if(array_key_exists($key, $data)) return $data[$key];
-		}
+function tem_get($key, $context)
+{
+	while($context) {
+		$data = array_pop($context);
+		if(array_key_exists($key, $data)) return $data[$key];
 	}
+}
 
-	# this is a callback for preg_replace_callback('/~([^~]*)~/', ...);
-	# it takes a key[:enc]* tag, looks up the value, and applies the encoding(s).
-	function get_enc($match)
-	{
-		# tag is the text matched by the first sub-expression
-		$encodings = explode(':', $match[1]);
-		$key = array_shift($encodings);
+function tem_get_enc($tag, $context)
+{
+	$encodings = explode(':', $tag);
+	$key = array_shift($encodings);
 
-		$value = $this->get($key);
-		if(is_string($value)) {
-			foreach($encodings as $encoding) {
-				$func = "enc_$encoding";
-				if(function_exists($func)) $value = $func($value, $key);
-				else die("ERROR: encoder function '$func' not found.<br>\n");
-			}
-			return $value;
+	$value = tem_get($key, $context);
+	if(is_string($value)) {
+		foreach($encodings as $encoding) {
+			$func = "enc_$encoding";
+			if(function_exists($func)) $value = $func($value, $key);
+			else die("ERROR: encoder function '$func' not found.<br>\n");
 		}
+		return $value;
 	}
 }
 

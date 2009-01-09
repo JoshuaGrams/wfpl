@@ -129,7 +129,7 @@ function ref(&$foo) {
 	return new stupid_reference($foo);
 }
 
-function last($array) {
+function &last(&$array) {
 	return $array[count($array) - 1];
 }
 
