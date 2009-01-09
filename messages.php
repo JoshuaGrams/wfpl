@@ -59,7 +59,7 @@ function message($msg, &$tem = NULL) {
 	if(!$tem) $tem = &$GLOBALS['wfpl_template'];
 
 	$sub['separator'] = $tem['message_separator'];
-	$sub['text'] = $message;
+	$sub['text'] = $msg;
 
 	$tem['messages'] = TRUE;
 	$tem['message'][] = $sub;
