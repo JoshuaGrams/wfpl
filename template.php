@@ -137,14 +137,12 @@ function tem_get_enc($tag, $context)
 	$key = array_shift($encodings);
 
 	$value = tem_get($key, $context);
-	if(is_string($value)) {
-		foreach($encodings as $encoding) {
-			$func = "enc_$encoding";
-			if(function_exists($func)) $value = $func($value, $key);
-			else die("ERROR: encoder function '$func' not found.<br>\n");
-		}
-		return $value;
+	foreach($encodings as $encoding) {
+		$func = "enc_$encoding";
+		if(function_exists($func)) $value = $func($value, $key);
+		else die("ERROR: encoder function '$func' not found.<br>\n");
 	}
+	return $value;
 }
 
 function top_sub_templates($tem) {
