@@ -151,13 +151,13 @@ function db_send_get($table, $columns, $where, $args) {
 }
 
 
-function db_get_rows($table, $columns, $where = '') {
+function db_get_rows($table, $columns, $where = '', $type = MYSQL_NUM) {
 	$args = func_get_args();
 	$args = array_slice($args, 3);
 	$result = db_send_get($table, $columns, $where, $args);
 
 	$rows = array();
-	while($row = mysql_fetch_row($result)) {
+	while($row = mysql_fetch_array($result, $type)) {
 		$rows[] = $row;
 	}
 
@@ -181,12 +181,12 @@ function db_get_column($table, $columns, $where = '') {
 	return $column;
 }
 
-function db_get_row($table, $columns, $where = '') {
+function db_get_row($table, $columns, $where = '', $type = MYSQL_NUM) {
 	$args = func_get_args();
 	$args = array_slice($args, 3);
 	$result = db_send_get($table, $columns, $where, $args);
 
-	$row = mysql_fetch_row($result);
+	$row = mysql_fetch_array($result, $type);
 
 	mysql_free_result($result);
 

@@ -1,320 +1,136 @@
 <?php
 
-
-# This file contains generally useful template handling code. It is wrapped in
-# an object so that if you want/need to you can make more than one instance of
-# it and they won't step on each other's toes. Also there are a set of global
-# functions at the bottom so you don't have to mess around with objects if you
-# don't want to. The documentation will be on the object methods, but just know
-# that each has a straight function wrapper at the bottom with 'tem_' prepended
-# to the name.
-
-# This is designed to be as simple as it can be for your project. The simple
-# way to use it is to set some key/value pairs with tem_set() then call
-# tem_output('filename.html') to output the page. A more complex example
-# including the use of sub-templates can be found in tem_test.php
-
-# FIXME: sub-sub templates need to be cleared when the sub template containing
-# them is run
+# This is a simple template-handling system.  You pass it a big data 
+# structure with key/value pairs, and a template string to fill out.
+#
+# Within a template, it recognizes tags delimited by tildes (~).  When 
+# the template is filled out, the tags will be replaced with the 
+# corresponding data.  Tags ending with '?' and '.' mark the start and 
+# end of a sub-template (for optional or repeated text), and can be 
+# wrapped in HTML comments (which will be removed along with the tags
+# when the template is filled out).
 
 require_once('code/wfpl/encode.php');
-require_once('code/wfpl/misc.php');
 require_once('code/wfpl/file.php');
 
-class tem {
-	var $keyval;        # an array containing key/value pairs 
-	var $filename;      # template filename (sometimes not set)
-	var $template;      # contents of template
-	var $sub_templates; # tag-name/template-string pairs
-	var $sub_subs;      # key: sub-template name  value: array of names of the sub-templates of this one
 
-	# initialize variables
-	function tem() {
-		$this->keyval = array('' => '~'); # so that ~~ in the template creates a single ~
-		$this->sub_templates = array();
-	}
+# Public functions
+# ----------------
 
-	# set a key/value pair. if a ~tag~ in the template matches key it will be replaced by value
-	function set($key, $value) {
-		$this->keyval[$key] = $value;
-	}
+function template($data, $template) {
+	return fill_template($data, parse_template($template));
+}
 
-	# like set() but appends
-	function append($key, $value) {
-		$this->keyval[$key] .= $value;
-	}
+function template_file($data, $filename) {
+	return template($data, file_get_contents($filename));
+}
 
-	# like set() but prepends
-	function prepend($key, $value) {
-		$this->keyval[$key] = $value . $this->keyval[$key];
-	}
+# First we take the template string and break it up into an array 
+# of strings and sub-arrays.  The first element of each array is 
+# the name of that sub-template.
 
-	# clear a value. Functionally equivalent to set($key, '') but cleaner and more efficient
-	function clear($key) {
-		unset($this->keyval[$key]);
-	}
-
-	# grab a value you stuck in earlier with set()
-	function get($key) {
-		return $this->keyval[$key];
-	}
-
-	# deprecated (renamed show())
-	function sub($sub_template_name) {
-		$this->show($sub_template_name);
-	}
-
-	# run the template engine on one of the sub-templates and append the result
-	# to the keyval in the main array. See tem_test.php for an example of how
-	# this can be used.
-	function show($sub_template_name) {
-		$this->keyval[$sub_template_name] .= template_run($this->sub_templates[$sub_template_name], $this->keyval);
-
-		# after running a sub-template, clear its sub-templates
-		if(isset($this->sub_subs[$sub_template_name])) {
-			foreach($this->sub_subs[$sub_template_name] as $sub_sub) {
-				$this->clear($sub_sub);
-			}
-		}
-	}
-
-	function show_separated($sub_template_name) {
-		if($this->get($sub_template_name)) {
-			$this->show($sub_template_name . '_sep');
-		}
-		$this->show($sub_template_name);
-	}
-
-	# this is used by tem::load() and should be otherwise useless
-	function _load(&$in, &$out, &$parents, &$parent) {
-		while($in) {
-			# scan for one of: 1) the begining of a sub-template 2) the end of this one 3) the end of the file
-			$n = strpos($in, '<!--~');
-			if($n === false) { # not found
-				# we hit the end of the file
-				$out .= $in;
-				$in = '';
-				return;
-			}
-
-			# move everything up to (but not including) <!-- to the output
-			$out .= substr($in, 0, $n);
-			$in = substr($in, $n);
-
-			# we found something.
-			# is it an end tag?
-			if(strcmp('<!--~end~-->', substr($in, 0, 12)) == 0) {
-				$in = substr($in, 12);
-				$parent = array_pop($parents);
-				return;
-			}
-
-			$matches = array();
-			# this limits sub_template names to 50 chars
-			if(ereg('^<!--~([^~]*) start~-->', substr($in, 0, 65), $matches)) {
-				list($start_tag, $tag_name) = $matches;
-
-				# keep track of the tree
-				if(!isset($this->sub_subs[$parent])) {
-					$this->sub_subs[$parent] = array();
-				}
-				array_push($this->sub_subs[$parent], $tag_name);
-				array_push($parents, $parent);
-				$parent = $tag_name;
-
-				$out .= '~' . $tag_name . '~';
-				$in = substr($in, strlen($start_tag));
-				$this->sub_templates[$tag_name] = '';
-				$this->_load($in, $this->sub_templates[$tag_name], $parents, $parent);
+function parse_template($string) {
+	$a[] = array(); $tem = &$a[count($a)-1];
+	# note: for some reason this captures '<!--' but not '-->'.
+	$pieces = preg_split("/(<!--)?(~[^~]*[?.]~)(?(1)-->)/", $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+	foreach($pieces as $piece) {
+		if($piece[0] == '~') {
+			$tag = substr($piece, 1, -2);
+			if(substr($piece, -2, 1) == '?') {
+				$a[] = array($tag);
+				$tem[] = &$a[count($a)-1];
+				$tem = &$a[count($a)-1];
 			} else {
-				# it's not a start tag or end tag, so let's pass it through:
-				$out .= substr($in, 0, 5);
-				$in = substr($in, 5);
+				array_pop($a); $tem = &$a[count($a)-1];
 			}
-		} #repeat
+		} elseif($piece != '<!--') $tem[] = $piece;
 	}
+	return $tem;
+}
 
-	# like load() except you pass a string instead of a filename
-	function load_str($str) {
-		$this->template = '';
-		$parents = array('top_level_subs' => array());
-		$parent = 'top_level_subs';
-		$this->_load($str, $this->template, $parents, $parent);
-	}
+# Then we do a depth-first traversal of the template tree,
+# replacing all tags with the data values.
 
-	# This is useful when you have sub-templates that you want to mess with
-	# before the main template is run. But can also be used to simply specify
-	# the filename ahead of time.
-	function load($filename) {
-		$this->filename = $filename;
-		$this->load_str(read_whole_file($filename));
-	}
-		
-	# Run the template. Pass a filename, or a string, unless you've already
-	# specified a template with load()
-	function run($templ = false) {
-		$template_string = $this->template;
-		$template_file = $this->file;
-		if($templ !== false) {
-			if(strlen($templ) < 150 && file_exists($templ)) {
-				$template_file = $templ;
-				unset($template_string);
-			} else {
-				$template_string = $templ;
-			}
-		}
-
-		if(!$template_string) {
-			if(!$template_file) {
-				print "sorry, no template to run\n";
-				exit(1);
-			}
-
-			$template_string = read_whole_file($template_file);
-		}
-		
-		return template_run($template_string, $this->keyval);
-	}	
-
-	# same as run() except the output is print()ed
-	function output($templ = false) {
-		print($this->run($templ));
-	}
-
-	# return the names of the top level subs, or an empty array
-	function top_sub_names() {
-		if(isset($this->sub_subs['top_level_subs'])) {
-			return $this->sub_subs['top_level_subs'];
+function fill_template($data, $template, $context = NULL) {
+	$context = new Context($context, $data);
+	foreach($template as $tem) {
+		if(is_string($tem)) {
+			$output .= preg_replace_callback('/~([^~]*)~/', array($context, 'get_enc'), $tem);
 		} else {
-			return array();
-		}
-	}
-
-	# return the contents of the top-level sub-templates
-	#
-	# this does not run the sub-templates, so if you've not called tem_show() on them, they will be blank.
-	#
-	# Return a hash.
-	#     keys: name of top level sub-template.
-	#     values: contents of said sub-template.
-	function top_subs() {
-		$ret = array();
-		$names = $this->top_sub_names();
-		foreach($names as $name) {
-			$ret[$name] = $this->get($name);
-		}
-		return $ret;
-	}
-}
-
-# Below are functions so you can use the above class without allocating or
-# keeping track of it.
-
-# get a reference to the current template object
-function tem_init() { 
-	if(!$GLOBALS['wfpl_template']) {
-		$GLOBALS['wfpl_template'] = new tem();
-	}
-}
-		
-function tem_append($key, $value) {
-	tem_init();
-	$GLOBALS['wfpl_template']->append($key, $value);
-}
-	
-function tem_prepend($key, $value) {
-	tem_init();
-	$GLOBALS['wfpl_template']->prepend($key, $value);
-}
-	
-function tem_set($key, $value) {
-	tem_init();
-	$GLOBALS['wfpl_template']->set($key, $value);
-}
-	
-function tem_get($key) {
-	tem_init();
-	return $GLOBALS['wfpl_template']->get($key);
-}
-
-function tem_run($templ = false) {
-	tem_init();
-	return $GLOBALS['wfpl_template']->run($templ);
-}
-
-# deprecated (renamed tem_show())
-function tem_sub($sub_template_name) {
-	tem_show($sub_template_name);
-}
-
-function tem_show($sub_template_name) {
-	tem_init();
-	$GLOBALS['wfpl_template']->show($sub_template_name);
-}
-
-function tem_show_separated($sub_template_name) {
-	tem_init();
-	$GLOBALS['wfpl_template']->show_separated($sub_template_name);
-}
-
-
-function tem_load($filename) {
-	tem_init();
-	$GLOBALS['wfpl_template']->load($filename);
-}
-
-function tem_output($filename = false) {
-	tem_init();
-	$GLOBALS['wfpl_template']->output($filename);
-}
-
-
-
-# this is used in template_run() and should be of no other use
-function template_filler($matches) {
-	$sep = defined('WFPL_TEM_SEP') ? WFPL_TEM_SEP : '.';
-	$match = array_pop($matches);
-	list($tag, $enc) = explode($sep, $match, 2);
-	$value = $GLOBALS['wfpl_template_keyval'][$tag];
-	if($enc) {
-		$encs = explode($sep, $enc);
-		foreach($encs as $enc) {
-			$enc = "enc_$enc";
-			if(function_exists($enc)) {
-				$value = $enc($value, $tag);
-			} else {
-				print "ERROR: encoder function '$enc' not found.<br>\n";
-				exit(1);
+			$key = array_shift($tem);
+			$value = $context->get($key);
+			foreach(template_rows($value) as $row) {
+				$output .= fill_template($row, $tem, $context);
 			}
 		}
 	}
-	return $value;
+	return $output;
 }
 
 
-# pass a template string and an associative array of the key/values and it
-# returns the result.
-function template_run($template, &$keyval) {
-	$GLOBALS['wfpl_template_keyval'] =& $keyval;
-	return preg_replace_callback('`<!--~([^~]*)~-->|~([^~]*)~|<span class="template">([^<]*)</span>|<p class="template">([^<]*)</p>`', 'template_filler', $template);
+
+# Internal functions
+# ------------------
+#
+# Of course, nothing stops you from using these, but I don't know
+# why you would want to...
+
+
+# Convert value to array of arrays of key/value pairs for use in
+# sub-template expansion.  This adds flexibility to how you represent
+# your data.
+function template_rows($value) {
+	if(is_array($value)) {
+		# numeric keys, is already array of arrays -- expand sub-template for each.
+		if(array_key_exists(0, $value)) return $value;
+		# key/value pairs -- expand sub-template once.
+		else return array($value);
+	} elseif($value) {
+		# value -- expand sub-template once using only parent values
+		return array(array());
+	} else {
+		# empty value -- don't expand sub-template
+		return array();
+	}
 }
 
-function tem_top_sub_names() {
-	tem_init();
-	return $GLOBALS['wfpl_template']->top_sub_names();
-}
+# Since PHP doesn't have closures, we wrap the context array in a class.
+class Context {
+	# a context is a stack of namespaces (arrays of key/value pairs).
+	var $ctx;
 
-function tem_top_subs() {
-	tem_init();
-	return $GLOBALS['wfpl_template']->top_subs();
-}
+	# new (inner) namespaces are added to the beginning.
+	function Context($context, $data) {
+		if($context) $this->ctx = $context->ctx; else $this->ctx = array();
+		array_unshift($this->ctx, $data);
+  	}
 
-# replaces currently set template, and returns the old.
-function tem_load_new($file) {
-	$old = $GLOBALS['wfpl_template'];
-	$GLOBALS['wfpl_template'] = new tem();
-	$GLOBALS['wfpl_template']->load($file);
-	return $old;
+	# we search from innermost to outermost namespace.
+	function get($key)
+	{
+		foreach($this->ctx as $data) {
+			if(array_key_exists($key, $data)) return $data[$key];
+		}
+	}
+
+	# this is a callback for preg_replace_callback('/~([^~]*)~/', ...);
+	# it takes a key[:enc]* tag, looks up the value, and applies the encoding(s).
+	function get_enc($match)
+	{
+		# tag is the text matched by the first sub-expression
+		$encodings = explode(':', $match[1]);
+		$key = array_shift($encodings);
+
+		$value = $this->get($key);
+		if(is_string($value)) {
+			foreach($encodings as $encoding) {
+				$func = "enc_$encoding";
+				if(function_exists($func)) $value = $func($value, $key);
+				else die("ERROR: encoder function '$func' not found.<br>\n");
+			}
+			return $value;
+		}
+	}
 }
 
 ?>

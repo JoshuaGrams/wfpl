@@ -54,7 +54,7 @@ if(file_exists('code/config.php')) {
 # pass http://foo.com/bar.html to redirect to a full directory
 function run_php($dest = false) {
 	if($dest) {
-		# if it's got a : it must be a full URL, redirect
+		# if it has a : it must be a full URL, redirect
 		if(strpos($dest, ':')) {
 			redirect($dest);
 			exit();
@@ -87,35 +87,13 @@ function run_php($dest = false) {
 	# cms_get can return one of:
 	# 1) false to indicate that there's no cms content for this basename
 	# 2) a string to indicate a soft/full redirect just as foo_main()
-	# 3) a hash of key/value pairs to be tem_set(key,value) on the template
+	# 3) a hash of key/value pairs to be added to the template
 	if(function_exists('cms_get')) {
 		$cms_content = cms_get($basename);
 		if(is_string($cms_content)) {
 			run_php($cms_content);
 			return;
 		}
-	} else {
-		$cms_content = false;
-	}
-
-	if(!$php_exists && !$html_exists && !$cms_content) {
-		header('HTTP/1.0 404 File Not Found');
-		if(file_exists('404.php') || file_exists('404.html')) {
-			run_php('404');
-			return;
-		} else {
-			echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html><head><title>404</title></head><body><h1>404 File Not Found</h1></body></html>';
-		}
-	}
-
-	# If there's no template.html we don't want to parse $html_file.
-	if($html_exists && !$php_exists && !file_exists('template.html')) {
-		readfile($html_file);
-		exit();
-	}
-
-	if($html_exists) {
-		tem_load_new($html_file);
 	}
 
 	if($php_exists) {
@@ -125,39 +103,31 @@ function run_php($dest = false) {
 			run_php($other);
 			return;
 		}
-	} else {
-		$sub_names = tem_top_sub_names();
-		foreach($sub_names as $sub_name) {
-			tem_show($sub_name);
+	} elseif($html_exists) {
+		readfile($html_file);
+		exit();
+	} elseif(!$cms_content) {
+		header('HTTP/1.0 404 File Not Found');
+		if(file_exists('404.php') || file_exists('404.html')) {
+			run_php('404');
+			return;
+		} else {
+			echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html><head><title>404</title></head><body><h1>404 File Not Found</h1></body></html>';
 		}
 	}
 
 	# Check for $GLOBALS['wfpl_template'] because it might have been set (or unset) by the php script.
 	if($GLOBALS['wfpl_template']) {
-		if(file_exists('template.html')) {
-			$tem = new tem();
-			$tem->load("template.html");
-			$tem->set('basename', $basename);
-			if($cms_content) foreach($cms_content as $name => $val) {
-				$tem->append($name, $val);
-			}
-			$sections = tem_top_subs();
-			if($sections) foreach($sections as $name => $val) {
-				$tem->append($name, $val);
-			}
-
-			if(file_exists("$basename.css")) {
-				$tem->set('css_link', "$basename.css");
-				$tem->show('css_links');
-			}
-
-			$GLOBALS['wfpl_template'] = $tem;
+		$data = &$GLOBALS['wfpl_template'];
+		$data['basename'] = $basename;
+		if($cms_content) foreach($cms_content as $name => $val) {
+			$data[$name] .= $val;
+		}
+		if(file_exists("$basename.css")) {
+			$data['css_link'] = "$basename.css";
 		}
 
-		if(function_exists('display_messages')) {
-			display_messages();
-		}
-		tem_output();
+		if($html_exists) print template_file($data, $html_file);
 	}
 }
 
