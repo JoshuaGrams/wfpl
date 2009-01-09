@@ -86,7 +86,7 @@ function run_php($dest = false) {
 
 	# cms_get can return one of:
 	# 1) false to indicate that there's no cms content for this basename
-	# 2) a string to indicate a soft/full redirect just as foo_main()
+	# 2) a string to request a soft/full redirect just like foo_main()
 	# 3) a hash of key/value pairs to be added to the template
 	if(function_exists('cms_get')) {
 		$cms_content = cms_get($basename);
@@ -116,28 +116,25 @@ function run_php($dest = false) {
 		}
 	}
 
-	# Check for $GLOBALS['wfpl_template'] because it might have been set (or unset) by the php script.
-	if($GLOBALS['wfpl_template']) {
-		$data = &$GLOBALS['wfpl_template'];
-		$data['basename'] = $basename;
-		if($cms_content) foreach($cms_content as $name => $val) {
-			$data[$name] .= $val;
-		}
-		if(file_exists("$basename.css")) {
-			$data['css_link'] = "$basename.css";
-		}
-
-		if(file_exists("template.html")) {
-			$template = parse_template(file_get_contents("template.html"));
-			if($html_exists) {
-				$subs = parse_template(file_get_contents($html_file));
-				$template = merge_templates($template, $subs);
-			}
-		} elseif($html_exists) {
-			$template = parse_template(file_get_contents("$html_file"));
-		}
-		if($template) print fill_template($data, $template);
+	$data = &$GLOBALS['wfpl_template'];
+	$data['basename'] = $basename;
+	if($cms_content) foreach($cms_content as $name => $value) {
+		$data[$name] .= $value;
 	}
+	if(file_exists("$basename.css")) {
+		$data['css_link'] = "$basename.css";
+	}
+
+	if(file_exists("template.html")) {
+		$template = parse_template_file("template.html");
+		if($html_exists) {
+			$subs = parse_template_file($html_file);
+			$template = merge_templates($template, $subs);
+		}
+	} elseif($html_exists) {
+		$template = parse_template_file("$html_file");
+	}
+	if($template) print fill_template($data, $template);
 }
 
 run_php();

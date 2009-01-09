@@ -23,16 +23,21 @@ function template($data, $template) {
 }
 
 function template_file($data, $filename) {
-	return template($data, file_get_contents($filename));
+	return fill_template($data, parse_template_file($filename));
+}
+
+function parse_template_file($filename) {
+	return parse_template(file_get_contents($filename));
 }
 
 # First we take the template string and break it up into an array 
-# of strings and sub-arrays.  The first item in a sub-array is the tag.
+# of strings and sub-arrays.  The first item in a sub-array is the name
+# of the value or sub-template.
 
 function parse_template($string) {
-	# Don't change any of the reference code!  Since PHP
-	# references point to the variable, not the data, it
-	# really does have to be written exactly like this.
+	# Don't mess with the $stack/$tem assignments!  Since
+	# PHP references point to the variable, not the data,
+	# it really does have to be written exactly like this.
 	$stack[] = array(); $tem = &last($stack);
 	# note: for some reason this captures '<!--' but not '-->'.
 	$pieces = preg_split("/(<!--)?(~[^~]*~)(?(1)-->)/", $string, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -79,9 +84,9 @@ function fill_template($data, $template, $context = NULL) {
 }
 
 
-# Replace values in main with sub-templates from tem.
+# Replace top-level values in $main with top-level templates from $tem.
 function merge_templates($main, $tem) {
-	$subs = get_sub_templates($tem);
+	$subs = top_sub_templates($tem);
 	foreach($main as $piece) {
 		if(is_array($piece) and count($piece) == 1 and $subs[$piece[0]]) {
 			$piece = $subs[$piece[0]];
@@ -142,7 +147,7 @@ function tem_get_enc($tag, $context)
 	}
 }
 
-function get_sub_templates($tem) {
+function top_sub_templates($tem) {
 	$subs = array();
 	foreach($tem as $piece) {
 		if(is_array($piece) and count($piece) > 1) {
