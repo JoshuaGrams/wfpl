@@ -165,126 +165,71 @@ function enc_mmddyyyyhhmm($seconds) {
 
 
 
-define('PULLDOWN_ARRAY', 0); define('PULLDOWN_HASH', 1); define('PULLDOWN_2D', 2);
+# pulldown options can be:
+#    array of values,
+#    hash of value => display,
+#    array of array(value, display) # canonical form.
+function pulldown_options($options, $always_use_keys = false) {
+	# convert other types of input to array of array(value, display)
+	reset($options); if(!is_scalar(current($options))) return $options;
 
-function pulldown_options_to_2d($options, $keys_from) {
-	# convert other types of input to value=>display hash
-	switch($keys_from) {
-		case PULLDOWN_HASH:
-			$new_options = array();
-			foreach($options as $value => $display) {
-				$new_options[] = array($value, $display);
-			}
-			return $new_options;
-		case PULLDOWN_ARRAY:
-			$new_options = array();
-			foreach($options as $opt) {
-				$new_options[] = array($opt, $opt);
-			}
-			return $new_options;
-		break;
-		case PULLDOWN_2D:
-			return $options;
-		break;
-		default:
-			die('pulldown_options_to_2d(): unknown value: "' . print_r($keys_from) . '" passed in $keys_from parameter');
+	if($always_use_keys or array_keys($options) !== range(0, count($values) - 1)) {
+		foreach($options as $value => $display) {
+			$pulldown[] = array($value, $display);
+		}
+	} else {
+		foreach($options as $value) {
+			$pulldown[] = array($value, $value);
+		}
 	}
+	return $pulldown;
 }
 
 
-# call this function before you run() the template so enc_options() knows what
-# to do
+# convert data to the structure used by enc_options
 #
 # Parameters:
 #
-#   name: the name of the html control
+#   selected: the current value (or array of values)
 #
 #   options: an array of options to display in the pulldown/selectbox
 #
-#   keys_from: Set to one of:
-#        PULLDOWN_ARRAY: (default) values of $options are displayd and posted
-#        PULLDOWN_HASH: values of $options are display, keys are posted
-#        PULLDOWN_2D: $options is a 2 dimensional array.
-#                     $options[0][1] is displayed, $options[0][0] is posted.
-#                     $options[1][1] is displayed, $options[1][0] is posted.
-#
-#   multiple: UNTESTED set to true for multiple-select boxes. 
-
-function pulldown($name, $options, $keys_from = PULLDOWN_ARRAY, $multiple = false) {
-	$options = pulldown_options_to_2d($options, $keys_from);
-	$GLOBALS[$name . '_options'] = array();
-	$GLOBALS[$name . '_options']['options'] = $options;
-	$GLOBALS[$name . '_options']['multiple'] = $multiple;
+#   use_keys: if your keys are 0..n-1 and you want to post them as values.
+function pulldown($selection, $options, $always_use_keys=false) {
+	$options = pulldown_options($options, $always_use_keys);
+	return array('options' => $options, 'selection' => $selection);
 }
 
 # output a bunch of <option> tags
-function enc_options($values, $name) {
-	if(!isset($GLOBALS[$name . '_options'])) {
-		die('pulldown() must be called before this template can be run. See code/wfpl/encode.php');
-	}
-	if($GLOBALS[$name . '_options']['multiple']) { # FIXME test this
-		$values = explode(', ', $values);
-	}
-	return encode_options($values, $GLOBALS[$name . '_options']['options'], PULLDOWN_2D);
-}
+function enc_options($values) {
+	extract($values);  # extract $options and $selection
 
-# use this function along with a special template to generate the html for pulldowns and multiple select boxes.
-#
-# Parameters:
-#
-#    selected: can be a string or (for multiple-selects) an array
-#
-#    options, keys_from: see documentation for pulldown() above
-function encode_options($selected, $options, $keys_from) {
-	if(!is_array($selected)) {
-		$selected = array($selected);
-	}
+	if(!is_array($selection)) $selection = array($selection);
 
-	if($keys_from != PULLDOWN_2D) {
-		$options = pulldown_options_to_2d($options, $keys_from);
-	}
-
-	$out = '';
-	foreach($options as $valdisp) {
-		list($value, $display) = $valdisp;
-		$out .= '<option';
-
-		if(in_array($value, $selected)) {
-			$out .= ' selected="selected"';
+	foreach($options as $option) {
+		if(in_array($option, $selection)) $selected = ' selected';
+		if($option[0] !== $option[1]) {
+			$value = ' value="' . enc_attr($option[0]) . '"';
 		}
+		$display = enc_htmlnbsp($option[1]);
 
-		if($value !== $display) {
-			$out .= ' value="';
-			$out .= enc_attr($value);
-			$out .= '"';
-		}
-			
-		$out .= '>';
-
-		$out .= enc_htmlnbsp($display);
-
-		$out .= "</option>\n";
+		$out .= "<option$value$selected>$display</option>\n";
 	}
-
 	return $out;
 }
 
 $GLOBALS['wfpl_states_assoc'] = array("AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", "AR" => "Arkansas", "CA" => "California", "CO" => "Colorado", "CT" => "Connecticut", "DE" => "Delaware", "FL" => "Florida", "GA" => "Georgia", "HI" => "Hawaii", "ID" => "Idaho", "IL" => "Illinois", "IN" => "Indiana", "IA" => "Iowa", "KS" => "Kansas", "KY" => "Kentucky", "LA" => "Louisiana", "ME" => "Maine", "MD" => "Maryland", "MA" => "Massachusetts", "MI" => "Michigan", "MN" => "Minnesota", "MS" => "Mississippi", "MO" => "Missouri", "MT" => "Montana", "NE" => "Nebraska", "NV" => "Nevada", "NH" => "New Hampshire", "NJ" => "New Jersey", "NM" => "New Mexico", "NY" => "New York", "NC" => "North Carolina", "ND" => "North Dakota", "OH" => "Ohio", "OK" => "Oklahoma", "OR" => "Oregon", "PA" => "Pennsylvania", "RI" => "Rhode Island", "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont", "VA" => "Virginia", "WA" => "Washington", "DC" => "Washington, DC", "WV" => "West Virginia", "WI" => "Wisconsin", "WY" => "Wyoming");
 
 # display <option>s
-function enc_states($str) {
-	$ret = '';
-
-	return encode_options($str, $GLOBALS['wfpl_states_assoc'], PULLDOWN_HASH);
+function enc_states($state) {
+	return enc_options(pulldown($state, $GLOBALS['wfpl_states_assoc']));
 }
 
 $GLOBALS['wfpl_provinces_assoc'] = array("AB" => "Alberta", "BC" => "British Columbia", "MB" => "Manitoba", "NF" => "Newfoundland", "NB" => "New Brunswick", "NS" => "Nova Scotia", "NT" => "Northwest Territories", "NU" => "Nunavut", "ON" => "Ontario", "PE" => "Prince Edward Island", "QC" => "Quebec", "SK" => "Saskatchewan", "YT" => "Yukon Territory");
 
 # display <option>s
-function enc_provinces($str) {
-	$ret = '';
-
-	return encode_options($str, $GLOBALS['wfpl_provinces_assoc'], PULLDOWN_HASH);
+function enc_provinces($province) {
+	return enc_options(pulldown($province, $GLOBALS['wfpl_provinces_assoc']));
 }
 
 # returns "odd", then "even", then "odd" etc.
