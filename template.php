@@ -68,7 +68,7 @@ function parse_template($string) {
 			} elseif($last == '.') {
 				$cur = $stack[count($stack)-1][0];
 				if($tag && $tag != $cur) {
-				   	die("Invalid template: tried to close $tag, but $cur is current.");
+				   	die("Invalid template: tried to close '$tag', but '$cur' is current.");
 				}
 				array_pop($stack); $tem = &last($stack);
 			} else {
