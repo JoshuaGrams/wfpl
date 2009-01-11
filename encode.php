@@ -165,25 +165,6 @@ function enc_mmddyyyyhhmm($seconds) {
 
 
 
-# pulldown options can be:
-#    array of values,
-#    hash of value => display,
-#    array of array(value, display) # canonical form.
-function pulldown_options($options, $always_use_keys = false) {
-	# convert other types of input to array of array(value, display)
-	reset($options); if(!is_scalar(current($options))) return $options;
-
-	if($always_use_keys or array_keys($options) !== range(0, count($values) - 1)) {
-		foreach($options as $value => $display) {
-			$pulldown[] = array($value, $display);
-		}
-	} else {
-		foreach($options as $value) {
-			$pulldown[] = array($value, $value);
-		}
-	}
-	return $pulldown;
-}
 
 
 # convert data to the structure used by enc_options
@@ -196,8 +177,24 @@ function pulldown_options($options, $always_use_keys = false) {
 #
 #   use_keys: if your keys are 0..n-1 and you want to post them as values.
 function pulldown($selection, $options, $always_use_keys=false) {
-	$options = pulldown_options($options, $always_use_keys);
-	return array('options' => $options, 'selection' => $selection);
+	# pulldown options can be:
+	#    array of values,
+	#    hash of value => display,
+	#    array of array(value, display) # canonical form
+	reset($options); if(!is_scalar(current($options))) {
+	   	$pulldown = $options;
+	} else {
+		if($always_use_keys or array_keys($options) !== range(0, count($options) - 1)) {
+			foreach($options as $value => $display) {
+				$pulldown[] = array($value, $display);
+			}
+		} else {
+			foreach($options as $value) {
+				$pulldown[] = array($value, $value);
+			}
+		}
+	}
+	return array('options' => $pulldown, 'selection' => $selection);
 }
 
 # output a bunch of <option> tags
@@ -207,10 +204,13 @@ function enc_options($values) {
 	if(!is_array($selection)) $selection = array($selection);
 
 	foreach($options as $option) {
-		if(in_array($option, $selection)) $selected = ' selected';
+		if(in_array($option[0], $selection)) $selected = ' selected';
+		else $selected = '';
+
 		if($option[0] !== $option[1]) {
 			$value = ' value="' . enc_attr($option[0]) . '"';
-		}
+		} else $value = '';
+
 		$display = enc_htmlnbsp($option[1]);
 
 		$out .= "<option$value$selected>$display</option>\n";
