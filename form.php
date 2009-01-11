@@ -2,10 +2,16 @@
 
 require_once('code/wfpl/db.php');
 
-function fields($table = NULL)
+function fields($table = NULL, $more_fields = NULL)
 {
 	if(!$table) $table = $GLOBALS['table'];
-	return implode(',', array_keys($GLOBALS["fields_in_$table"]));
+	if($more_fields) {
+		if(!is_scalar($more_fields)) {
+		   	$more_fields = implode(',', $more_fields);
+		}
+		$more_fields .= ',';
+	}
+	return $more_fields . implode(',', array_keys($GLOBALS["fields_in_$table"]));
 }
 
 function values($table = NULL)
